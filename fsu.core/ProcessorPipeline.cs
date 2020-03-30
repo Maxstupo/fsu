@@ -1,12 +1,9 @@
 ﻿using Maxstupo.Fsu.Core.Detail;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Core.Utility;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maxstupo.Fsu.Core {
 
@@ -21,6 +18,7 @@ namespace Maxstupo.Fsu.Core {
         public ProcessorPipeline(bool silent) {
             this.silent = silent;
             FilePropertyProviders.Add(new BasicPropertyProvider());
+            FilePropertyProviders.Add(new ExtendedFilePropertyProvider());
         }
 
 

@@ -28,6 +28,12 @@ namespace Maxstupo.Fsu.Core.Processor {
         }
 
         public Property GetFileProperty(IFilePropertyProvider propertyProvider, string propertyName) {
+           
+            if (propertyName.Equals("megapixels", StringComparison.InvariantCultureIgnoreCase)) {
+                Property p1 = GetFileProperty(propertyProvider, "width");
+                Property p2 = GetFileProperty(propertyProvider, "height");
+                return new Property(p1.ValueNumber * p2.ValueNumber / 1000000);
+            }
 
             if (cachedProperties.TryGetValue(propertyName, out Property property)) {
                 return property;
