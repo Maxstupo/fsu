@@ -75,7 +75,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TokenParser.cs" />
     <Compile Include="Utility\ColorConsole.cs" />
+    <Compile Include="Utility\ColorConsoleTablePrinter.cs" />
     <Compile Include="Utility\ExtendedFile.cs" />
+    <Compile Include="Utility\Table\ConsoleTable.cs" />
+    <Compile Include="Utility\Table\ConsoleTableCollection.cs" />
+    <Compile Include="Utility\Table\ConsoleTableColumns.cs" />
+    <Compile Include="Utility\Table\ConsoleTableConverter.cs" />
+    <Compile Include="Utility\Table\ConsoleTablePrinter.cs" />
+    <Compile Include="Utility\Table\ConsoleTableRows.cs" />
+    <Compile Include="Utility\Table\ConsoleTableSection.cs" />
+    <Compile Include="Utility\Table\IConsoleTable.cs" />
+    <Compile Include="Utility\Table\IConsoleTableConverter.cs" />
+    <Compile Include="Utility\Table\IConsoleTablePrinter.cs" />
     <Compile Include="Utility\Util.cs" />
   </ItemGroup>
   <ItemGroup>

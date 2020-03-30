@@ -8,6 +8,11 @@ namespace Maxstupo.Fsu.Core.Utility {
 
     public static class Util {
 
+        public static void Populate<T>(this T[] arr, T value) {
+            for (int i = 0; i < arr.Length; i++)
+                arr[i] = value;
+        }
+
         public static string SafeSubstring(this string str, int offset) {
             if (string.IsNullOrEmpty(str) || offset >= str.Length)
                 return str;
