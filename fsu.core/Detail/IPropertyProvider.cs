@@ -2,12 +2,13 @@
 
 namespace Maxstupo.Fsu.Core.Detail {
 
-    public interface IFilePropertyProvider {
+    public interface IPropertyProvider {
 
         void Begin();
+
         void End();
 
-        Property GetFileProperty(ProcessorItem item, string propertyName);
+        Property GetProperty(ProcessorItem item, string propertyName);
 
     }
 

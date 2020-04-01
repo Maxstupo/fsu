@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maxstupo.Fsu.Core.Utility {
 
@@ -14,7 +10,7 @@ namespace Maxstupo.Fsu.Core.Utility {
         }
 
         public static string SafeSubstring(this string str, int offset) {
-            if (string.IsNullOrEmpty(str) || offset >= str.Length)
+            if (string.IsNullOrEmpty(str) || offset < 0 || offset >= str.Length)
                 return str;
 
             return str.Substring(offset);

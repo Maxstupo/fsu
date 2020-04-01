@@ -30,8 +30,13 @@ namespace Maxstupo.Fsu.Core.Utility {
         /// Accepts color stack syntax. 
         /// </summary>
         /// <inheritdoc cref="Console.WriteLine(string)"/>
-        public static void WriteLine(string line) {
-            WriteText(line, true);
+        public static void WriteLine(string line, bool disableColor = false) {
+            if (!disableColor) {
+                WriteText(line, true);
+            } else {
+                lock (_lock)
+                    Console.WriteLine(line);
+            }
         }
 
         /// <summary>
@@ -39,8 +44,13 @@ namespace Maxstupo.Fsu.Core.Utility {
         /// Accepts color stack syntax. 
         /// </summary>
         /// <inheritdoc cref="Console.Write(string)"/>
-        public static void Write(string str) {
-            WriteText(str, false);
+        public static void Write(string str, bool disableColor=false) {
+            if (!disableColor) {
+                WriteText(str, false);
+            } else {
+                lock (_lock)
+                    Console.Write(str);
+            }
         }
 
         /// <inheritdoc cref="Console.Write(char)"/>
@@ -48,6 +58,7 @@ namespace Maxstupo.Fsu.Core.Utility {
             lock (_lock)
                 Console.Write(c);
         }
+
 
         private static void WriteText(string text, bool newline) {
             lock (_lock) {

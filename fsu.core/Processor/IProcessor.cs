@@ -5,7 +5,7 @@ namespace Maxstupo.Fsu.Core.Processor {
 
     public interface IProcessor {
 
-        bool Process(IFilePropertyProvider propertyProvider, IPropertyStore propertyStore, ref List<ProcessorItem> items);
+        bool ProcessItem(IProcessorPipeline pipeline, IPropertyProvider propertyProvider, IPropertyStore propertyStore);
 
     }
 
