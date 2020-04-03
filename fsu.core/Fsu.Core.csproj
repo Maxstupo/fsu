@@ -41,13 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detail\BasicFilePropertyProvider.cs" />
     <Compile Include="Detail\IPropertyProvider.cs" />
     <Compile Include="Detail\IPropertyStore.cs" />
     <Compile Include="Detail\Property.cs" />
+    <Compile Include="Detail\PropertyStore.cs" />
     <Compile Include="IProcessorPipeline.cs" />
     <Compile Include="ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
+    <Compile Include="Processor\Standard\OutProcessor.cs" />
+    <Compile Include="Processor\Standard\InProcessor.cs" />
+    <Compile Include="Processor\Standard\PrintProcessor.cs" />
+    <Compile Include="Processor\Standard\GlobProcessor.cs" />
+    <Compile Include="Processor\Standard\ScanProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\ColorConsole.cs" />
     <Compile Include="Utility\Util.cs" />
@@ -72,7 +79,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dsl\" />
+    <Folder Include="Dsl\Parser\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
