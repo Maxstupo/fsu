@@ -46,6 +46,10 @@
     <Compile Include="Detail\IPropertyStore.cs" />
     <Compile Include="Detail\Property.cs" />
     <Compile Include="Detail\PropertyStore.cs" />
+    <Compile Include="Dsl\Lexer\ITokenizer.cs" />
+    <Compile Include="Dsl\Lexer\TokenDefinition.cs" />
+    <Compile Include="Dsl\Lexer\Tokenizer.cs" />
+    <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="IProcessorPipeline.cs" />
     <Compile Include="ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />
