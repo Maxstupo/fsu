@@ -1,12 +1,11 @@
 ﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
+using Maxstupo.Fsu.Core.Dsl;
 using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
-namespace Maxstupo.Fsu.Core {
+namespace Maxstupo.Fsu.Core.Processor {
 
     public class ProcessorPipeline : IProcessorPipeline {
 
@@ -14,10 +13,16 @@ namespace Maxstupo.Fsu.Core {
 
         public IPropertyStore PropertyStore { get; }
 
+        public IDslInterpreter<IProcessor> Interpreter { get; }
 
-        public ProcessorPipeline(IPropertyProvider propertyProvider, IPropertyStore propertyStore) {
+        public IConsole Console { get; }
+
+
+        public ProcessorPipeline(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, IDslInterpreter<IProcessor> interpreter) {
+            Console = console ?? throw new ArgumentNullException(nameof(console));
             PropertyProvider = propertyProvider ?? throw new ArgumentNullException(nameof(propertyProvider));
             PropertyStore = propertyStore ?? throw new ArgumentNullException(nameof(propertyStore));
+            Interpreter = interpreter ?? throw new ArgumentNullException(nameof(interpreter));
         }
 
 
@@ -31,7 +36,7 @@ namespace Maxstupo.Fsu.Core {
 
                 items = processor.Process(this, items);
 
-                ColorConsole.WriteLine($"Done: &-b;{processor.GetType().Name}&-^; (&-a;{sw.Elapsed.TotalMilliseconds:0.#}&-^; ms)");
+                Console.WriteLine($"Done: &-b;{processor.GetType().Name}&-^; (&-a;{sw.Elapsed.TotalMilliseconds:0.#}&-^; ms)");
             }
 
             return items;

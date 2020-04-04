@@ -1,183 +1,104 @@
-﻿using GlobExpressions;
-using Maxstupo.Fsu.Core;
-using Maxstupo.Fsu.Core.Detail;
+﻿using Maxstupo.Fsu.Core.Detail;
+using Maxstupo.Fsu.Core.Dsl;
 using Maxstupo.Fsu.Core.Dsl.Lexer;
+using Maxstupo.Fsu.Core.Dsl.Parser;
+using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Processor.Standard;
 using Maxstupo.Fsu.Core.Utility;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Maxstupo.Fsu {
 
-    public enum TokenType {
-        Invalid,
-        Eol,
-        Eof,
+    public class Program : IFsuHost {
 
-        [TokenDef(">>", HasVariableValue = false)]
-        Pipe,
+        public IPluginManager PluginManager { get; }
 
-        //  [TokenDef("scan|transform|print|filter|in|out|glob")]
-        [TokenDef("scan")]
-        [TokenDef("transform")]
-        [TokenDef("print")]
-        [TokenDef("filter")]
-        [TokenDef("in")]
-        [TokenDef("out")]
-        [TokenDef("glob")]
-        Function,
+        public IConsole Console { get; }
 
-        [TokenDef(@"(?:\<|\>)=?", 2)]
-        NumericOperator,
+        public ITokenizer<TokenType> Tokenizer { get; }
 
-        [TokenDef(@"\>\<|\<\>")]
-        [TokenDef(@"~\<|\>~")]
-        StringOperator,
+        public ITokenParser<TokenType, IProcessor> Parser { get; }
+
+        public IDslInterpreter<IProcessor> Interpreter { get; }
+
+        public IProcessorPipeline Pipeline { get; }
+
+        public IPropertyProviderList PropertyProviders { get; }
 
 
+        private readonly Cli cli;
 
-        [TokenDef(@"!", HasVariableValue = false)]
-        Not,
+        /*
+*private readonly IConsole console = new ColorConsole();
 
-        [TokenDef(@"&|\|")]
-        LogicOperator,
 
-        [TokenDef("files|dirs|dir|file|top")]
-        Mode,
+private readonly Cli cli;
 
-        [TokenDef("\\\"([^\"]*)\\\"")]
-        StringValue,
 
-        [TokenDef(@"\@\w+")]
-        ItemProperty,
+private readonly IPropertyProvider propertyProvider;
+private readonly IPropertyStore propertyStore;
 
-        [TokenDef(@"\$\w+")]
-        GlobalProperty,
+private readonly IProcessorPipeline pipeline;
 
-        [TokenDef(@"-?(\d+)\.(\d+)?", Template ="{1}apple{2} ({0})")]
-        NumberValue,
 
-        [TokenDef(@"//")]
-        Comment,
-        [TokenDef("mb|gb|tb|kb|s|m|h|d|y")]
-        Unit,
-
-        [TokenDef(@"[\w\d:\\/\.\-]+", 3)]
-        TextValue,
-    }
-
-    public class Program {
-
-        private readonly Cli cli = new Cli();
-        private readonly IProcessorPipeline pipeline;
-
-        private readonly ITokenizer<TokenType> tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof);
+private readonly FsuTokenizer tokenizer = new FsuTokenizer();
+private readonly FsuTokenParser parser;
+*/
 
         public Program() {
-            Console.Title = Assembly.GetEntryAssembly().GetName().Name;
+            Console = new ColorConsole();
 
+            Tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof);
+            Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof);
 
-            cli.OnCommand += Cli_OnCommand;
-            cli.OnAutoComplete += Cli_OnAutoComplete;
+            Interpreter = new DslInterpreter<TokenType, IProcessor>(Tokenizer, Parser);
 
-
-            IPropertyProvider propertyProvider = new BasicFilePropertyProvider();
+            PropertyProviders = new PropertyProviderList(new BasicFilePropertyProvider());
             IPropertyStore propertyStore = new PropertyStore();
+            Pipeline = new ProcessorPipeline(Console, PropertyProviders, propertyStore, Interpreter);
 
-            pipeline = new ProcessorPipeline(propertyProvider, propertyStore);
+            PluginManager = new PluginManager(this);
+            PluginManager.LoadPluginsFromDirectory("plugins");
 
+            cli = new Cli(Console);
+            cli.OnCommand += Cli_OnCommand;
 
-            List<IProcessor> list = new List<IProcessor> {
-              //  new InProcessor("test.txt"),
-                //new ScanProcessor(true, SearchOption.AllDirectories),
-                new GlobProcessor("*.{pdf,stl,txt}"),
-              //   new OutProcessor("test.txt"),
-                new PrintProcessor(),
-            };
-
-            List<ProcessorItem> items = new List<ProcessorItem>() {
-                new ProcessorItem(@"E:\Videos")
-            };
-
-            //     pipeline.Process(list, items);
-            Cli_OnCommand(this, "");
+            //Temp
+            Cli_OnCommand(null, string.Empty);
         }
 
         public void Run() {
             cli.Run();
         }
 
-        private string Cli_OnAutoComplete(string text, int caretIndex) {
-            string value = text.Substring(0, caretIndex).Trim().ToLowerInvariant();
-
-            if (value.EndsWith("scan"))
-                return " files";
-
-            return null;
-        }
-
         private void Cli_OnCommand(object sender, string input) {
-            ColorConsole.WriteLine(input);
+            //Console.WriteLine(input);
+            System.Console.Clear();
 
-            if (input.StartsWith("!")) {
+            List<Token<TokenType>> tokens = Tokenizer.Tokenize(File.ReadAllLines("test.txt")).ToList();
 
-                string[] tokens = input.Substring(1).ToLowerInvariant().Split(' ');
-                switch (tokens[0]) {
-                    case "clear":
-                    case "cls":
-                        Console.Clear();
-                        break;
-                    case "hello":
-                        Console.WriteLine("Hello World");
-                        break;
-                    case "exit":
-                    case "quit":
-                        Environment.Exit(0);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
+            Console.WriteLine();
 
-                Console.Clear();
+            foreach (Token<TokenType> token in tokens) {
+                token.WriteLine(Console, 'a');
+            }
 
-                List<Token<TokenType>> tokens = tokenizer.Parse(File.ReadAllLines("test.txt")).ToList();
+            Console.WriteLine("\n------------------------------------------------\n");
 
-                // IEnumerable<Token<TokenType>> tokenMatches = ((Tokenizer<TokenType>) tokenizer).FindAllTokenMatches(File.ReadAllText("test.txt"), 1);
+            List<IProcessor> objs = Parser.Parse(tokens);
 
-                //  IEnumerable<IGrouping<int, Token<TokenType>>> groupedByStartIndex = tokenMatches.GroupBy(x => x.StartIndex).OrderBy(x => x.Key);
+            Console.WriteLine("\n------------------------------------------------\n");
 
-                Console.WriteLine();
-
-                //foreach (var a in groupedByStartIndex) {
-                //    foreach (var item in a.OrderBy(x => x.Precedence)) {
-
-                //        //      item.Print();
-                //    }
-                //    // Console.WriteLine("----------------------------------------");
-
-                //}
-
-                bool comment = false;
-                foreach (var a in tokens) {
-                    if ((!comment && a.TokenType == TokenType.Comment))
-                        comment = true;
-
-                    a.Print(comment ? '7' : 'a');
-                    if ((comment && a.TokenType == TokenType.Eol))
-                        comment = false;
-                }
+            foreach (IProcessor a in objs) {
+                if (a != null)
+                    Console.WriteLine(a.GetType().Name);
             }
 
         }
 
-        [STAThread]
+
         static int Main(string[] args) {
             Program program = new Program();
             program.Run();

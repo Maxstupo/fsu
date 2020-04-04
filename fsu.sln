@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Core", "fsu.core\Fsu.Core.csproj", "{A74702F9-8461-4586-9D5B-8A4DDA97AC62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu", "fsu\Fsu.csproj", "{4F202C12-D18D-4088-91BB-4BC4D540A638}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7560B62C-A91F-44BF-A95C-A90A6A205DB3} = {7560B62C-A91F-44BF-A95C-A90A6A205DB3}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Tests", "fsu.tests\Fsu.Tests.csproj", "{E6AE7965-00A8-49BD-818C-E310662519F3}"
 EndProject
@@ -13,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Standard", "Fsu.Standard\Fsu.Standard.csproj", "{7560B62C-A91F-44BF-A95C-A90A6A205DB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +37,10 @@ Global
 		{E6AE7965-00A8-49BD-818C-E310662519F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6AE7965-00A8-49BD-818C-E310662519F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6AE7965-00A8-49BD-818C-E310662519F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7560B62C-A91F-44BF-A95C-A90A6A205DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7560B62C-A91F-44BF-A95C-A90A6A205DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7560B62C-A91F-44BF-A95C-A90A6A205DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7560B62C-A91F-44BF-A95C-A90A6A205DB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,10 +6,10 @@ using System.Text;
 namespace Maxstupo.Fsu {
     public class Cli {
         public string Prompt { get; set; } = "&-e;>>&-^; ";
-        public int TotalCommandsRemembered { get; set; } = 25;
+        public int MaxCommandHistory { get; set; } = 25;
 
         public event EventHandler<string> OnCommand;
-        public event Func<string, int, string> OnAutoComplete;
+        public event Func<string, int, string> OnAutoComplete; // TODO: Use a IAutoCompleteProvider pattern.
 
         private int caretIndex = 0;
         private readonly StringBuilder sb = new StringBuilder();
@@ -17,11 +17,17 @@ namespace Maxstupo.Fsu {
         private int historyIndex = 0;
         private readonly List<string> commandHistory = new List<string>();
 
+        private readonly IConsole console;
+
+        public Cli(IConsole console) {
+            this.console = console ?? throw new ArgumentNullException(nameof(console));
+        }
+
         public void Run() {
 
             while (true) {
                 if (!string.IsNullOrWhiteSpace(Prompt))
-                    ColorConsole.Write(Prompt);
+                    console.Write(Prompt);
 
                 while (true) {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -60,13 +66,13 @@ namespace Maxstupo.Fsu {
 
                 }
 
-                ColorConsole.WriteLine();
+                console.WriteLine();
 
                 string cmd = sb.ToString().Trim();
                 commandHistory.Add(cmd);
                 historyIndex = commandHistory.Count - 1;
 
-                if (commandHistory.Count > TotalCommandsRemembered)
+                if (commandHistory.Count > MaxCommandHistory)
                     commandHistory.RemoveAt(0);
 
                 OnCommand?.Invoke(this, cmd);
@@ -112,20 +118,20 @@ namespace Maxstupo.Fsu {
 
         public void InsertChar(char keyChar) {
             sb.Insert(caretIndex, keyChar); // Insert the new char into the buffer.
-            ColorConsole.Write(keyChar);    // Write the new char to console.
+            console.Write(keyChar);    // Write the new char to console.
 
             caretIndex++;
 
             for (int i = caretIndex; i < sb.Length; i++) // Replace the previous chars from buffer.
-                ColorConsole.Write(sb[i]);
+                console.Write(sb[i]);
 
-            ColorConsole.Write(new string('\b', sb.Length - caretIndex), true);//Return to original caret location
+            console.Write(new string('\b', sb.Length - caretIndex), true);//Return to original caret location
         }
 
 
         public bool MoveCaretRight() {
             if (caretIndex < sb.Length && sb.Length > 0) {
-                ColorConsole.Write(sb[caretIndex]);
+                console.Write(sb[caretIndex]);
                 caretIndex++;
                 return true;
             }
@@ -134,7 +140,7 @@ namespace Maxstupo.Fsu {
 
         public bool MoveCaretLeft() {
             if (caretIndex > 0 && sb.Length > 0) {
-                ColorConsole.Write('\b');
+                console.Write('\b');
                 caretIndex--;
                 return true;
             }
@@ -144,18 +150,18 @@ namespace Maxstupo.Fsu {
         public bool Backspace() {
             if (sb.Length > 0) {
 
-                ColorConsole.Write('\b');
+                console.Write('\b');
 
                 for (int i = caretIndex; i < sb.Length; i++) // Replace the previous chars from buffer.
-                    ColorConsole.Write(sb[i]);
+                    console.Write(sb[i]);
 
-                ColorConsole.Write(' ');
+                console.Write(' ');
 
                 caretIndex--;
                 sb.Remove(caretIndex, 1);
 
 
-                ColorConsole.Write(new string('\b', (sb.Length - caretIndex) + 1), true);
+                console.Write(new string('\b', (sb.Length - caretIndex) + 1), true);
 
                 return true;
             }

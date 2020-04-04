@@ -1,6 +1,4 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Maxstupo.Fsu.Core.Processor {
 

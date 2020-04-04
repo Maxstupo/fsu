@@ -5,21 +5,13 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
     public interface ITokenizer<T> where T : Enum {
 
-        T EndOfFileToken { get; }
-
-        T EndOfLineToken { get; }
-
-        T InvalidToken { get; }
-
-
-        void AddDef(TokenDefinition<T> definition);
+        void Add(TokenDefinition<T> definition);
 
         void Clear();
 
+        IEnumerable<Token<T>> Tokenize(IEnumerable<string> input);
 
-        IEnumerable<Token<T>> Parse(IEnumerable<string> input);
-
-        IEnumerable<Token<T>> Parse(string input, int lineNumber);
+        IEnumerable<Token<T>> Tokenize(string input, int lineNumber);
 
     }
 
