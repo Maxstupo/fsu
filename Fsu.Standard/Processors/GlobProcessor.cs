@@ -1,8 +1,9 @@
 ﻿using GlobExpressions;
+using Maxstupo.Fsu.Core.Processor;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Maxstupo.Fsu.Core.Processor.Standard {
+namespace Maxstupo.Fsu.Standard.Processor {
     public class GlobProcessor : IProcessor {
 
         private readonly Glob glob;
@@ -21,6 +22,10 @@ namespace Maxstupo.Fsu.Core.Processor.Standard {
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
             return items.Where(x => glob.IsMatch(x.Value));
+        }
+
+        public override string ToString() {
+            return $"{nameof(GlobProcessor)}[pattern='{glob.Pattern}']";
         }
     }
 }

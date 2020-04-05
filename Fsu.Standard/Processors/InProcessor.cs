@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Maxstupo.Fsu.Core.Processor;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Maxstupo.Fsu.Core.Processor.Standard {
+namespace Maxstupo.Fsu.Standard.Processor {
     public class InProcessor : IProcessor {
 
         private readonly string path;
@@ -20,5 +21,10 @@ namespace Maxstupo.Fsu.Core.Processor.Standard {
             IEnumerable<ProcessorItem> fileItems = File.ReadLines(path, Encoding.UTF8).Select(x => new ProcessorItem(x));
             return items.Concat(fileItems);
         }
+
+        public override string ToString() {
+            return $"{nameof(InProcessor)}[path='{path}']";
+        }
+
     }
 }

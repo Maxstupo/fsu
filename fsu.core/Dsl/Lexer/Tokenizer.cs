@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Maxstupo.Fsu.Core.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,14 +7,15 @@ using System.Reflection;
 namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
     public class Tokenizer<T> : ITokenizer<T> where T : Enum {
-
+        private readonly IConsole console;
         private readonly T invalidToken;
         private readonly T eolToken;
         private readonly T eofToken;
 
         private readonly List<TokenDefinition<T>> tokenDefinitions = new List<TokenDefinition<T>>();
 
-        public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
+        public Tokenizer(IConsole console, T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
+            this.console = console;
             this.invalidToken = invalidToken;
             this.eolToken = eolToken;
             this.eofToken = eofToken;
@@ -47,6 +49,8 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
             if (tokenDefinitions.Contains(definition))
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Pattern}'", nameof(definition));
+
+            console.WriteLine($"Adding token definition: '&-e;{definition.Pattern}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
 
             tokenDefinitions.Add(definition);
         }

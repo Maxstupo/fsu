@@ -42,6 +42,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MyPlugin.cs" />
+    <Compile Include="Processors\EvalProcessor.cs" />
+    <Compile Include="Processors\FilterProcessor.cs" />
+    <Compile Include="Processors\GlobProcessor.cs" />
+    <Compile Include="Processors\InProcessor.cs" />
+    <Compile Include="Processors\ItemsProcessor.cs" />
+    <Compile Include="Processors\OutProcessor.cs" />
+    <Compile Include="Processors\PrintProcessor.cs" />
+    <Compile Include="Processors\ScanProcessor.cs" />
+    <Compile Include="Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +58,11 @@
       <Project>{a74702f9-8461-4586-9d5b-8a4dda97ac62}</Project>
       <Name>Fsu.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Glob">
+      <Version>1.1.6</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

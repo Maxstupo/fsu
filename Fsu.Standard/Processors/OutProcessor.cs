@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Maxstupo.Fsu.Core.Processor;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Maxstupo.Fsu.Core.Processor.Standard {
+namespace Maxstupo.Fsu.Standard.Processor {
     public class OutProcessor : IProcessor {
 
         private readonly string path;
@@ -16,6 +17,10 @@ namespace Maxstupo.Fsu.Core.Processor.Standard {
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
             File.WriteAllLines(path, items.Select(x => x.Value), Encoding.UTF8);
             return items;
+        }
+
+        public override string ToString() {
+            return $"{nameof(OutProcessor)}[path='{path}']";
         }
     }
 }

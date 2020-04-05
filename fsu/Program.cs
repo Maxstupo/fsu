@@ -50,7 +50,7 @@ private readonly FsuTokenParser parser;
         public Program() {
             Console = new ColorConsole();
 
-            Tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof);
+            Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
             Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof);
 
             Interpreter = new DslInterpreter<TokenType, IProcessor>(Tokenizer, Parser);
@@ -66,36 +66,41 @@ private readonly FsuTokenParser parser;
             cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            Cli_OnCommand(null, string.Empty);
+            Cli_OnCommand(null, File.ReadAllText("test.txt"));
         }
 
         public void Run() {
             cli.Run();
         }
 
+        
+
         private void Cli_OnCommand(object sender, string input) {
-            //Console.WriteLine(input);
-            System.Console.Clear();
+            Console.WriteLine($">> {input}");
 
-            List<Token<TokenType>> tokens = Tokenizer.Tokenize(File.ReadAllLines("test.txt")).ToList();
+            List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
-            Console.WriteLine();
+            Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
+
 
             foreach (Token<TokenType> token in tokens) {
                 token.WriteLine(Console, 'a');
             }
 
-            Console.WriteLine("\n------------------------------------------------\n");
+            Console.WriteLine("\n----------------------- Parsing ----------------------------\n");
 
             List<IProcessor> objs = Parser.Parse(tokens);
 
-            Console.WriteLine("\n------------------------------------------------\n");
+            Console.WriteLine("\n-------------------- Processor List ----------------------\n");
 
             foreach (IProcessor a in objs) {
                 if (a != null)
-                    Console.WriteLine(a.GetType().Name);
+                    Console.WriteLine(a.ToString());
             }
 
+            Console.WriteLine("\n--------------------- Pipeline Output --------------------\n");
+
+            Pipeline.Process(objs);
         }
 
 

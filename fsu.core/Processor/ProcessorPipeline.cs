@@ -4,6 +4,7 @@ using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Maxstupo.Fsu.Core.Processor {
 
@@ -26,9 +27,11 @@ namespace Maxstupo.Fsu.Core.Processor {
         }
 
 
-        public IEnumerable<ProcessorItem> Process(List<IProcessor> processors, IEnumerable<ProcessorItem> items) {
+        public IEnumerable<ProcessorItem> Process(List<IProcessor> processors) {
 
             Stopwatch sw = Stopwatch.StartNew();
+
+            IEnumerable<ProcessorItem> items = Enumerable.Empty<ProcessorItem>();
 
             foreach (IProcessor processor in processors) {
 

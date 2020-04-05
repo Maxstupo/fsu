@@ -8,12 +8,16 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
     public class RepeatingSequenceRule<T> : Rule<T>, IEnumerable<Rule<T>> where T : Enum {
 
         private readonly List<Rule<T>> rules = new List<Rule<T>>();
+        private readonly bool includeSeperator;
 
         /// <summary>
         /// Defines a rule that can have a set of tokens repeat when they seperate by the provided <paramref name="seperatorTokens"/>.
         /// </summary>
+        /// <param name="includeSeperator">If true the seperator value will be included in the rule data.</param>
         /// <param name="seperatorTokens">An array of tokens that denote the seperation of each rule sequence.</param>
-        public RepeatingSequenceRule(params T[] seperatorTokens) : base(seperatorTokens) { }
+        public RepeatingSequenceRule(bool includeSeperator, params T[] seperatorTokens) : base(seperatorTokens) {
+            this.includeSeperator = includeSeperator;
+        }
 
 
         public RepeatingSequenceRule<T> Add(Rule<T> rule) {
@@ -23,16 +27,18 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
             return this;
         }
 
-        public override bool Check(ref TokenStack<T> stack) {
+        public override bool Eval(ref TokenStack<T> stack, ref RuleData data) {
+            //TEMP
             new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
 
             foreach (Rule<T> rule in rules) {
-                if (!rule.Check(ref stack))
+                if (!rule.Eval(ref stack, ref data))
                     return false;
             }
 
             if (IsTokenTypeMatch(stack.Next())) {
-                return Check(ref stack);
+                UpdateData(ref data, stack.Peek(), includeSeperator);
+                return Eval(ref stack, ref data);
             } else {
                 stack.Prev();
             }

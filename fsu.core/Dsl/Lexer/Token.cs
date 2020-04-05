@@ -67,7 +67,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         public void WriteLine(IConsole console, char color = 'a') {
 
 
-            string common = $"{Precedence} #&-c;{LineNumber}&-^; @&-c;{StartIndex}&-^;-&-c;{EndIndex}&-^;";
+            string common = $"&-9;{Precedence}&-^; #&-c;{LineNumber}&-^; @&-c;{StartIndex}&-^;-&-c;{EndIndex}&-^;";
             string value = HasVariableValue ? $"&-e;{Value,-30}&-^;" : $"{"---",-30}";
 
 

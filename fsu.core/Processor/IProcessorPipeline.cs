@@ -15,7 +15,7 @@ namespace Maxstupo.Fsu.Core.Processor {
 
         IDslInterpreter<IProcessor> Interpreter { get; }
 
-        IEnumerable<ProcessorItem> Process(List<IProcessor> processors, IEnumerable<ProcessorItem> items);
+        IEnumerable<ProcessorItem> Process(List<IProcessor> processors);
 
     }
 

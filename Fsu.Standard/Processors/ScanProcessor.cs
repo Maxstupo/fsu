@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Maxstupo.Fsu.Core.Processor;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Maxstupo.Fsu.Core.Processor.Standard {
+namespace Maxstupo.Fsu.Standard.Processor {
     public class ScanProcessor : IProcessor {
 
         private readonly bool isFiles;
@@ -56,5 +57,8 @@ namespace Maxstupo.Fsu.Core.Processor.Standard {
             return foundFiles;
         }
 
+        public override string ToString() {
+            return $"{nameof(ScanProcessor)}[isFiles={isFiles}, searchOption={searchOption}]";
+        }
     }
 }

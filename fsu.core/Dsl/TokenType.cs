@@ -5,6 +5,7 @@ namespace Maxstupo.Fsu {
         Invalid,
         Eol,
         Eof,
+        Sol,
 
         [TokenDef(">>", HasVariableValue = false)]
         Pipe,
@@ -44,6 +45,8 @@ namespace Maxstupo.Fsu {
         [TokenDef(@"[\w\d:\\/\.\-\*\[\]\{\}]+", 3)]
         TextValue,
 
+        [TokenDef(@",")]
+        Seperator,
 
         [TokenDef(@"//")]
         Comment,

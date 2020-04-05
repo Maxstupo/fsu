@@ -1,11 +1,13 @@
-﻿using Maxstupo.Fsu;
-using Maxstupo.Fsu.Core.Dsl.Lexer;
+﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
 using Maxstupo.Fsu.Core.Dsl.Parser;
 using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
 using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Processor.Standard;
+using Maxstupo.Fsu.Standard.Processor;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Maxstupo.Fsu.Standard {
     public class MyFirstPlugin : IFsuPlugin {
@@ -37,60 +39,103 @@ namespace Maxstupo.Fsu.Standard {
         private void InitParser(ITokenParser<TokenType, IProcessor> parser) {
             //   parser.Clear();
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Pipe));
+            List<Grammer<TokenType, IProcessor>> grammers = new List<Grammer<TokenType, IProcessor>> {
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
-                Construct = x => new PrintProcessor()
-            });
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "eval"));
+                new Grammer<TokenType, IProcessor>(TokenType.Pipe) {
+                    Rules = {
+                        new LookaheadRule<TokenType>(TokenType.Function)
+                    }
+                },
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "scan") {
-                Construct = x => new ScanProcessor(true, SearchOption.AllDirectories),
-                Rules = {
-                    new Rule<TokenType>(TokenType.Constant, "files|dirs|directories"),
-                    new OptionalRule<TokenType>(TokenType.Constant, "top"),
-                }
-            });
+                new Grammer<TokenType, IProcessor>(TokenType.StringValue) {
+                    IncludeTriggerToken=true,
+                    Construct = x => new ItemsProcessor(x.Cast<string>()),
+                    Rules = {
+                        new RepeatingSequenceRule<TokenType>(false,TokenType.Seperator) {
+                           new Rule<TokenType>(TokenType.StringValue,TokenType.TextValue)
+                        },
+                        new LookaheadRule<TokenType>(TokenType.Pipe)
+                    }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.TextValue) {
+                    IncludeTriggerToken=true,
+                    Construct = x => new ItemsProcessor(x.Cast<string>()),
+                    Rules = {
+                        new RepeatingSequenceRule<TokenType>(false,TokenType.Seperator) {
+                           new Rule<TokenType>(TokenType.StringValue,TokenType.TextValue)
+                        },
+                        new LookaheadRule<TokenType>(TokenType.Pipe)
+                    }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
+                    Construct = x => new PrintProcessor()
+                },
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
-                Construct = x => new FilterProcessor(),
-                Rules = {
-                    new RepeatingSequenceRule<TokenType>(TokenType.LogicOperator) {
-                        new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
-                        new OptionalRule<TokenType>(TokenType.Not),
-                        new Rule<TokenType>(TokenType.StringOperator, TokenType.NumericOperator),
-                        new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "eval"),
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "scan") {
+                    Construct = x => new ScanProcessor(x.Get<bool>(0), x.Get<SearchOption>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.Constant, "files|dirs|directories") {
+                            ValueConverter = value => value.Equals("files", StringComparison.InvariantCultureIgnoreCase)
+                        },
+                        new OptionalRule<TokenType>(TokenType.Constant, SearchOption.AllDirectories, "top") {
+                            ValueConverter = value => value.Equals("top", StringComparison.InvariantCultureIgnoreCase) ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories
+                        },
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
+                    Construct = x => new FilterProcessor(),
+                    Rules = {
+                        new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
+                            new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
+                            new OptionalRule<TokenType>(TokenType.Unit),
+                            new OptionalRule<TokenType>(TokenType.Not),
+                            new Rule<TokenType>(TokenType.StringOperator, TokenType.NumericOperator),
+                            new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
+                            new OptionalRule<TokenType>(TokenType.Unit),
+                        }
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "glob") {
+                    Construct = x => new GlobProcessor(x.Get<string>(0)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "in") {
+                    Construct = x => new InProcessor(x.Get<string>(0)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "out") {
+                    Construct = x => new OutProcessor(x.Get<string>(0)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "transform") {
+                    Construct = x => new TransformProcessor(),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
                     }
                 }
-            });
+            };
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "glob") {
-                Construct = x => new GlobProcessor("*"),
-                Rules = {
-                     new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                }
-            });
+            // Ensure that all functions have a pipe or be the end of line after them.
+            foreach (Grammer<TokenType, IProcessor> grammer in grammers.Where(x => x.TriggerTokenToken.Equals(TokenType.Function))) {
+                grammer.Rules.Add(new LookaheadRule<TokenType>(TokenType.Pipe, TokenType.Eol));
+            }
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "in") {
-                Construct = x => new InProcessor(""),
-                Rules = {
-                    new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                }
-            });
+            foreach (Grammer<TokenType, IProcessor> grammer in grammers)
+                parser.Add(grammer);
 
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "out") {
-                Construct = x => new OutProcessor(""),
-                Rules = {
-                    new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                }
-            });
-
-            parser.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "transform") {
-                //Construct = x => new InProcessor(""),
-                Rules = {
-                    new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                }
-            });
         }
 
 

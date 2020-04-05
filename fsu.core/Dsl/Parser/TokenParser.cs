@@ -12,7 +12,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
     public class TokenParser<T, V> : ITokenParser<T, V> where T : Enum where V : class {
 
         private readonly IConsole console;
-        
+
         private readonly T commentToken;
         private readonly T eolToken;
         private readonly T eofToken;
@@ -31,7 +31,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         }
 
         public Grammer<T, V> Add(Grammer<T, V> grammer) {
-            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerPattern}&-^;' (&-a;{grammer.TriggerToken}&-^;) with {grammer.Rules.Count} rule(s)");
+            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{grammer.TriggerTokenToken}&-^;) with {grammer.Rules.Count} rule(s)");
             grammers.Add(grammer);
             return grammer;
         }
@@ -71,7 +71,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
                         stack.Mark();
 
-                        if (grammer.Run(ref stack, out V result)) {
+                        if (grammer.Eval(ref stack, out V result)) {
                             if (result != null)
                                 objects.Add(result);
                             break;
@@ -85,9 +85,10 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
                     if (hasError) {
                         console.WriteLine($"&-c;ERROR - Unexpected token: '{token.Value}' ({token.TokenType}) {token.Location}&-^;");
+                        objects.Clear();
                         break;
                     }
-                }
+                } 
 
 
             }
