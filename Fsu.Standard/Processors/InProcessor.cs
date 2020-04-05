@@ -23,7 +23,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
         public override string ToString() {
-            return $"{nameof(InProcessor)}[path='{path}']";
+            return $"{GetType().Name}[path='{path}']";
         }
 
     }

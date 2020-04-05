@@ -15,8 +15,10 @@ namespace Maxstupo.Fsu.Standard.Processor {
 
             return items;
         }
+
         public override string ToString() {
-            return $"{nameof(PrintProcessor)}";
+            return $"{GetType().Name}";
         }
+
     }
 }

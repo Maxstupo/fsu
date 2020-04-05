@@ -9,7 +9,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
         public override string ToString() {
-            return $"{nameof(FilterProcessor)}";
+            return $"{GetType().Name}";
         }
 
     }

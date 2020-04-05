@@ -5,7 +5,6 @@ namespace Maxstupo.Fsu {
         Invalid,
         Eol,
         Eof,
-        Sol,
 
         [TokenDef(">>", HasVariableValue = false)]
         Pipe,
@@ -32,7 +31,7 @@ namespace Maxstupo.Fsu {
         [TokenDef(@"&|\|")]
         LogicOperator,
 
-        [TokenDef(@"mb|gb|tb|kb|s|m|h|d|y", 3)]
+        [TokenDef(@"mb|gb|tb|kb|s|m|h", 3)]
         Unit,
 
 

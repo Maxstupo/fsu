@@ -20,10 +20,15 @@ namespace Maxstupo.Fsu.Standard.Processor {
             IEnumerable<ProcessorItem> result = Enumerable.Empty<ProcessorItem>();
 
             foreach (ProcessorItem item in items) {
+
+                if (!Directory.Exists(item.Value))
+                    continue;
+
+
                 IEnumerable<string> enumerable = isFiles ?
-                                                         GetDirectoryFiles(item.Value, "*", searchOption)
+                                                         Directory.EnumerateFiles(item.Value, "*", searchOption)
                                                          :
-                                                         GetDirectoryFiles(item.Value, "*", searchOption);
+                                                         Directory.EnumerateDirectories(item.Value, "*", searchOption);
 
                 result = result.Concat(enumerable.Select(x => new ProcessorItem(x)));
             }
@@ -31,34 +36,9 @@ namespace Maxstupo.Fsu.Standard.Processor {
             return result;
         }
 
-
-
-        public static IEnumerable<string> GetDirectoryFiles(string rootPath, string patternMatch, SearchOption searchOption) {
-            IEnumerable<string> foundFiles = Enumerable.Empty<string>();
-
-            if (searchOption == SearchOption.AllDirectories) {
-                try {
-                    IEnumerable<string> subDirs = Directory.EnumerateDirectories(rootPath);
-                    foreach (string dir in subDirs)
-                        foundFiles = foundFiles.Concat(GetDirectoryFiles(dir, patternMatch, searchOption)); // Add files in subdirectories recursively to the list
-
-                } catch (UnauthorizedAccessException e) {
-                    Console.WriteLine(e.ToString());
-                } catch (PathTooLongException) {
-                }
-            }
-
-            try {
-                foundFiles = foundFiles.Concat(Directory.EnumerateFiles(rootPath, patternMatch)); // Add files from the current directory
-            } catch (UnauthorizedAccessException e) {
-                Console.WriteLine("AAAA: " + e.ToString());
-            }
-
-            return foundFiles;
-        }
-
         public override string ToString() {
-            return $"{nameof(ScanProcessor)}[isFiles={isFiles}, searchOption={searchOption}]";
+            return $"{GetType().Name}[isFiles={isFiles}, searchOption={searchOption}]";
         }
+
     }
 }

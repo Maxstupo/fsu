@@ -4,18 +4,19 @@ using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
     public class Grammer<T, V> : IEnumerable<Rule<T>> where T : Enum where V : class {
 
-        public T TriggerTokenToken { get; }
+        public T[] TriggerTokenTokens { get; }
 
         public string TriggerTokenValuePattern { get; }
 
         /// <summary>If true, remove all null entries from the <see cref="RuleData"/>. Useful for optional rules.</summary>
-        public bool CleanRuleData { get; set; } 
+        public bool CleanRuleData { get; set; }
 
         /// <summary>If true, include the trigger token when evaluating the rules.</summary>
         public bool IncludeTriggerToken { get; set; } = false;
@@ -31,9 +32,15 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
         //TODO: Support multiple trigger token types?
         public Grammer(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
-            TriggerTokenToken = triggerTokenType;
+            TriggerTokenTokens = new T[] { triggerTokenType };
             TriggerTokenValuePattern = triggerTokenValuePattern;
             CleanRuleData = cleanRuleData;
+        }
+
+        public Grammer(params T[] triggerTokenType) {
+            TriggerTokenTokens = triggerTokenType;
+            TriggerTokenValuePattern = null;
+            CleanRuleData = true;
         }
 
         public bool Eval(ref TokenStack<T> stack, out V result) {
@@ -63,10 +70,10 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
 
         /// <summary>
-        /// Checks if the provided <paramref name="token"/> matches the TriggerToken and optionally the TriggerPattern.
+        /// Checks if the provided <paramref name="token"/> matches the any of the trigger token types and optionally the value pattern.
         /// </summary>
         public virtual bool IsMatch(Token<T> token) {
-            return token.TokenType.Equals(TriggerTokenToken) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
+            return TriggerTokenTokens.Any(x => x.Equals(token.TokenType)) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
         }
 
         public void Add(Rule<T> rule) {

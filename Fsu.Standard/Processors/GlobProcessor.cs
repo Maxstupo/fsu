@@ -25,7 +25,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
         public override string ToString() {
-            return $"{nameof(GlobProcessor)}[pattern='{glob.Pattern}']";
+            return $"{GetType().Name}[pattern='{glob.Pattern}']";
         }
     }
 }

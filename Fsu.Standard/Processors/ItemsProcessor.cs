@@ -14,7 +14,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
         public override string ToString() {
-            return $"{nameof(ItemsProcessor)}[{string.Join(", ", newItems)}]";
+            return $"{GetType().Name}[{string.Join(", ", newItems)}]";
         }
 
     }

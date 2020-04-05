@@ -20,7 +20,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
         public override string ToString() {
-            return $"{nameof(OutProcessor)}[path='{path}']";
+            return $"{GetType().Name}[path='{path}']";
         }
     }
 }

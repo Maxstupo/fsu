@@ -26,6 +26,7 @@ namespace Maxstupo.Fsu.Standard {
 
         private void InitTokenizer(ITokenizer<TokenType> tokenizer) {
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Constant, "files|dirs|directories|top"));
+            tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "scan"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "transform"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "glob"));
@@ -43,35 +44,35 @@ namespace Maxstupo.Fsu.Standard {
 
                 new Grammer<TokenType, IProcessor>(TokenType.Pipe) {
                     Rules = {
-                        new LookaheadRule<TokenType>(TokenType.Function)
+                        new LookaheadRule<TokenType>(TokenType.Function,TokenType.TextValue,TokenType.StringValue)
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.StringValue) {
+                new Grammer<TokenType, IProcessor>(TokenType.StringValue, TokenType.TextValue) {
                     IncludeTriggerToken=true,
                     Construct = x => new ItemsProcessor(x.Cast<string>()),
                     Rules = {
                         new RepeatingSequenceRule<TokenType>(false,TokenType.Seperator) {
                            new Rule<TokenType>(TokenType.StringValue,TokenType.TextValue)
-                        },
-                        new LookaheadRule<TokenType>(TokenType.Pipe)
+                        }
                     }
                 },
-                new Grammer<TokenType, IProcessor>(TokenType.TextValue) {
-                    IncludeTriggerToken=true,
-                    Construct = x => new ItemsProcessor(x.Cast<string>()),
-                    Rules = {
-                        new RepeatingSequenceRule<TokenType>(false,TokenType.Seperator) {
-                           new Rule<TokenType>(TokenType.StringValue,TokenType.TextValue)
-                        },
-                        new LookaheadRule<TokenType>(TokenType.Pipe)
-                    }
-                },
+             
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
                     Construct = x => new PrintProcessor()
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "eval"),
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "eval") {
+                    Construct = x => new EvalProcessor(x.Get<bool>(0), x.Get<bool>(1)),
+                    Rules = {
+                        new OptionalRule<TokenType>(TokenType.Constant, false, "join|seq") {
+                            ValueConverter = value => value.Equals("join", StringComparison.InvariantCultureIgnoreCase)
+                        },
+                        new OptionalRule<TokenType>(TokenType.Constant, true, "append|replace") {
+                            ValueConverter = value => value.Equals("append", StringComparison.InvariantCultureIgnoreCase)
+                        },
+                    }
+                },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "scan") {
                     Construct = x => new ScanProcessor(x.Get<bool>(0), x.Get<SearchOption>(1)),
@@ -129,7 +130,7 @@ namespace Maxstupo.Fsu.Standard {
             };
 
             // Ensure that all functions have a pipe or be the end of line after them.
-            foreach (Grammer<TokenType, IProcessor> grammer in grammers.Where(x => x.TriggerTokenToken.Equals(TokenType.Function))) {
+            foreach (Grammer<TokenType, IProcessor> grammer in grammers.Where(x => x.TriggerTokenTokens.Equals(TokenType.Function))) {
                 grammer.Rules.Add(new LookaheadRule<TokenType>(TokenType.Pipe, TokenType.Eol));
             }
 

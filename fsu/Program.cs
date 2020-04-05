@@ -8,6 +8,7 @@ using Maxstupo.Fsu.Core.Utility;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Maxstupo.Fsu {
 
@@ -48,6 +49,7 @@ private readonly FsuTokenParser parser;
 */
 
         public Program() {
+            System.Console.OutputEncoding = Encoding.Unicode;
             Console = new ColorConsole();
 
             Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
@@ -66,18 +68,17 @@ private readonly FsuTokenParser parser;
             cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            Cli_OnCommand(null, File.ReadAllText("test.txt"));
+            Cli_OnCommand(null, "in test.txt >> eval");
         }
 
         public void Run() {
             cli.Run();
         }
 
-        
+
 
         private void Cli_OnCommand(object sender, string input) {
-            Console.WriteLine($">> {input}");
-
+            System.Console.Clear();
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
             Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
