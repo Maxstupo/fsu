@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 
 namespace Maxstupo.Fsu.Standard {
-    public class MyFirstPlugin : IFsuPlugin {
+    public class FsuStandardPlugin : IFsuPlugin {
 
         public string PluginId => "fsu.standard";
 
@@ -28,6 +28,7 @@ namespace Maxstupo.Fsu.Standard {
         private void InitTokenizer(ITokenizer<TokenType> tokenizer) {
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Constant, "files|dirs|directories|top"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"));
+            tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Constant, "nowindow|no-window"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "scan"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "transform"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "glob"));
@@ -36,6 +37,7 @@ namespace Maxstupo.Fsu.Standard {
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "in"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "out"));
             tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "eval"));
+            tokenizer.Add(new TokenDefinition<TokenType>(TokenType.Function, "exec"));
         }
 
         private void InitParser(ITokenParser<TokenType, IProcessor> parser) {
@@ -128,6 +130,21 @@ namespace Maxstupo.Fsu.Standard {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
                             ValueConverter = value => FormatTemplate.Build(value)
                         },
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "exec") {
+                    Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1),x.Get<bool>(2)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
+                            ValueConverter = value => FormatTemplate.Build(value)
+                        },
+                        new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
+                            ValueConverter = value => FormatTemplate.Build(value)
+                        },
+                        new OptionalRule<TokenType>(TokenType.Constant, false, "nowindow|no-window") {
+                            ValueConverter = value => value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
+                        }
                     }
                 }
             };

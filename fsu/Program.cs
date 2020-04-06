@@ -6,7 +6,6 @@ using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Core.Utility;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -30,32 +29,15 @@ namespace Maxstupo.Fsu {
         public IProcessorPipeline Pipeline { get; }
 
         public IPropertyProviderList PropertyProviders { get; }
+        
+        public Cli Cli { get; }
 
-
-        private readonly Cli cli;
-
-        /*
-*private readonly IConsole console = new ColorConsole();
-
-
-private readonly Cli cli;
-
-
-private readonly IPropertyProvider propertyProvider;
-private readonly IPropertyStore propertyStore;
-
-private readonly IProcessorPipeline pipeline;
-
-
-private readonly FsuTokenizer tokenizer = new FsuTokenizer();
-private readonly FsuTokenParser parser;
-*/
 
         public Program() {
-            System.Console.OutputEncoding = Encoding.Unicode;
+           // System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
 
-            Console = new ColorConsole();
+            Console = new ColorConsole(System.Console.Out);
 
             Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
             Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof);
@@ -69,21 +51,21 @@ private readonly FsuTokenParser parser;
             PluginManager = new PluginManager(this);
             PluginManager.LoadPluginsFromDirectory("plugins");
 
-            cli = new Cli(Console);
-            cli.OnCommand += Cli_OnCommand;
+            Cli = new Cli(Console);
+            Cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            Cli_OnCommand(null, "in test.txt >> eval");
+         Cli_OnCommand(null, "in test.txt >> eval");
         }
 
         public void Run() {
-            cli.Run();
+            Cli.Run();
         }
 
 
 
         private void Cli_OnCommand(object sender, string input) {
-       //     System.Console.Clear();
+       //     Console.Clear();
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
             Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
@@ -107,6 +89,7 @@ private readonly FsuTokenParser parser;
             Console.WriteLine("\n--------------------- Pipeline Output --------------------\n");
 
             Pipeline.Process(objs);
+
         }
 
 

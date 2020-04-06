@@ -31,12 +31,17 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         }
 
         public Grammer<T, V> Add(Grammer<T, V> grammer) {
+            if (grammer == null)
+                throw new ArgumentNullException(nameof(grammer)); 
             console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
             grammers.Add(grammer);
             return grammer;
         }
 
         public List<V> Parse(IEnumerable<Token<T>> tokens) {
+            if (tokens == null)
+                throw new ArgumentNullException(nameof(tokens));
+
             List<V> objects = new List<V>();
 
             TokenStack<T> stack = new TokenStack<T>(tokens);

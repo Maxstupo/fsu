@@ -30,7 +30,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
                                                          :
                                                          Directory.EnumerateDirectories(item.Value, "*", searchOption);
 
-                result = result.Concat(enumerable.Select(x => new ProcessorItem(x)));
+                result = result.Concat(enumerable.Select(x => new ProcessorItem(x, item.Value)));
             }
 
             return result;

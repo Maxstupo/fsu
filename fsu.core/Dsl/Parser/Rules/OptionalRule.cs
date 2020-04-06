@@ -15,7 +15,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         public OptionalRule(T tokenType, object defaultValue = null, string pattern = null) : base(tokenType, pattern) {
             DefaultValue = defaultValue;
         }
-
+        public OptionalRule(object defaultValue, params T[] tokenTypes) : base(tokenTypes) {
+            DefaultValue = defaultValue;
+        }
 
         public override bool Eval(ref TokenStack<T> stack, ref RuleData data) {
             Token<T> token = stack.Next();

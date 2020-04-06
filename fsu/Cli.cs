@@ -106,18 +106,18 @@ namespace Maxstupo.Fsu {
             }
         }
 
-        public void Clear() {
+        private void Clear() {
             while (MoveCaretRight()) ;
             while (Backspace()) ;
         }
 
 
-        public void InsertString(string text) {
+        private void InsertString(string text) {
             for (int i = 0; i < text.Length; i++)
                 InsertChar(text[i]);
         }
 
-        public void InsertChar(char keyChar) {
+        private void InsertChar(char keyChar) {
             sb.Insert(caretIndex, keyChar); // Insert the new char into the buffer.
             console.Write(keyChar);    // Write the new char to console.
 
@@ -130,7 +130,7 @@ namespace Maxstupo.Fsu {
         }
 
 
-        public bool MoveCaretRight() {
+        private bool MoveCaretRight() {
             if (caretIndex < sb.Length && sb.Length > 0) {
                 console.Write(sb[caretIndex]);
                 caretIndex++;
@@ -139,7 +139,7 @@ namespace Maxstupo.Fsu {
             return false;
         }
 
-        public bool MoveCaretLeft() {
+        private bool MoveCaretLeft() {
             if (caretIndex > 0 && sb.Length > 0) {
                 console.Write('\b');
                 caretIndex--;
@@ -148,7 +148,7 @@ namespace Maxstupo.Fsu {
             return false;
         }
 
-        public bool Backspace() {
+        private bool Backspace() {
             if (sb.Length > 0) {
 
                 console.Write('\b');

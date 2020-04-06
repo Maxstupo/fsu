@@ -13,6 +13,8 @@ namespace Maxstupo.Fsu.Core.Format {
 
         private readonly List<FormatToken> tokens;
 
+        public static readonly FormatTemplate Empty = Build(string.Empty);
+
         public string Template { get; }
 
         private FormatTemplate(string template, List<FormatToken> tokens) {

@@ -1,62 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Maxstupo.Fsu.Core.Utility {
 
     public class ColorConsole : IConsole {
+        private static readonly Regex Regex = new Regex(@"\&([0-9a-fA-F\^\-]{1})([0-9a-fA-F\^\-]{1})\;", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
         private readonly object _lock = new object();
 
         private readonly Stack<ConsoleColor> foregroundStack = new Stack<ConsoleColor>();
         private readonly Stack<ConsoleColor> backgroundStack = new Stack<ConsoleColor>();
 
-        private readonly Regex regex = new Regex(@"\&([0-9a-fA-F\^\-]{1})([0-9a-fA-F\^\-]{1})\;", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        private readonly TextWriter output;
 
+        public ColorConsole(TextWriter output = null) {
+            this.output = output ?? Console.Out;
 
-        public ColorConsole() {
             Push(ConsoleColor.Black, ConsoleColor.White);
         }
 
-        /// <inheritdoc cref="Console.WriteLine()"/>  
+        public void Clear() {
+            Console.Clear();
+        }
+
         public void WriteLine() {
             lock (_lock)
-                Console.WriteLine();
+                output.WriteLine();
         }
 
         /// <summary>
-        /// <inheritdoc cref="Console.WriteLine(string)"/>.<br/><br/>
         /// Accepts color stack syntax. 
         /// </summary>
-        /// <inheritdoc cref="Console.WriteLine(string)"/>
         public void WriteLine(string line, bool disableColor = false) {
             if (!disableColor) {
                 WriteText(line, true);
             } else {
                 lock (_lock)
-                    Console.WriteLine(line);
+                    output.WriteLine(line);
             }
         }
 
         /// <summary>
-        /// <inheritdoc cref="Console.Write(string)"/>.<br/><br/>
         /// Accepts color stack syntax. 
         /// </summary>
-        /// <inheritdoc cref="Console.Write(string)"/>
         public void Write(string str, bool disableColor = false) {
             if (!disableColor) {
                 WriteText(str, false);
             } else {
                 lock (_lock)
-                    Console.Write(str);
+                    output.Write(str);
             }
         }
 
-        /// <inheritdoc cref="Console.Write(char)"/>
+
         public void Write(char c) {
             lock (_lock)
-                Console.Write(c);
+                output.Write(c);
         }
 
 
@@ -65,7 +67,7 @@ namespace Maxstupo.Fsu.Core.Utility {
                 text += "&--;";
 
                 int index = 0;
-                MatchCollection mc = regex.Matches(text);
+                MatchCollection mc = Regex.Matches(text);
                 foreach (Match match in mc) {
                     if (!match.Success)
                         continue;
@@ -73,7 +75,7 @@ namespace Maxstupo.Fsu.Core.Utility {
                     string substring = text.Substring(index, match.Index - index);
                     index = match.Index + match.Length;
 
-                    Console.Write(substring);
+                    output.Write(substring);
 
                     string bgStr = match.Groups[1].Value;
                     string fgStr = match.Groups[2].Value;
@@ -92,7 +94,7 @@ namespace Maxstupo.Fsu.Core.Utility {
                 }
 
                 if (newline)
-                    Console.Write(Environment.NewLine);
+                    output.Write(Environment.NewLine);
             }
         }
 

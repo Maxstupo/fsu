@@ -60,6 +60,8 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         }
 
         public IEnumerable<Token<T>> Tokenize(IEnumerable<string> input) {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
 
             int lineNumber = 1;
 
@@ -75,6 +77,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         }
 
         public IEnumerable<Token<T>> Tokenize(string input, int lineNumber) {
+            if (input == null)
+                throw new ArgumentNullException(nameof(input));
+
             IEnumerable<Token<T>> tokenMatches = FindAllTokenMatches(input, lineNumber);
 
             IEnumerable<IGrouping<int, Token<T>>> groupedByStartIndex = tokenMatches.GroupBy(x => x.StartIndex).OrderBy(x => x.Key);

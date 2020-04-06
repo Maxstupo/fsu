@@ -10,6 +10,8 @@
 
         void WriteLine(string line, bool disableColor = false);
 
+        void Clear();
+
     }
 
 }
