@@ -8,11 +8,14 @@ using Maxstupo.Fsu.Core.Utility;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Maxstupo.Fsu {
 
     public class Program : IFsuHost {
+
+        private string Title => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
         public IPluginManager PluginManager { get; }
 
@@ -50,6 +53,8 @@ private readonly FsuTokenParser parser;
 
         public Program() {
             System.Console.OutputEncoding = Encoding.Unicode;
+            System.Console.Title = Title;
+
             Console = new ColorConsole();
 
             Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
@@ -78,7 +83,7 @@ private readonly FsuTokenParser parser;
 
 
         private void Cli_OnCommand(object sender, string input) {
-            System.Console.Clear();
+       //     System.Console.Clear();
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
             Console.WriteLine("\n----------------------- Tokens ----------------------------\n");

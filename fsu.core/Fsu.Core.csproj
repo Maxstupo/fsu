@@ -65,6 +65,10 @@
     <Compile Include="Dsl\Parser\TokenParser.cs" />
     <Compile Include="Dsl\Parser\Rules\Rule.cs" />
     <Compile Include="Dsl\TokenType.cs" />
+    <Compile Include="Format\FormatTemplate.cs" />
+    <Compile Include="Format\FormatToken.cs" />
+    <Compile Include="Format\Unit.cs" />
+    <Compile Include="Format\PropertyType.cs" />
     <Compile Include="Plugins\IHost.cs" />
     <Compile Include="Plugins\IPlugin.cs" />
     <Compile Include="Plugins\IPluginManager.cs" />

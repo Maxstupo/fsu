@@ -1,6 +1,7 @@
 ﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
 using Maxstupo.Fsu.Core.Dsl.Parser;
 using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
+using Maxstupo.Fsu.Core.Format;
 using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Standard.Processor;
@@ -57,7 +58,7 @@ namespace Maxstupo.Fsu.Standard {
                         }
                     }
                 },
-             
+
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
                     Construct = x => new PrintProcessor()
                 },
@@ -122,9 +123,11 @@ namespace Maxstupo.Fsu.Standard {
                 },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "transform") {
-                    Construct = x => new TransformProcessor(),
+                    Construct = x => new TransformProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
-                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
+                            ValueConverter = value => FormatTemplate.Build(value)
+                        },
                     }
                 }
             };

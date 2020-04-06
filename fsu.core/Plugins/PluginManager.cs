@@ -59,7 +59,7 @@ namespace Maxstupo.Fsu.Core.Plugins {
                 if (!plugins.ContainsKey(plugin.PluginId)) {
                     plugins.Add(plugin.PluginId, plugin);
 
-                    host.Console.WriteLine($"&-e;Loading plugin&-^;: '&-a;{plugin.PluginName}&-^;' ({plugin.PluginAuthor})...");
+                    host.Console.WriteLine($"&-e;Loading plugin&-^;: '&-a;{plugin.PluginName} v{assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version.ToString()}&-^;' ({plugin.PluginAuthor})...");
                     plugin.Init(host);
                     host.Console.WriteLine($"Loaded.");
 

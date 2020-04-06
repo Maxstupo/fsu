@@ -31,7 +31,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         }
 
         public Grammer<T, V> Add(Grammer<T, V> grammer) {
-            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{grammer.TriggerTokenTokens}&-^;) with {grammer.Rules.Count} rule(s)");
+            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
             grammers.Add(grammer);
             return grammer;
         }
