@@ -1,11 +1,7 @@
 ﻿using Maxstupo.Fsu.Core.Format;
 using Maxstupo.Fsu.Core.Processor;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Maxstupo.Fsu.Standard.Processor {
     public class ExecProcessor : IProcessor {
@@ -37,7 +33,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
 
                 string exeArguments = argsTemplate.Make(pipeline.PropertyProvider, pipeline.PropertyStore, item);
 
-            
+
                 info.FileName = exeFilepath;
                 info.Arguments = exeArguments;
 
@@ -61,9 +57,9 @@ namespace Maxstupo.Fsu.Standard.Processor {
                 } catch (Win32Exception) {
                     pipeline.Console.WriteLine($"&-c;Exec failed: {exeFilepath} {exeArguments}&-^;");
                 }
-
-                yield return item;
             }
+
+            return items;
         }
 
         public override string ToString() {

@@ -26,7 +26,7 @@ namespace Maxstupo.Fsu.Core.Format {
         /// <summary>
         /// Creates a string formatted using this template, with the values provided by the property providers.
         /// </summary>
-        public string Make(IPropertyProvider propertyProvider, IPropertyStore propertyContainer, ProcessorItem item) {
+        public string Make(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             StringBuilder sb = new StringBuilder();
 
             propertyProvider.Begin();
@@ -37,7 +37,7 @@ namespace Maxstupo.Fsu.Core.Format {
                         sb.Append(token.Value);
 
                     } else {
-                        Property property = token.GetProperty(propertyProvider, propertyContainer, item);
+                        Property property = token.GetProperty(propertyProvider, propertyStore, item);
 
                         if (property == null) {
                             sb.Append("NA");

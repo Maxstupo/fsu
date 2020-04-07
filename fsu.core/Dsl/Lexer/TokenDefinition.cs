@@ -15,7 +15,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         public T TokenType { get; }
 
         /// <summary>The regex pattern.</summary>
-        public string Pattern { get; }
+        public string Regex { get; }
 
         /// <summary>
         /// A template string for formatting the output value of this token. Access to all regex groups captured are available. Set empty to disable. <br/> See <seealso cref="string.Format(string, object[])"/>
@@ -28,18 +28,24 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         /// <summary>A hint indicating if this definition has variable values (e.g. number or quoted text).</summary>
         public bool HasVariableValue { get; }
 
+        public string RemoveRegex { get; }
 
         private readonly Regex regex;
+        private readonly Regex removeRegex;
 
-        public TokenDefinition(T tokenType, string pattern, string template = null, int precedence = 1, bool hasVariableValue = true) {
+        public TokenDefinition(T tokenType, string regex, string template = null, int precedence = 1, bool hasVariableValue = true, string removeRegex = null) {
             TokenType = tokenType;
-            Pattern = pattern ?? throw new ArgumentNullException(nameof(pattern));
-            Template = template ?? string.Empty;
+            Regex = regex ?? throw new ArgumentNullException(nameof(regex));
+            Template = template;
             Precedence = precedence;
             HasVariableValue = hasVariableValue;
+            RemoveRegex = removeRegex;
 
             //TODO: Move RegexOptions into variable.
-            regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+            this.regex = new Regex(regex, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+            if (!string.IsNullOrWhiteSpace(RemoveRegex))
+                this.removeRegex = new Regex(RemoveRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
         }
 
         /// <summary>
@@ -54,7 +60,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
                 string value = match.Value;
 
 
-                if (!string.IsNullOrEmpty(Template)) {
+                if (!string.IsNullOrWhiteSpace(Template)) {
                     string[] values = match.Groups.Cast<Group>().Where(x => x.Success).Select(x => x.Value).ToArray();
                     value = string.Format(Template, values);
                 } else if (match.Groups.Count > 1) {
@@ -63,6 +69,8 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
                         value = group.Value;
                 }
 
+                if (removeRegex != null)
+                    value = removeRegex.Replace(value, string.Empty);
 
                 return new Token<T>(TokenType, value, startIndex, endIndex, Precedence, HasVariableValue, lineNumber);
 
@@ -76,13 +84,13 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         public bool Equals(TokenDefinition<T> other) {
             return other != null &&
                    EqualityComparer<T>.Default.Equals(TokenType, other.TokenType) &&
-                   Pattern == other.Pattern;
+                   Regex == other.Regex;
         }
 
         public override int GetHashCode() {
             var hashCode = -1694758725;
             hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(TokenType);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Pattern);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Regex);
             return hashCode;
         }
 
@@ -102,18 +110,19 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class TokenDef : Attribute {
 
-        /// <inheritdoc cref="TokenDefinition{T}.Pattern"/>
+        /// <inheritdoc cref="TokenDefinition{T}.Regex"/>
         public string Regex { get; }
 
         /// <inheritdoc cref="TokenDefinition{T}.Precedence"/>
         public int Precedence { get; }
 
         /// <inheritdoc cref="TokenDefinition{T}.Template"/>
-        public string Template { get; set; } = string.Empty;
+        public string Template { get; set; } = null;
 
         /// <inheritdoc cref="TokenDefinition{T}.HasVariableValue"/>
         public bool HasVariableValue { get; set; } = true;
 
+        public string RemoveRegex { get; set; } = null;
 
         public TokenDef(string regex, int precedence = 1) {
             Regex = regex ?? throw new ArgumentNullException(nameof(regex));

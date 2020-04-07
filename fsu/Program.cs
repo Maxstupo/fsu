@@ -5,10 +5,11 @@ using Maxstupo.Fsu.Core.Dsl.Parser;
 using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Core.Utility;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Maxstupo.Fsu {
 
@@ -29,12 +30,12 @@ namespace Maxstupo.Fsu {
         public IProcessorPipeline Pipeline { get; }
 
         public IPropertyProviderList PropertyProviders { get; }
-        
+
         public Cli Cli { get; }
 
 
         public Program() {
-           // System.Console.OutputEncoding = Encoding.Unicode;
+            // System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
 
             Console = new ColorConsole(System.Console.Out);
@@ -55,7 +56,7 @@ namespace Maxstupo.Fsu {
             Cli.OnCommand += Cli_OnCommand;
 
             //Temp
-         Cli_OnCommand(null, "in test.txt >> eval");
+            Cli_OnCommand(null, File.ReadAllText("test.txt"));
         }
 
         public void Run() {
@@ -65,7 +66,7 @@ namespace Maxstupo.Fsu {
 
 
         private void Cli_OnCommand(object sender, string input) {
-       //     Console.Clear();
+            //     Console.Clear();
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
             Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
@@ -92,7 +93,7 @@ namespace Maxstupo.Fsu {
 
         }
 
-
+        [STAThread]
         static int Main(string[] args) {
             Program program = new Program();
             program.Run();

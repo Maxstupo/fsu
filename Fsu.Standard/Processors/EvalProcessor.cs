@@ -16,16 +16,16 @@ namespace Maxstupo.Fsu.Standard.Processor {
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
 
             IEnumerable<ProcessorItem> result = appendOutput ? items : Enumerable.Empty<ProcessorItem>();
-          
+
             if (joinInput) {
                 string value = string.Join(" ", items.Select(x => x.Value));
 
-                result = result.Concat(Eval(pipeline, value)); 
+                result = result.Concat(Eval(pipeline, value));
 
             } else {
-                foreach (ProcessorItem item in items) 
-                    result = result.Concat(Eval(pipeline, item.Value));      
-                
+                foreach (ProcessorItem item in items)
+                    result = result.Concat(Eval(pipeline, item.Value));
+
             }
 
             return result;

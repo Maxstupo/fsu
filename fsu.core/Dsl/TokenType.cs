@@ -12,10 +12,10 @@ namespace Maxstupo.Fsu {
         Function,   // defined dynamically.
         Constant,       // defined dynamically.
 
-        [TokenDef(@"\@\w+")]
+        [TokenDef(@"\@\{\w+\}")]
         ItemProperty,
 
-        [TokenDef(@"\$\w+")]
+        [TokenDef(@"\$\{\w+\}")]
         GlobalProperty,
 
         [TokenDef(@"!", HasVariableValue = false)]
@@ -33,12 +33,11 @@ namespace Maxstupo.Fsu {
 
         [TokenDef(@"mb|gb|tb|kb|s|m|h", 3)]
         Unit,
-
-
-        [TokenDef("\\\"([^\"]*)\\\"")]
+    
+        [TokenDef("\"((?:\\\\.|[^\\\\\"])*)\"", RemoveRegex = "\\\\(?=\\\")")]
         StringValue,
 
-        [TokenDef(@"-?(\d+)\.(\d+)?")]
+        [TokenDef(@" -?(\d+)\.(\d+)?")]
         NumberValue,
 
         [TokenDef(@"[\w\d:\\/\.\-\*\[\]\{\}]+", 3)]

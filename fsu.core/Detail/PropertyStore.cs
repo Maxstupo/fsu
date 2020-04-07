@@ -1,18 +1,19 @@
-﻿namespace Maxstupo.Fsu.Core.Detail {
+﻿using System;
+
+namespace Maxstupo.Fsu.Core.Detail {
     public class PropertyStore : IPropertyStore {
         public void Clear() {
-            //   ColorConsole.WriteLine($"PropertyStore.Clear()");
+            throw new NotImplementedException();
 
         }
 
         public Property GetProperty(string propertyName) {
-            //ColorConsole.WriteLine($"PropertyStore.GetProperty(\"{propertyName}\")");
-            return null;
+            throw new NotImplementedException();
+
         }
 
         public void SetProperty(string propertyName, Property property) {
-            //  ColorConsole.WriteLine($"PropertyStore.SetProperty(\"{propertyName}\")");
-
+            throw new NotImplementedException();
         }
     }
 }

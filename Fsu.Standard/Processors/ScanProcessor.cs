@@ -1,10 +1,9 @@
 ﻿using Maxstupo.Fsu.Core.Processor;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Maxstupo.Fsu.Standard.Processor {
+
     public class ScanProcessor : IProcessor {
 
         private readonly bool isFiles;
@@ -17,23 +16,21 @@ namespace Maxstupo.Fsu.Standard.Processor {
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
 
-            IEnumerable<ProcessorItem> result = Enumerable.Empty<ProcessorItem>();
+            foreach (ProcessorItem inputItem in items) {
 
-            foreach (ProcessorItem item in items) {
-
-                if (!Directory.Exists(item.Value))
+                if (!Directory.Exists(inputItem.Value))
                     continue;
 
 
                 IEnumerable<string> enumerable = isFiles ?
-                                                         Directory.EnumerateFiles(item.Value, "*", searchOption)
+                                                         Directory.EnumerateFiles(inputItem.Value, "*", searchOption)
                                                          :
-                                                         Directory.EnumerateDirectories(item.Value, "*", searchOption);
+                                                         Directory.EnumerateDirectories(inputItem.Value, "*", searchOption);
 
-                result = result.Concat(enumerable.Select(x => new ProcessorItem(x, item.Value)));
+                foreach (string filepath in enumerable)
+                    yield return new ProcessorItem(filepath, inputItem.Value);
             }
 
-            return result;
         }
 
         public override string ToString() {
@@ -41,4 +38,5 @@ namespace Maxstupo.Fsu.Standard.Processor {
         }
 
     }
+
 }

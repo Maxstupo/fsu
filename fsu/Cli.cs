@@ -69,8 +69,8 @@ namespace Maxstupo.Fsu {
                 console.WriteLine();
 
                 string cmd = sb.ToString().Trim();
-                if(!string.IsNullOrWhiteSpace(cmd))
-                commandHistory.Add(cmd);
+                if (!string.IsNullOrWhiteSpace(cmd))
+                    commandHistory.Add(cmd);
                 historyIndex = commandHistory.Count;
 
                 if (commandHistory.Count > MaxCommandHistory)

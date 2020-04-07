@@ -1,0 +1,40 @@
+﻿version: 0.0.0.{build}
+image: Visual Studio 2019
+
+configuration:
+  - Debug
+  - Release
+
+environment:
+    PRJ_NAME: 'fsu'
+    TEST_ASSEMBLY: '%PRJ_NAME%.Tests\bin\%CONFIGURATION%\%PRJ_NAME%.Tests.dll'
+    COVERALLS_REPO_TOKEN:
+      secure: AA6BsNJ40iTf4N/1NmoRoweZcQZAU0kwkH+CDk/s8pR143KAQ/QxyKqvGv0f/47O
+
+skip_commits:
+    files:
+      - '**/*.md'
+
+cache:
+  - 'C:\ProgramData\chocolatey\bin -> appveyor.yml'
+  - 'C:\ProgramData\chocolatey\lib -> appveyor.yml'
+  - 'C:\Program Files (x86)\Inno Setup 6 -> appveyor.yml'
+
+install:
+  - dotnet tool install coveralls.net --global --version 1.0.0
+  - choco install gitversion.portable -pre -y --version 5.2.4
+  - choco install -y innosetup --version 6.0.4
+  - set PATH="C:\Program Files (x86)\Inno Setup 6";%PATH%
+
+before_build:
+  - nuget restore
+ # - ps: gitversion /l console /output buildserver /updateAssemblyInfo
+
+build:
+  project: '%PRJ_NAME%.sln'
+  verbosity: minimal
+
+test_script:
+  - cmd: >-
+      
+      %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[*]Maxstupo.*.Tests*" -coverbytest:"*.Tests.dll" -output:".\coverage_%CONFIGURATION%.xml"

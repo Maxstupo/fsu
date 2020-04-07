@@ -15,7 +15,7 @@ namespace Maxstupo.Fsu.Standard.Processor {
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
             foreach (ProcessorItem item in items) {
                 item.Value = template.Make(pipeline.PropertyProvider, pipeline.PropertyStore, item);
-              
+
                 yield return item;
             }
         }

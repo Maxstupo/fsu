@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExtendedFile.cs" />
     <Compile Include="FsuStandardPlugin.cs" />
     <Compile Include="Processors\EvalProcessor.cs" />
     <Compile Include="Processors\ExecProcessor.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="Processors\ScanProcessor.cs" />
     <Compile Include="Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\ExtendedFilePropertyProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\fsu.core\Fsu.Core.csproj">
@@ -64,9 +66,21 @@
     <PackageReference Include="Glob">
       <Version>1.1.6</Version>
     </PackageReference>
+    <PackageReference Include="MimeTypesMap">
+      <Version>1.0.8</Version>
+    </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Providers\" />
+    <COMReference Include="Shell32">
+      <Guid>{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

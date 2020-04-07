@@ -1,14 +1,17 @@
 ﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
 using Maxstupo.Fsu.Core.Dsl.Parser;
 using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
+using Maxstupo.Fsu.Core.Filtering;
 using Maxstupo.Fsu.Core.Format;
 using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Standard.Processor;
+using Maxstupo.Fsu.Standard.Providers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Maxstupo.Fsu.Standard {
     public class FsuStandardPlugin : IFsuPlugin {
@@ -23,6 +26,8 @@ namespace Maxstupo.Fsu.Standard {
         public void Init(IFsuHost host) {
             InitTokenizer(host.Tokenizer);
             InitParser(host.Parser);
+
+            host.PropertyProviders.Add(new ExtendedFilePropertyProvider());
         }
 
         private void InitTokenizer(ITokenizer<TokenType> tokenizer) {
@@ -42,6 +47,7 @@ namespace Maxstupo.Fsu.Standard {
 
         private void InitParser(ITokenParser<TokenType, IProcessor> parser) {
             //   parser.Clear();
+
 
             List<Grammer<TokenType, IProcessor>> grammers = new List<Grammer<TokenType, IProcessor>> {
 
@@ -69,10 +75,10 @@ namespace Maxstupo.Fsu.Standard {
                     Construct = x => new EvalProcessor(x.Get<bool>(0), x.Get<bool>(1)),
                     Rules = {
                         new OptionalRule<TokenType>(TokenType.Constant, false, "join|seq") {
-                            ValueConverter = value => value.Equals("join", StringComparison.InvariantCultureIgnoreCase)
+                            TokenConverter = token => token.Value.Equals("join", StringComparison.InvariantCultureIgnoreCase)
                         },
-                        new OptionalRule<TokenType>(TokenType.Constant, true, "append|replace") {
-                            ValueConverter = value => value.Equals("append", StringComparison.InvariantCultureIgnoreCase)
+                        new OptionalRule<TokenType>(TokenType.Constant, false, "append|replace") {
+                            TokenConverter = token => token.Value.Equals("append", StringComparison.InvariantCultureIgnoreCase)
                         },
                     }
                 },
@@ -81,27 +87,14 @@ namespace Maxstupo.Fsu.Standard {
                     Construct = x => new ScanProcessor(x.Get<bool>(0), x.Get<SearchOption>(1)),
                     Rules = {
                         new Rule<TokenType>(TokenType.Constant, "files|dirs|directories") {
-                            ValueConverter = value => value.Equals("files", StringComparison.InvariantCultureIgnoreCase)
+                            TokenConverter = token => token.Value.Equals("files", StringComparison.InvariantCultureIgnoreCase)
                         },
                         new OptionalRule<TokenType>(TokenType.Constant, SearchOption.AllDirectories, "top") {
-                            ValueConverter = value => value.Equals("top", StringComparison.InvariantCultureIgnoreCase) ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories
+                            TokenConverter = token => token.Value.Equals("top", StringComparison.InvariantCultureIgnoreCase) ? SearchOption.TopDirectoryOnly : SearchOption.AllDirectories
                         },
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
-                    Construct = x => new FilterProcessor(),
-                    Rules = {
-                        new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
-                            new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
-                            new OptionalRule<TokenType>(TokenType.Unit),
-                            new OptionalRule<TokenType>(TokenType.Not),
-                            new Rule<TokenType>(TokenType.StringOperator, TokenType.NumericOperator),
-                            new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue),
-                            new OptionalRule<TokenType>(TokenType.Unit),
-                        }
-                    }
-                },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "glob") {
                     Construct = x => new GlobProcessor(x.Get<string>(0)),
@@ -128,7 +121,7 @@ namespace Maxstupo.Fsu.Standard {
                     Construct = x => new TransformProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
-                            ValueConverter = value => FormatTemplate.Build(value)
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
                         },
                     }
                 },
@@ -137,17 +130,95 @@ namespace Maxstupo.Fsu.Standard {
                     Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1),x.Get<bool>(2)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
-                            ValueConverter = value => FormatTemplate.Build(value)
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
                         },
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
-                            ValueConverter = value => FormatTemplate.Build(value)
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
                         },
                         new OptionalRule<TokenType>(TokenType.Constant, false, "nowindow|no-window") {
-                            ValueConverter = value => value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
+                            TokenConverter = token => token.Value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || token.Value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
                         }
                     }
                 }
             };
+
+            // Filter processor.
+            RepeatingSequenceRule<TokenType> rsr = new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
+                new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
+                new OptionalRule<TokenType>(TokenType.Unit) { TokenConverter = value => value },
+                new OptionalRule<TokenType>(TokenType.Not) { TokenConverter = value => value },
+                new Rule<TokenType>(TokenType.StringOperator, TokenType.NumericOperator) { TokenConverter = value => value },
+                new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
+                new OptionalRule<TokenType>(TokenType.Unit) { TokenConverter = value => value },
+            };
+            rsr.TokenConverter = value => value;
+
+            grammers.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
+                Construct = x => {
+                    Console.WriteLine("\n-------------------------------------\n");
+
+                    Filter.FilterBuilder builder = Filter.Builder();
+
+                    string leftValue = null;
+                    string op = null;
+                    string rightValue = null;
+                    bool invert = false;
+                    bool requiresLogic = false;
+                    foreach (Token<TokenType> token in x) {
+
+                        Console.WriteLine($"{token.Value,-10}{token.TokenType}");
+
+                        switch (token.TokenType) {
+                            case TokenType.GlobalProperty:
+                            case TokenType.ItemProperty:
+                            case TokenType.NumberValue:
+                            case TokenType.StringValue:
+                            case TokenType.TextValue:
+                                if (requiresLogic)
+                                    throw new Exception(token.Location);
+
+                                if (leftValue == null) {
+                                    leftValue =  Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                } else if (rightValue == null) {
+                                    if (op == null)
+                                        throw new Exception(token.Location);
+
+                                    rightValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant|RegexOptions.IgnoreCase|RegexOptions.Compiled);
+                                    builder.Condition(leftValue, (invert ? "!" : string.Empty) + op, rightValue);
+                                    op = null;
+                                    leftValue = null;
+                                    rightValue = null;
+                                    requiresLogic = true;
+                                    invert = false;
+                                }
+                                break;
+                            case TokenType.Not:
+                                invert = true;
+                                break;
+                            case TokenType.LogicOperator:
+                                if (token.Value == "&") {
+                                    builder.And();
+                                    requiresLogic = false;
+                                } else if (token.Value == "|") {
+                                    builder.Or();
+                                    requiresLogic = false;
+                                }
+                                break;
+                            case TokenType.NumericOperator:
+                            case TokenType.StringOperator:                               
+                                op = token.Value;
+                                break;
+                            default:
+                                throw new Exception(token.Location);
+                        }
+
+                    }
+                    Console.WriteLine("\n-------------------------------------\n");
+
+                    return new FilterProcessor(builder.Create());
+                },
+                Rules = { rsr }
+            });
 
             // Ensure that all functions have a pipe or be the end of line after them.
             foreach (Grammer<TokenType, IProcessor> grammer in grammers.Where(x => x.TriggerTokenTokens.Equals(TokenType.Function))) {

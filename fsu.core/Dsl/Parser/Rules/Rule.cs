@@ -12,9 +12,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         public string Pattern { get; }
 
         /// <summary>
-        /// Converts the token value for this rule into an object usable within the <see cref="Grammer{T, V}.Construct"/> delegate. By default, no conversion takes place.
+        /// Converts the token for this rule into an object usable within the <see cref="Grammer{T, V}.Construct"/> delegate. By default the value of the token is used.
         /// </summary>
-        public Func<string, object> ValueConverter { get; set; }
+        public Func<Token<T>, object> TokenConverter { get; set; }
 
         /// <summary>
         /// Defines a grammer rule where the current <see cref="Token{T}"/> type must equal the provided <paramref name="tokenType"/>, and optionally the value must match the provided <paramref name="pattern"/>. 
@@ -63,9 +63,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         /// Returns the value of the provided <paramref name="token"/> converted into the correct format for <see cref="Grammer{T, V}.Construct"/>.
         /// </summary>
         protected virtual object GetValue(Token<T> token) {
-            if (ValueConverter == null)
+            if (TokenConverter == null)
                 return token.Value;
-            return ValueConverter(token.Value);
+            return TokenConverter(token);
         }
 
         /// <summary>

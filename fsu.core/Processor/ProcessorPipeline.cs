@@ -3,7 +3,6 @@ using Maxstupo.Fsu.Core.Dsl;
 using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Maxstupo.Fsu.Core.Processor {
@@ -31,31 +30,10 @@ namespace Maxstupo.Fsu.Core.Processor {
 
             IEnumerable<ProcessorItem> items = Enumerable.Empty<ProcessorItem>();
 
-            Stopwatch sw = Stopwatch.StartNew();
-
-            // TEMP
-            int index = 0;
-
-
             foreach (IProcessor processor in processors) {
-                sw.Restart();
-
-                int itemCount = 0; //items.Count(); // This might negate the advantage of using enumerable.
-                if (itemCount == 0) {
-                    Console.WriteLine($"&03;{index}. Executing: {processor.GetType().Name,-20}&^^;");
-                } else {
-                    Console.WriteLine($"&03;{index}. Executing: {processor.GetType().Name,-20} (with &-e;{itemCount}&-^; items)&^^;");
-                }
+                Console.WriteLine($"&03;Executing: {processor.GetType().Name,-20}&^^;");
 
                 items = processor.Process(this, items);
-
-                double ms = sw.Elapsed.TotalMilliseconds;
-                if (itemCount == 0) {
-                    Console.WriteLine($"\t &03;{index}. Elapsed: &-e;{ms:0.###}&-^; ms&^^;");
-                } else {
-                    Console.WriteLine($"\t &03;{index}. Elapsed: &-e;{ms:0.###}&-^; ms (&-e;{(ms / itemCount):0.##}&-^; ms/item)&^^;");
-                }
-                index++;
             }
 
             return items;

@@ -35,7 +35,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
                 foreach (TokenDef tokenDef in member.GetCustomAttributes<TokenDef>()) {
                     T tokenType = (T) member.GetValue(typeof(T));
 
-                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue));
+                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue, tokenDef.RemoveRegex));
                 }
             }
 
@@ -48,9 +48,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register a reserved token (invalid, eol, eof): {typeof(T).Name}.{definition.TokenType}", nameof(definition));
 
             if (tokenDefinitions.Contains(definition))
-                throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Pattern}'", nameof(definition));
+                throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Regex}'", nameof(definition));
 
-            console.WriteLine($"Adding token definition: '&-e;{definition.Pattern}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
+            console.WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
 
             tokenDefinitions.Add(definition);
         }
