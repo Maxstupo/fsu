@@ -155,8 +155,6 @@ namespace Maxstupo.Fsu.Standard {
 
             grammers.Add(new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
                 Construct = x => {
-                    Console.WriteLine("\n-------------------------------------\n");
-
                     Filter.FilterBuilder builder = Filter.Builder();
 
                     string leftValue = null;
@@ -164,9 +162,8 @@ namespace Maxstupo.Fsu.Standard {
                     string rightValue = null;
                     bool invert = false;
                     bool requiresLogic = false;
-                    foreach (Token<TokenType> token in x) {
 
-                        Console.WriteLine($"{token.Value,-10}{token.TokenType}");
+                    foreach (Token<TokenType> token in x) {
 
                         switch (token.TokenType) {
                             case TokenType.GlobalProperty:
@@ -178,12 +175,12 @@ namespace Maxstupo.Fsu.Standard {
                                     throw new Exception(token.Location);
 
                                 if (leftValue == null) {
-                                    leftValue =  Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                    leftValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
                                 } else if (rightValue == null) {
                                     if (op == null)
                                         throw new Exception(token.Location);
 
-                                    rightValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant|RegexOptions.IgnoreCase|RegexOptions.Compiled);
+                                    rightValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
                                     builder.Condition(leftValue, (invert ? "!" : string.Empty) + op, rightValue);
                                     op = null;
                                     leftValue = null;
@@ -205,7 +202,7 @@ namespace Maxstupo.Fsu.Standard {
                                 }
                                 break;
                             case TokenType.NumericOperator:
-                            case TokenType.StringOperator:                               
+                            case TokenType.StringOperator:
                                 op = token.Value;
                                 break;
                             default:
@@ -213,7 +210,6 @@ namespace Maxstupo.Fsu.Standard {
                         }
 
                     }
-                    Console.WriteLine("\n-------------------------------------\n");
 
                     return new FilterProcessor(builder.Create());
                 },

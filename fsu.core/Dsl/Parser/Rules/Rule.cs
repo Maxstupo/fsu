@@ -42,9 +42,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
             Token<T> token = tokenStack.Next();
 
-            // TEMP
+#if DEBUG   // TEMP
             new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-
+#endif
             bool isMatch = IsTokenTypeMatch(token) && IsPatternMatch(token);
 
             UpdateData(ref data, token, isMatch);

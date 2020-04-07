@@ -50,8 +50,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
                 stack.Prev();
 
             //TEMP
+#if DEBUG
             token.WriteLine(new ColorConsole());
-
+#endif
             RuleData data = new RuleData();
 
             foreach (Rule<T> rule in Rules) {

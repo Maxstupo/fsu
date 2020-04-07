@@ -56,7 +56,8 @@ namespace Maxstupo.Fsu {
             Cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            Cli_OnCommand(null, File.ReadAllText("test.txt"));
+            if (File.Exists("fsu_on_start.txt"))
+                Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
         }
 
         public void Run() {
@@ -69,6 +70,7 @@ namespace Maxstupo.Fsu {
             //     Console.Clear();
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input.Split('\n')).ToList();
 
+#if DEBUG
             Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
 
 
@@ -77,10 +79,13 @@ namespace Maxstupo.Fsu {
             }
 
             Console.WriteLine("\n----------------------- Parsing ----------------------------\n");
+#endif
 
             List<IProcessor> objs = Parser.Parse(tokens);
 
+#if DEBUG
             Console.WriteLine("\n-------------------- Processor List ----------------------\n");
+
 
             foreach (IProcessor a in objs) {
                 if (a != null)
@@ -88,6 +93,7 @@ namespace Maxstupo.Fsu {
             }
 
             Console.WriteLine("\n--------------------- Pipeline Output --------------------\n");
+#endif
 
             Pipeline.Process(objs);
 

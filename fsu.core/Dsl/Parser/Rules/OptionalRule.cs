@@ -23,15 +23,18 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
             Token<T> token = stack.Next();
 
             // TEMP
-            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-
+#if DEBUG
+    new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+#endif
             // Token type doesn't match, token isn't the one we are looking for... Revert stack, and return true.
             if (!IsTokenTypeMatch(token)) {
                 stack.Prev();
                 UpdateData(ref data, token, false);
 
                 //TEMP
-                new ColorConsole().WriteLine("    - Optional token missing, reverting...");
+#if DEBUG
+    new ColorConsole().WriteLine("    - Optional token missing, reverting...");
+#endif
                 return true;
             }
 
