@@ -1,7 +1,8 @@
 ﻿using Maxstupo.Fsu.Core.Detail;
+using Maxstupo.Fsu.Core.Detail.Converters;
 using Maxstupo.Fsu.Core.Processor;
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -9,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace Maxstupo.Fsu.Core.Format {
 
     public class FormatTemplate {
-        private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,2})(?:\,([\d\w]{1,2}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,3})(?:\,([\d\w]{1,3}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private readonly List<FormatToken> tokens;
 
@@ -22,6 +23,8 @@ namespace Maxstupo.Fsu.Core.Format {
             this.tokens = tokens;
 
         }
+
+        private static IUnitConverter unitConverter = new UnitNetPropertyConverter();
 
         /// <summary>
         /// Creates a string formatted using this template, with the values provided by the property providers.
@@ -37,15 +40,15 @@ namespace Maxstupo.Fsu.Core.Format {
                         sb.Append(token.Value);
 
                     } else {
-                        Property property = token.GetProperty(propertyProvider, propertyStore, item);
+                        PropertyItem property = token.GetProperty(propertyProvider, propertyStore, item);
 
                         if (property == null) {
                             sb.Append("NA");
 
                         } else if (property.IsNumeric) {
-                            double value = Math.Round(property.ValueNumber / (double) token.Unit, token.Decimals);
-                            sb.Append(value);
+                            double value = unitConverter.ConvertPropertyValue(property, token.Unit);
 
+                            sb.Append(value.ToString(token.DecimalFormat, CultureInfo.InvariantCulture));
                         } else {
                             sb.Append(property.Value);
 
@@ -81,7 +84,7 @@ namespace Maxstupo.Fsu.Core.Format {
                 string name = match.Groups[2].Value;
 
                 int decimals = 2;
-                Unit unit = Unit.None;
+                string unit = null;
 
                 for (int i = 3; i <= 4; i++) {// Group 3 and 4 could be decimal number or unit.
                     if (!match.Groups[i].Success)
@@ -93,8 +96,7 @@ namespace Maxstupo.Fsu.Core.Format {
                         int.TryParse(g3, out decimals);
 
                     } else if (g3.All(x => char.IsLetter(x))) {
-                        Enum.TryParse(g3, true, out unit);
-
+                        unit = g3;
                     }
                 }
 

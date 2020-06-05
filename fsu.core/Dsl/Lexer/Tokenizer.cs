@@ -35,7 +35,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
                 foreach (TokenDef tokenDef in member.GetCustomAttributes<TokenDef>()) {
                     T tokenType = (T) member.GetValue(typeof(T));
 
-                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue, tokenDef.RemoveRegex));
+                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue, tokenDef.RemoveRegex,tokenDef.RetargetToGroup));
                 }
             }
 

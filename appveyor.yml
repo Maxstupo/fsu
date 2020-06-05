@@ -15,16 +15,16 @@ skip_commits:
     files:
       - '**/*.md'
 
-cache:
-  - 'C:\ProgramData\chocolatey\bin -> appveyor.yml'
-  - 'C:\ProgramData\chocolatey\lib -> appveyor.yml'
-  - 'C:\Program Files (x86)\Inno Setup 6 -> appveyor.yml'
+#cache:
+#  - 'C:\ProgramData\chocolatey\bin -> appveyor.yml'
+#  - 'C:\ProgramData\chocolatey\lib -> appveyor.yml'
+#  - 'C:\Program Files (x86)\Inno Setup 6 -> appveyor.yml'
 
 install:
   - dotnet tool install coveralls.net --global --version 1.0.0
-  - choco install gitversion.portable -pre -y --version 5.2.4
-  - choco install -y innosetup --version 6.0.4
-  - set PATH="C:\Program Files (x86)\Inno Setup 6";%PATH%
+#  - choco install gitversion.portable -pre -y --version 5.2.4
+#  - choco install -y innosetup --version 6.0.4
+#  - set PATH="C:\Program Files (x86)\Inno Setup 6";%PATH%
 
 before_build:
   - nuget restore

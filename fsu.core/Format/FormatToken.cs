@@ -12,20 +12,23 @@ namespace Maxstupo.Fsu.Core.Format {
 
         public int Decimals { get; }
 
-        public Unit Unit { get; }
+        public string DecimalFormat { get; }
+
+        public string Unit { get; }
 
         public bool IsText => Type == PropertyType.Text;
 
-        public FormatToken(string value, PropertyType type, int decimals = 2, Unit unit = Unit.None) {
+        public FormatToken(string value, PropertyType type, int decimals = 2, string unit = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
 
             Type = type;
 
             Decimals = decimals;
             Unit = unit;
+            DecimalFormat = $"0.{new string('0', Decimals)}";
         }
 
-        public Property GetProperty(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public PropertyItem GetProperty(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             switch (Type) {
 
                 case PropertyType.Global:

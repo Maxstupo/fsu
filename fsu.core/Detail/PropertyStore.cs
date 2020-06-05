@@ -7,12 +7,12 @@ namespace Maxstupo.Fsu.Core.Detail {
 
         }
 
-        public Property GetProperty(string propertyName) {
+        public PropertyItem GetProperty(string propertyName) {
             throw new NotImplementedException();
 
         }
 
-        public void SetProperty(string propertyName, Property property) {
+        public void SetProperty(string propertyName, PropertyItem property) {
             throw new NotImplementedException();
         }
     }

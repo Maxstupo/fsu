@@ -30,14 +30,14 @@ namespace Maxstupo.Fsu.Core.Detail {
             propertyProviders.Clear();
         }
 
-        public Property GetProperty(ProcessorItem item, string propertyName) {
+        public PropertyItem GetProperty(IPropertyProvider _, ProcessorItem item, string propertyName) {
             foreach (IPropertyProvider propertyProvider in propertyProviders) {
-                Property property = propertyProvider.GetProperty(item, propertyName);
+                PropertyItem property = propertyProvider.GetProperty(this, item, propertyName);
                 if (property != null)
                     return property;
             }
 
-            return fallbackProvider?.GetProperty(item, propertyName);
+            return fallbackProvider?.GetProperty(this, item, propertyName);
         }
     }
 }

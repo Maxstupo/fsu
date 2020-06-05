@@ -11,6 +11,7 @@ namespace Maxstupo.Fsu.Core.Filtering {
         StartsWith = 16,
         Contains = 32,
         Not = 64,
+        Regex = 128
     }
 
 }

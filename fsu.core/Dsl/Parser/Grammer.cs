@@ -30,7 +30,6 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         /// </summary>
         public Func<RuleData, V> Construct;
 
-        //TODO: Support multiple trigger token types?
         public Grammer(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
             TriggerTokenTokens = new T[] { triggerTokenType };
             TriggerTokenValuePattern = triggerTokenValuePattern;
@@ -65,8 +64,13 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
             if (CleanRuleData)
                 data.RemoveAll(x => x == null);
 
-            result = Construct?.Invoke(data) ?? null;
-            return true;
+            try {
+                result = Construct?.Invoke(data) ?? null;
+                return true;
+            } catch (Exception) {
+                result = null;
+                return false;
+            }
         }
 
 

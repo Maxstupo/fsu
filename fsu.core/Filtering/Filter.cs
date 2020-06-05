@@ -4,8 +4,6 @@ using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Maxstupo.Fsu.Core.Filtering {
 
@@ -42,7 +40,7 @@ namespace Maxstupo.Fsu.Core.Filtering {
 
 
                 if (opValue == "<>") {
-                    operatorValue |= Operator.Contains; // TODO: Implement Regex operator.
+                    operatorValue |= Operator.Regex; 
                 } else if (opValue == "><") {
                     operatorValue |= Operator.Contains;
                 } else if (opValue == "~<") {

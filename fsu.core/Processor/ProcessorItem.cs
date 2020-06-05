@@ -20,7 +20,7 @@ namespace Maxstupo.Fsu.Core.Processor {
 
         public string Origin { get; set; }
 
-        private readonly Dictionary<string, Property> cachedProperties = new Dictionary<string, Property>();
+        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>();
 
         public ProcessorItem(string value, string origin = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
@@ -28,17 +28,22 @@ namespace Maxstupo.Fsu.Core.Processor {
             Origin = origin;
         }
 
-        public Property GetProperty(IPropertyProvider propertyProvider, string propertyName) {
-            if (cachedProperties.TryGetValue(propertyName, out Property property)) {
+        public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
+            if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
-                property = propertyProvider.GetProperty(this, propertyName);
+                property = propertyProvider.GetProperty(propertyProvider, this, propertyName);
 
                 if (property != null)
                     cachedProperties.Add(propertyName, property);
 
                 return property;
             }
+        }
+
+        public void TryCachePropertyValue(string propertyName, PropertyItem property) {
+            if (property != null)
+                cachedProperties.Add(propertyName, property);
         }
     }
 

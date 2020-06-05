@@ -30,7 +30,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         public override bool Eval(ref TokenStack<T> stack, ref RuleData data) {
             //TEMP
 #if DEBUG
-    new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
+            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
 #endif
             foreach (Rule<T> rule in rules) {
                 if (!rule.Eval(ref stack, ref data))

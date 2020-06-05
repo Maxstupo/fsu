@@ -16,14 +16,16 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         private readonly T commentToken;
         private readonly T eolToken;
         private readonly T eofToken;
+        private readonly T invalidToken;
 
         private readonly List<Grammer<T, V>> grammers = new List<Grammer<T, V>>();
 
-        public TokenParser(IConsole console, T commentToken, T eolToken, T eofToken) {
+        public TokenParser(IConsole console, T commentToken, T eolToken, T eofToken, T invalidToken) {
             this.console = console;
             this.commentToken = commentToken;
             this.eolToken = eolToken;
             this.eofToken = eofToken;
+            this.invalidToken = invalidToken;
         }
 
         public void Clear() {
@@ -51,6 +53,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
             while (stack.HasNext) {
 
                 Token<T> token = stack.Next();
+                bool hasError = false;
 
                 if (token.TokenType.Equals(commentToken)) {
                     inComment = true;
@@ -61,9 +64,10 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
                 } else if (token.TokenType.Equals(eofToken)) {
 
 
-                } else if (!inComment) {
+                } else if (token.TokenType.Equals(invalidToken)) {
+                    hasError = true;
 
-                    bool hasError = false;
+                } else if (!inComment) {
 
                     // TODO: Should we allow multiple matching grammers?
                     List<Grammer<T, V>> matchedGrammers = grammers.Where(x => x.IsMatch(token)).ToList();
@@ -88,13 +92,13 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
                         }
                     }
 
-                    if (hasError) {
-                        console.WriteLine($"&-c;ERROR - Unexpected token: '{token.Value}' ({token.TokenType}) {token.Location}&-^;");
-                        objects.Clear();
-                        break;
-                    }
                 }
 
+                if (hasError) {
+                    console.WriteLine($"&-c;ERROR - Unexpected token: '{token.Value}' ({token.TokenType}) {token.Location}&-^;");
+                    objects.Clear();
+                    break;
+                }
 
             }
 

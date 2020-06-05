@@ -28,19 +28,25 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         /// <summary>A hint indicating if this definition has variable values (e.g. number or quoted text).</summary>
         public bool HasVariableValue { get; }
 
+        /// <summary>
+        /// Retargets the match of this token to the specified group. Added as a workaround for zero-width positive lookbehind assertions not supporting quantifiers.
+        /// Set to zero or less to disable.
+        /// </summary>
+        public int RetargetToGroup { get; } = -1;
+
         public string RemoveRegex { get; }
 
         private readonly Regex regex;
         private readonly Regex removeRegex;
 
-        public TokenDefinition(T tokenType, string regex, string template = null, int precedence = 1, bool hasVariableValue = true, string removeRegex = null) {
+        public TokenDefinition(T tokenType, string regex, string template = null, int precedence = 1, bool hasVariableValue = true, string removeRegex = null, int retargetToGroup = -1) {
             TokenType = tokenType;
             Regex = regex ?? throw new ArgumentNullException(nameof(regex));
             Template = template;
             Precedence = precedence;
             HasVariableValue = hasVariableValue;
             RemoveRegex = removeRegex;
-
+            RetargetToGroup = retargetToGroup;
             //TODO: Move RegexOptions into variable.
             this.regex = new Regex(regex, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
@@ -59,6 +65,11 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
                 string value = match.Value;
 
+                if (RetargetToGroup > 0) {
+                    startIndex = match.Groups[RetargetToGroup].Index;
+                    endIndex = startIndex + match.Groups[RetargetToGroup].Length;
+                    value = match.Groups[RetargetToGroup].Value;
+                }
 
                 if (!string.IsNullOrWhiteSpace(Template)) {
                     string[] values = match.Groups.Cast<Group>().Where(x => x.Success).Select(x => x.Value).ToArray();
@@ -123,6 +134,9 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         public bool HasVariableValue { get; set; } = true;
 
         public string RemoveRegex { get; set; } = null;
+
+        /// <inheritdoc cref="TokenDefinition{T}.RetargetToGroup"/>
+        public int RetargetToGroup { get; set; } = -1;
 
         public TokenDef(string regex, int precedence = 1) {
             Regex = regex ?? throw new ArgumentNullException(nameof(regex));

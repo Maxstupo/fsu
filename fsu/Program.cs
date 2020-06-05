@@ -2,9 +2,10 @@
 using Maxstupo.Fsu.Core.Dsl;
 using Maxstupo.Fsu.Core.Dsl.Lexer;
 using Maxstupo.Fsu.Core.Dsl.Parser;
-using Maxstupo.Fsu.Core.Plugins;
 using Maxstupo.Fsu.Core.Processor;
 using Maxstupo.Fsu.Core.Utility;
+using Maxstupo.Fsu.Providers;
+using Maxstupo.Fsu.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +14,9 @@ using System.Reflection;
 
 namespace Maxstupo.Fsu {
 
-    public class Program : IFsuHost {
+    public class Program {
 
         private string Title => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
-
-        public IPluginManager PluginManager { get; }
 
         public IConsole Console { get; }
 
@@ -41,7 +40,7 @@ namespace Maxstupo.Fsu {
             Console = new ColorConsole(System.Console.Out);
 
             Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
-            Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof);
+            Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof, TokenType.Invalid);
 
             Interpreter = new DslInterpreter<TokenType, IProcessor>(Tokenizer, Parser);
 
@@ -49,15 +48,14 @@ namespace Maxstupo.Fsu {
             IPropertyStore propertyStore = new PropertyStore();
             Pipeline = new ProcessorPipeline(Console, PropertyProviders, propertyStore, Interpreter);
 
-            PluginManager = new PluginManager(this);
-            PluginManager.LoadPluginsFromDirectory("plugins");
+            FsuLanguageSpec.Init(Tokenizer, Parser, PropertyProviders);
 
             Cli = new Cli(Console);
             Cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            if (File.Exists("fsu_on_start.txt"))
-                Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
+            //   if (File.Exists("fsu_on_start.txt"))
+            //        Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
         }
 
         public void Run() {
@@ -99,10 +97,15 @@ namespace Maxstupo.Fsu {
 
         }
 
+  
+
+
         [STAThread]
         static int Main(string[] args) {
             Program program = new Program();
-            program.Run();
+               program.Run();
+ 
+           
             return 0;
         }
 
