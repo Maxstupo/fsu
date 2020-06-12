@@ -4,12 +4,6 @@ using System;
 
 namespace Maxstupo.Fsu.Core.Format {
 
-    public enum PropertyType {
-        Global,
-        File,
-        Text
-    }
-
     public class FormatToken {
 
         public string Value { get; }
@@ -18,30 +12,37 @@ namespace Maxstupo.Fsu.Core.Format {
 
         public int Decimals { get; }
 
-        public FormatUnit Unit { get; }
+        public string DecimalFormat { get; }
+
+        public string Unit { get; }
 
         public bool IsText => Type == PropertyType.Text;
 
-        public FormatToken(string value, PropertyType type, int decimals = 2, FormatUnit unit = FormatUnit.None) {
+        public FormatToken(string value, PropertyType type, int decimals = 2, string unit = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
 
             Type = type;
 
             Decimals = decimals;
             Unit = unit;
+            DecimalFormat = $"0.{new string('0', Decimals)}";
         }
 
-        public Property GetProperty(IFilePropertyProvider propertyProvider, IPropertyStore propertyContainer, ProcessorItem item) {
-            if (Type == PropertyType.File) {
-                return item.GetFileProperty(propertyProvider, Value);
+        public PropertyItem GetProperty(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+            switch (Type) {
 
-            } else if (Type == PropertyType.Global) {
-                return propertyContainer.GetProperty(Value);
+                case PropertyType.Global:
+                    return propertyStore.GetProperty(Value);
 
+                case PropertyType.Item:
+                    return item.GetProperty(propertyProvider, Value);
+
+                case PropertyType.Text:
+                default:
+                    return null;
             }
-
-            return null;
         }
+
     }
 
 }

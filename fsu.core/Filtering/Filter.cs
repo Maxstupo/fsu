@@ -1,5 +1,6 @@
 ﻿using Maxstupo.Fsu.Core.Detail;
 using Maxstupo.Fsu.Core.Processor;
+using Maxstupo.Fsu.Core.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,63 +9,56 @@ namespace Maxstupo.Fsu.Core.Filtering {
 
     public class Filter {
 
-        private readonly List<IFilterEntry> conditions = new List<IFilterEntry>();
+        private readonly List<IFilterEntry> conditions;
 
         public Filter(List<IFilterEntry> conditions) {
-            this.conditions = conditions ?? throw new ArgumentNullException(nameof(conditions));
+            this.conditions = new List<IFilterEntry>(conditions);
         }
 
-        public bool Check(IFilePropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public bool Check(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             propertyProvider.Begin();
-            bool result = conditions.All(x => x.Evaluate(propertyProvider, propertyStore, item));
+
+            bool result = conditions.All(x => x.Evaluate(console, propertyProvider, propertyStore, item));
+
             propertyProvider.End();
+
             return result;
         }
 
         public class FilterBuilder {
+
             private readonly List<IFilterEntry> conditions = new List<IFilterEntry>();
 
             public FilterBuilder Condition(string leftValue, string op, string rightValue) {
+                Operator operatorValue = 0;
+                string opValue = op.ToLowerInvariant();
 
-                if (string.IsNullOrWhiteSpace(op) || op.Length > 3)
-                    throw new ArgumentException(nameof(op));
-
-
-                Operator ooo = 0;
-                if (op.StartsWith("!")) {
-                    ooo = Operator.Not;
-                    op = op.Substring(1);
+                if (opValue.StartsWith("!")) {
+                    opValue = opValue.Substring(1);
+                    operatorValue |= Operator.Not;
                 }
 
-                Operator oper;
-                if (op[0] == '~' && op.Length == 2 && op[1] == '<') {
-                    oper = Operator.EndsWith;
-                } else if (op[0] == '<') {
-                    oper = Operator.LessThan;
-                } else if (op[0] == '>') {
-                    oper = Operator.GreaterThan;
 
-                } else if (op[0] == '=') {
-                    oper = Operator.Equal;
-                } else throw new ArgumentException(nameof(op));
+                if (opValue == "<>") {
+                    operatorValue |= Operator.Regex; 
+                } else if (opValue == "><") {
+                    operatorValue |= Operator.Contains;
+                } else if (opValue == "~<") {
+                    operatorValue |= Operator.EndsWith;
+                } else if (opValue == ">~") {
+                    operatorValue |= Operator.StartsWith;
+                } else {
 
-                if (op.Length > 1 && oper != Operator.EndsWith) {
-                    char letter = op[1];
-                    if (oper == Operator.GreaterThan) {
+                    if (opValue.Contains("="))
+                        operatorValue |= Operator.Equal;
 
-                        if (letter == '~')
-                            oper = Operator.StartsWith;
-                        else if (letter == '<')
-                            oper = Operator.Contains;
-
-                    } else if (letter != '=' || (letter == '=' && oper == Operator.Equal)) {
-                        throw new ArgumentException(nameof(op));
-                    } else {
-                        oper |= Operator.Equal;
-                    }
+                    if (opValue.Contains("<"))
+                        operatorValue |= Operator.LessThan;
+                    else if (opValue.Contains(">"))
+                        operatorValue |= Operator.GreaterThan;
                 }
-                oper |= ooo;
-                return Condition(leftValue, oper, rightValue);
+
+                return Condition(leftValue, operatorValue, rightValue);
             }
 
             public FilterBuilder Condition(string leftValue, Operator op, string rightValue) {
@@ -89,7 +83,7 @@ namespace Maxstupo.Fsu.Core.Filtering {
             public FilterBuilder And() {
                 IFilterEntry entry = conditions.LastOrDefault();
                 if (entry == null)
-                    throw new Exception();
+                    throw new Exception("Can't use a And condition on an empty filter.");
 
 
                 conditions.RemoveAt(conditions.Count - 1);
@@ -101,7 +95,7 @@ namespace Maxstupo.Fsu.Core.Filtering {
             public FilterBuilder Or() {
                 IFilterEntry entry = conditions.LastOrDefault();
                 if (entry == null)
-                    throw new Exception();
+                    throw new Exception("Can't use a Or condition on an empty filter.");
 
                 conditions.RemoveAt(conditions.Count - 1);
                 conditions.Add(new FilterOr(entry, null));
@@ -110,13 +104,15 @@ namespace Maxstupo.Fsu.Core.Filtering {
             }
 
             public Filter Create() {
-                if (conditions.Count != 1)
-                    throw new Exception();
+                //  if (conditions.Count != 1)
+                //       throw new Exception();
                 foreach (IFilterEntry entry in conditions) {
                     if (!Check(entry))
-                        throw new Exception();
+                        throw new Exception("Filter missing conditions for AND/OR condition.");
                 }
-                return new Filter(conditions);
+                Filter filter = new Filter(conditions);
+                conditions.Clear();
+                return filter;
             }
 
             private bool Check(IFilterEntry entry) {
@@ -135,8 +131,10 @@ namespace Maxstupo.Fsu.Core.Filtering {
 
                     return Check(or.Left) && Check(or.Right);
                 }
+
                 return true;
             }
+
         }
 
         public static FilterBuilder Builder() {

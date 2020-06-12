@@ -1,51 +1,64 @@
 ﻿using Maxstupo.Fsu.Core.Detail;
+using Maxstupo.Fsu.Core.Detail.Converters;
 using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Maxstupo.Fsu.Core.Format {
+
     public class FormatTemplate {
-        private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,2})(?:\,([\d\w]{1,2}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,3})(?:\,([\d\w]{1,3}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private readonly List<FormatToken> tokens;
 
-        private FormatTemplate(List<FormatToken> tokens) {
+        public static readonly FormatTemplate Empty = Build(string.Empty);
+
+        public string Template { get; }
+
+        private FormatTemplate(string template, List<FormatToken> tokens) {
+            this.Template = template;
             this.tokens = tokens;
+
         }
 
-        public void Print() {
-            foreach (var item in tokens)
-                Console.WriteLine($"{$"'{item.Value}'",-20}{item.Type,-9}{item.Decimals,-4}{item.Unit,-6}(n / {(double) item.Unit})");
-        }
+        private static IUnitConverter unitConverter = new UnitNetPropertyConverter();
 
-        public string Make(IFilePropertyProvider propertyProvider, IPropertyStore propertyContainer, ProcessorItem item) {
+        /// <summary>
+        /// Creates a string formatted using this template, with the values provided by the property providers.
+        /// </summary>
+        public string Make(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             StringBuilder sb = new StringBuilder();
+
             propertyProvider.Begin();
-            foreach (FormatToken token in tokens) {
-                if (token.IsText) {
-                    sb.Append(token.Value);
+            {
 
-                } else {
-                    Property property = token.GetProperty(propertyProvider, propertyContainer, item);
-
-                    if (property == null) {
-                        sb.Append("NA");
-
-                    } else if (property.IsNumeric) {
-                        double value = Math.Round(property.ValueNumber / (double) token.Unit, token.Decimals);
-                        sb.Append(value);
+                foreach (FormatToken token in tokens) {
+                    if (token.IsText) {
+                        sb.Append(token.Value);
 
                     } else {
-                        sb.Append(property.Value);
+                        PropertyItem property = token.GetProperty(propertyProvider, propertyStore, item);
 
+                        if (property == null) {
+                            sb.Append("NA");
+
+                        } else if (property.IsNumeric) {
+                            double value = unitConverter.ConvertPropertyValue(property, token.Unit);
+
+                            sb.Append(value.ToString(token.DecimalFormat, CultureInfo.InvariantCulture));
+                        } else {
+                            sb.Append(property.Value);
+
+                        }
                     }
                 }
+
             }
             propertyProvider.End();
+
             return sb.ToString();
         }
 
@@ -67,11 +80,11 @@ namespace Maxstupo.Fsu.Core.Format {
                     tokens.Add(new FormatToken(format.Substring(endIndex, len), PropertyType.Text));
 
 
-                bool isFileProperty = match.Groups[1].Value == "@";
+                bool isItemProperty = match.Groups[1].Value == "@";
                 string name = match.Groups[2].Value;
 
                 int decimals = 2;
-                FormatUnit unit = FormatUnit.None;
+                string unit = null;
 
                 for (int i = 3; i <= 4; i++) {// Group 3 and 4 could be decimal number or unit.
                     if (!match.Groups[i].Success)
@@ -83,12 +96,11 @@ namespace Maxstupo.Fsu.Core.Format {
                         int.TryParse(g3, out decimals);
 
                     } else if (g3.All(x => char.IsLetter(x))) {
-                        Enum.TryParse(g3, true, out unit);
-
+                        unit = g3;
                     }
                 }
 
-                PropertyType type = isFileProperty ? PropertyType.File : PropertyType.Global;
+                PropertyType type = isItemProperty ? PropertyType.Item : PropertyType.Global;
                 tokens.Add(new FormatToken(name, type, decimals, unit));
 
                 endIndex = match.Index + match.Length;
@@ -99,24 +111,10 @@ namespace Maxstupo.Fsu.Core.Format {
             if (mc.Count == 0)
                 tokens.Add(new FormatToken(format, PropertyType.Text));
 
-            return Build(tokens);
+            return new FormatTemplate(format, tokens);
         }
 
-        public bool ContainsFileProperty(params string[] items) {
-            return tokens.Where(x => x.Type == PropertyType.File).Any(x => x.Value.ContainsAny(items, StringComparison.InvariantCultureIgnoreCase));
-        }
 
-        public bool ContainsText(params string[] items) {
-            return tokens.Where(x => x.IsText).Any(x => x.Value.ContainsAny(items, StringComparison.InvariantCultureIgnoreCase));
-        }
-
-        public static FormatTemplate Build(List<FormatToken> tokens) {
-            return new FormatTemplate(tokens);
-        }
-
-        public static FormatTemplate Build(params FormatToken[] tokens) {
-            return Build(tokens.ToList());
-        }
     }
 
 }

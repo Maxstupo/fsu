@@ -1,60 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Maxstupo.Fsu.Core.Utility {
 
-    public static class ColorConsole {
+    public class ColorConsole : IConsole {
+        private static readonly Regex Regex = new Regex(@"\&([0-9a-fA-F\^\-]{1})([0-9a-fA-F\^\-]{1})\;", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
-        private static readonly object _lock = new object();
+        private readonly object _lock = new object();
 
-        private static readonly Stack<ConsoleColor> foregroundStack = new Stack<ConsoleColor>();
-        private static readonly Stack<ConsoleColor> backgroundStack = new Stack<ConsoleColor>();
+        private readonly Stack<ConsoleColor> foregroundStack = new Stack<ConsoleColor>();
+        private readonly Stack<ConsoleColor> backgroundStack = new Stack<ConsoleColor>();
 
-        private static readonly Regex regex = new Regex(@"\&([0-9a-fA-F\^\-]{1})([0-9a-fA-F\^\-]{1})\;", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+        private readonly TextWriter output;
 
+        public ColorConsole(TextWriter output = null) {
+            this.output = output ?? Console.Out;
 
-        static ColorConsole() {
             Push(ConsoleColor.Black, ConsoleColor.White);
         }
 
-        /// <inheritdoc cref="Console.WriteLine()"/>  
-        public static void WriteLine() {
+        public void Clear() {
+            Console.Clear();
+        }
+
+        public void WriteLine() {
             lock (_lock)
-                Console.WriteLine();
+                output.WriteLine();
         }
 
         /// <summary>
-        /// <inheritdoc cref="Console.WriteLine(string)"/>.<br/><br/>
         /// Accepts color stack syntax. 
         /// </summary>
-        /// <inheritdoc cref="Console.WriteLine(string)"/>
-        public static void WriteLine(string line) {
-            WriteText(line, true);
+        public void WriteLine(string line, bool disableColor = false) {
+            if (!disableColor) {
+                WriteText(line, true);
+            } else {
+                lock (_lock)
+                    output.WriteLine(line);
+            }
         }
 
         /// <summary>
-        /// <inheritdoc cref="Console.Write(string)"/>.<br/><br/>
         /// Accepts color stack syntax. 
         /// </summary>
-        /// <inheritdoc cref="Console.Write(string)"/>
-        public static void Write(string str) {
-            WriteText(str, false);
+        public void Write(string str, bool disableColor = false) {
+            if (!disableColor) {
+                WriteText(str, false);
+            } else {
+                lock (_lock)
+                    output.Write(str);
+            }
         }
 
-        /// <inheritdoc cref="Console.Write(char)"/>
-        public static void Write(char c) {
+
+        public void Write(char c) {
             lock (_lock)
-                Console.Write(c);
+                output.Write(c);
         }
 
-        private static void WriteText(string text, bool newline) {
+
+        private void WriteText(string text, bool newline) {
             lock (_lock) {
                 text += "&--;";
 
                 int index = 0;
-                MatchCollection mc = regex.Matches(text);
+                MatchCollection mc = Regex.Matches(text);
                 foreach (Match match in mc) {
                     if (!match.Success)
                         continue;
@@ -62,7 +75,7 @@ namespace Maxstupo.Fsu.Core.Utility {
                     string substring = text.Substring(index, match.Index - index);
                     index = match.Index + match.Length;
 
-                    Console.Write(substring);
+                    output.Write(substring);
 
                     string bgStr = match.Groups[1].Value;
                     string fgStr = match.Groups[2].Value;
@@ -81,14 +94,14 @@ namespace Maxstupo.Fsu.Core.Utility {
                 }
 
                 if (newline)
-                    Console.Write(Environment.NewLine);
+                    output.Write(Environment.NewLine);
             }
         }
 
         /// <summary>
         /// Sets the current console foreground color and adds it to the foreground stack.
         /// </summary>
-        public static void PushForeground(ConsoleColor fg) {
+        public void PushForeground(ConsoleColor fg) {
             lock (_lock)
                 PushFg(fg);
         }
@@ -96,7 +109,7 @@ namespace Maxstupo.Fsu.Core.Utility {
         /// <summary>
         /// Sets the current console background color and adds it to the background stack.
         /// </summary>
-        public static void PushBackground(ConsoleColor bg) {
+        public void PushBackground(ConsoleColor bg) {
             lock (_lock)
                 PushBg(bg);
         }
@@ -104,7 +117,7 @@ namespace Maxstupo.Fsu.Core.Utility {
         /// <summary>
         /// Pops the foreground stack and sets the current foreground console color.
         /// </summary>
-        public static void PopForeground() {
+        public void PopForeground() {
             lock (_lock)
                 PopFg();
         }
@@ -112,41 +125,41 @@ namespace Maxstupo.Fsu.Core.Utility {
         /// <summary>
         /// Pops the background stack and sets the current background console color.
         /// </summary>
-        public static void PopBackground() {
+        public void PopBackground() {
             lock (_lock)
                 PopBg();
         }
 
-        public static void Push(ConsoleColor bg, ConsoleColor fg) {
+        public void Push(ConsoleColor bg, ConsoleColor fg) {
             lock (_lock) {
                 PushBg(bg);
                 PushFg(fg);
             }
         }
 
-        public static void Pop() {
+        public void Pop() {
             lock (_lock) {
                 PopBg();
                 PopFg();
             }
         }
 
-        private static void PushFg(ConsoleColor fg) {
+        private void PushFg(ConsoleColor fg) {
             foregroundStack.Push(Console.ForegroundColor);
             Console.ForegroundColor = fg;
         }
 
-        private static void PushBg(ConsoleColor bg) {
+        private void PushBg(ConsoleColor bg) {
             backgroundStack.Push(Console.BackgroundColor);
             Console.BackgroundColor = bg;
         }
 
-        private static void PopFg() {
+        private void PopFg() {
             if (foregroundStack.Count > 0)
                 Console.ForegroundColor = foregroundStack.Pop();
         }
 
-        private static void PopBg() {
+        private void PopBg() {
             if (backgroundStack.Count > 0)
                 Console.BackgroundColor = backgroundStack.Pop();
         }

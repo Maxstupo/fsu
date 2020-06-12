@@ -2,12 +2,12 @@
 
     public interface IPropertyStore {
 
-        void ClearStore();
+        void Clear();
 
-        void SetProperty(string propertyName, Property property);
+        void SetProperty(string propertyName, PropertyItem property);
 
-        Property GetProperty(string propertyName);
-    
+        PropertyItem GetProperty(string propertyName);
+
     }
 
 }

@@ -12,56 +12,55 @@ namespace Maxstupo.Fsu.Core.Filtering {
         private static readonly Regex regex = new Regex(@"^(\d+(?:\.\d+)?)\s*([a-z]{1,2})?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
         public string Left { get; }
-        private Property propLeft;
-        private readonly bool isLeftFileProperty;
+        private PropertyItem propLeft;
+        private readonly bool isLeftItemProperty;
         private readonly bool isLeftGlobalProperty;
 
         public Operator Operator { get; }
 
         public string Right { get; }
-        private Property propRight;
-        private readonly bool isRightFileProperty;
+        private PropertyItem propRight;
+        private readonly bool isRightItemProperty;
         private readonly bool isRightGlobalProperty;
 
         private bool ignored = false;
 
+
         public FilterCondition(string leftValue, Operator op, string rightValue) {
             Left = leftValue ?? throw new ArgumentNullException(nameof(leftValue));
-            isLeftFileProperty = Left.StartsWith("@");
+            isLeftItemProperty = Left.StartsWith("@");
             isLeftGlobalProperty = Left.StartsWith("$");
-            if (isLeftFileProperty || isLeftGlobalProperty)
+            if (isLeftItemProperty || isLeftGlobalProperty)
                 Left = Left.Substring(1);
 
             Operator = op;
 
             Right = rightValue ?? throw new ArgumentNullException(nameof(rightValue));
-            isRightFileProperty = Right.StartsWith("@");
+            isRightItemProperty = Right.StartsWith("@");
             isRightGlobalProperty = Right.StartsWith("$");
-            if (isRightFileProperty || isRightGlobalProperty)
+            if (isRightItemProperty || isRightGlobalProperty)
                 Right = Right.Substring(1);
         }
 
-        public bool Evaluate(IFilePropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public bool Evaluate(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             if (ignored)
                 return false;
 
-            Property valueLeft = GetValue(propertyProvider, propertyStore, item, true);
+            PropertyItem valueLeft = GetValue(console, propertyProvider, propertyStore, item, true);
             if (valueLeft == null)
                 return false;
 
 
-            Property valueRight = GetValue(propertyProvider, propertyStore, item, false);
+            PropertyItem valueRight = GetValue(console, propertyProvider, propertyStore, item, false);
             if (valueRight == null)
                 return false;
 
 
+            if (valueLeft.IsNumeric && valueRight.IsNumeric) { // If we are comparing two numbers.
 
-            // If we are comparing two numbers.
-            if (valueLeft.IsNumeric && valueRight.IsNumeric) {
-
-                if (Operator.HasFlag(Operator.StartsWith) || Operator.HasFlag(Operator.EndsWith) || Operator.HasFlag(Operator.Contains)) {
+                if (Operator.HasFlag(Operator.StartsWith) || Operator.HasFlag(Operator.EndsWith) || Operator.HasFlag(Operator.Contains) || Operator.HasFlag(Operator.Regex)) {
                     ignored = true;
-                    ColorConsole.WriteLine($"  &-c;Unsupported operator for numeric comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
+                    console.WriteLine($"&-c;Unsupported operator for numeric comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
                     return true;
                 }
 
@@ -98,47 +97,51 @@ namespace Maxstupo.Fsu.Core.Filtering {
                 } else if (Operator.HasFlag(Operator.Contains)) {
                     return vl.Contains(vr, StringComparison.InvariantCultureIgnoreCase) == !Operator.HasFlag(Operator.Not);
 
+                } else if (Operator.HasFlag(Operator.Regex)) {
+                    //return vl.Contains(vr, StringComparison.InvariantCultureIgnoreCase) == !Operator.HasFlag(Operator.Not);
+                    return Regex.IsMatch(vl, vr, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) == !Operator.HasFlag(Operator.Not);
                 } else {
                     ignored = true;
-                    ColorConsole.WriteLine($"  &-c;Unsupported operator for string comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
+                    console.WriteLine($"&-c;Unsupported operator for string comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
                     return true;
                 }
 
             } else {
                 ignored = true;
-                ColorConsole.WriteLine($"  &-c;Condition type mismatch, unable to compare values, ignoring condition...&-^;");
+                console.WriteLine($"&-c;Condition type mismatch, unable to compare values, ignoring condition...&-^;");
                 return true;
             }
 
         }
 
-        private Property GetValue(IFilePropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item, bool isLeft) {
+
+        private PropertyItem GetValue(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item, bool isLeft) {
             if (isLeft && propLeft != null)
                 return propLeft;
             else if (!isLeft && propRight != null)
                 return propRight;
 
             bool isGlobal = isLeft ? isLeftGlobalProperty : isRightGlobalProperty;
-            bool isFile = isLeft ? isLeftFileProperty : isRightFileProperty;
+            bool isItem = isLeft ? isLeftItemProperty : isRightItemProperty;
 
             string text = isLeft ? Left : Right;
 
-            if (isFile) { // it's a file property, needs to be collected for each item.
-                Property property = item.GetFileProperty(propertyProvider, text);
+            if (isItem) { // it's an item property, needs to be collected for each item.
+                PropertyItem property = item.GetProperty(propertyProvider, text);
                 if (property != null)
                     return property;
 
-                //          ColorConsole.WriteLine($"  &-c;File property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
+                //          console.WriteLine($"  &-c;Item property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
                 return null;
 
             } else if (isGlobal) {
-                Property property = propertyStore.GetProperty(text);
+                PropertyItem property = propertyStore.GetProperty(text);
                 if (property != null) {
                     if (isLeft) propLeft = property; else propRight = property;
                     return property;
                 }
                 ignored = true;
-                ColorConsole.WriteLine($"  &-c;Global property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
+                console.WriteLine($"  &-c;Global property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
                 return null;
 
             } else {
@@ -147,27 +150,22 @@ namespace Maxstupo.Fsu.Core.Filtering {
                 if (match.Success) {
 
                     string numberPart = match.Groups[1].Value;
-                    string suffix = match.Groups[2].Value;
 
                     if (double.TryParse(numberPart, out double value)) {
-                        if (Enum.TryParse(suffix, true, out FormatUnit unit))
-                            value *= (double) unit;
-
-                        Property property = new Property(value);
+                        PropertyItem property = new PropertyItem(value);
                         if (isLeft) propLeft = property; else propRight = property;
                         return property;
                     }
                 } else {
-                    Property property = new Property(text);
+                    PropertyItem property = new PropertyItem(text);
                     if (isLeft) propLeft = property; else propRight = property;
                     return property;
                 }
                 ignored = true;
-                ColorConsole.WriteLine($"  &-c;Constant value isn't numeric '&-e;{text}&-^;', ignoring condition...&-^;");
+                console.WriteLine($"  &-c;Constant value isn't numeric '&-e;{text}&-^;', ignoring condition...&-^;");
                 return null;
             }
         }
-
 
     }
 

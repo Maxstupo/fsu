@@ -10,9 +10,9 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         Disabled
     }
 
+
     public class ConsoleTable : IConsoleTable {
         public char RowSeperator { get; set; } = '-';
-
         public char RowColumnJunction { get; set; } = '+';
 
         public char ColumnSeperator { get; set; } = '|';
@@ -20,19 +20,16 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         public int CellPadding { get; set; } = 2;
 
         public ConsoleTableColumns Columns { get; } = new ConsoleTableColumns();
-
         public ConsoleTableRows Rows { get; } = new ConsoleTableRows();
 
         public int TableLength { get; private set; } = 0;
 
         public IConsoleTablePrinter Printer { get; set; } = new ConsoleTablePrinter();
-
         public IConsoleTableConverter Converter { get; set; }// = new ConsoleTableConverter();
 
         public bool IsDirty { get; private set; }
 
         public UpdateMode UpdateMode { get; set; } = UpdateMode.OnChange;
-
 
         public ConsoleTable() {
             Columns.OnChange += Data_OnChange;
@@ -45,6 +42,7 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
             if (UpdateMode == UpdateMode.OnChange)
                 Update();
         }
+
 
         public void Update() {
             TableLength = 2 * Columns.Count + 1;
@@ -177,6 +175,8 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
                 sb.Append(str);
             return sb.ToString();
         }
+
+
 
     }
 

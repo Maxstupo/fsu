@@ -6,7 +6,7 @@ namespace Maxstupo.Fsu.Core.Processor {
 
     public class ProcessorItem {
 
-        public string InitalValue { get; }
+        public string InitialValue { get; }
 
         private string _value;
         public string Value {
@@ -20,34 +20,31 @@ namespace Maxstupo.Fsu.Core.Processor {
 
         public string Origin { get; set; }
 
-        private readonly Dictionary<string, Property> cachedProperties = new Dictionary<string, Property>();
+        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>();
 
-        public ProcessorItem(string value) {
+        public ProcessorItem(string value, string origin = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
-            InitalValue = value;
+            InitialValue = value;
+            Origin = origin;
         }
 
-        public Property GetFileProperty(IFilePropertyProvider propertyProvider, string propertyName) {
-           
-            if (propertyName.Equals("megapixels", StringComparison.InvariantCultureIgnoreCase)) {
-                Property p1 = GetFileProperty(propertyProvider, "width");
-                Property p2 = GetFileProperty(propertyProvider, "height");
-                return new Property(p1.ValueNumber * p2.ValueNumber / 1000000);
-            }
-
-            if (cachedProperties.TryGetValue(propertyName, out Property property)) {
+        public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
+            if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
-                property = propertyProvider.GetFileProperty(this, propertyName);
+                property = propertyProvider.GetProperty(propertyProvider, this, propertyName);
 
                 if (property != null)
                     cachedProperties.Add(propertyName, property);
 
                 return property;
             }
-
         }
 
+        public void TryCachePropertyValue(string propertyName, PropertyItem property) {
+            if (property != null)
+                cachedProperties.Add(propertyName, property);
+        }
     }
 
 }
