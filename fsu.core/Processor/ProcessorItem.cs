@@ -1,8 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Processor {
 
-namespace Maxstupo.Fsu.Core.Processor {
+    using Maxstupo.Fsu.Core.Detail;
+    using System;
+    using System.Collections.Generic;
 
     public class ProcessorItem {
 
@@ -45,6 +45,7 @@ namespace Maxstupo.Fsu.Core.Processor {
             if (property != null)
                 cachedProperties.Add(propertyName, property);
         }
+ 
     }
 
 }

@@ -1,13 +1,13 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Detail.Converters;
-using Maxstupo.Fsu.Core.Processor;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿namespace Maxstupo.Fsu.Core.Format {
 
-namespace Maxstupo.Fsu.Core.Format {
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Detail.Converters;
+    using Maxstupo.Fsu.Core.Processor;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
 
     public class FormatTemplate {
         private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,3})(?:\,([\d\w]{1,3}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
@@ -113,7 +113,6 @@ namespace Maxstupo.Fsu.Core.Format {
 
             return new FormatTemplate(format, tokens);
         }
-
 
     }
 

@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Detail {
 
-namespace Maxstupo.Fsu.Core.Detail {
+    using System;
 
     public class PropertyItem {
 

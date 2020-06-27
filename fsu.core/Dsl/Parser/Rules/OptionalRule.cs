@@ -1,8 +1,9 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Utility;
-using System;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+
     public class OptionalRule<T> : Rule<T> where T : Enum {
 
         public object DefaultValue { get; }
@@ -15,6 +16,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         public OptionalRule(T tokenType, object defaultValue = null, string pattern = null) : base(tokenType, pattern) {
             DefaultValue = defaultValue;
         }
+
         public OptionalRule(object defaultValue, params T[] tokenTypes) : base(tokenTypes) {
             DefaultValue = defaultValue;
         }
@@ -55,4 +57,5 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         }
 
     }
+
 }

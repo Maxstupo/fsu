@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Utility {
 
-namespace Maxstupo.Fsu.Core.Utility {
+    using System;
 
     public static class Util {
 

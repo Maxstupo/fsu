@@ -1,8 +1,9 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using System;
+    using System.Collections.Generic;
+
     public interface ITokenParser<T, V> where T : Enum where V : class {
 
         Grammer<T, V> Add(Grammer<T, V> grammer);
@@ -12,4 +13,5 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         List<V> Parse(IEnumerable<Token<T>> tokens);
 
     }
+
 }

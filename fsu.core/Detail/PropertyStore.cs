@@ -1,6 +1,7 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Detail {
 
-namespace Maxstupo.Fsu.Core.Detail {
+    using System;
+
     public class PropertyStore : IPropertyStore {
         public void Clear() {
             throw new NotImplementedException();
@@ -15,5 +16,7 @@ namespace Maxstupo.Fsu.Core.Detail {
         public void SetProperty(string propertyName, PropertyItem property) {
             throw new NotImplementedException();
         }
+
     }
+
 }

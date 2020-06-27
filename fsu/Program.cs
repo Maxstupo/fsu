@@ -1,18 +1,17 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Dsl;
-using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Dsl.Parser;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using Maxstupo.Fsu.Providers;
-using Maxstupo.Fsu.Utility;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+﻿namespace Maxstupo.Fsu {
 
-namespace Maxstupo.Fsu {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Dsl;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Dsl.Parser;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using Maxstupo.Fsu.Providers;
+    using Maxstupo.Fsu.Utility;
 
     public class Program {
 
@@ -97,15 +96,15 @@ namespace Maxstupo.Fsu {
 
         }
 
-  
+
 
 
         [STAThread]
         static int Main(string[] args) {
             Program program = new Program();
-               program.Run();
- 
-           
+            program.Run();
+
+
             return 0;
         }
 

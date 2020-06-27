@@ -1,7 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Processor;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Detail {
 
-namespace Maxstupo.Fsu.Core.Detail {
+    using Maxstupo.Fsu.Core.Processor;
+    using System.Collections.Generic;
+
     public class PropertyProviderList : IPropertyProviderList {
 
         private readonly IPropertyProvider fallbackProvider;
@@ -39,5 +40,7 @@ namespace Maxstupo.Fsu.Core.Detail {
 
             return fallbackProvider?.GetProperty(this, item, propertyName);
         }
+
     }
+
 }

@@ -1,14 +1,15 @@
-﻿using HeyRed.Mime;
-using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
-using UnitsNet.Units;
+﻿namespace Maxstupo.Fsu.Providers {
+    
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Security.Cryptography;
+    using HeyRed.Mime;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using UnitsNet.Units;
 
-namespace Maxstupo.Fsu.Providers {
     public class BasicFilePropertyProvider : IPropertyProvider {
 
 
@@ -74,16 +75,16 @@ namespace Maxstupo.Fsu.Providers {
                         break;
                     return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0);
                 case "mime":
-                 return new PropertyItem(   MimeTypesMap.GetMimeType(filepath));
-                  
+                    return new PropertyItem(MimeTypesMap.GetMimeType(filepath));
+
                 case "md5":
                     ha = TryGetOrAddAlgorithm(propertyName, () => MD5.Create());
                     return new PropertyItem(ComputeHash(ha, filepath));
                 case "sha256":
-                     ha = TryGetOrAddAlgorithm(propertyName, () => SHA256.Create());
+                    ha = TryGetOrAddAlgorithm(propertyName, () => SHA256.Create());
                     return new PropertyItem(ComputeHash(ha, filepath));
-                case "sha1":                    
-                     ha = TryGetOrAddAlgorithm(propertyName, () => SHA1.Create());
+                case "sha1":
+                    ha = TryGetOrAddAlgorithm(propertyName, () => SHA1.Create());
                     return new PropertyItem(ComputeHash(ha, filepath));
             }
             return null;

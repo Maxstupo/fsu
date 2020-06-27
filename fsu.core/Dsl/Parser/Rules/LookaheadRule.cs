@@ -1,7 +1,7 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using System;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using System;
 
     public class LookaheadRule<T> : Rule<T> where T : Enum {
 

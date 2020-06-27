@@ -1,9 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Format;
-using Maxstupo.Fsu.Core.Processor;
-using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System;
+    using System.Collections.Generic;
+    using Maxstupo.Fsu.Core.Format;
+    using Maxstupo.Fsu.Core.Processor;
+
     public class TransformProcessor : IProcessor {
 
         private readonly FormatTemplate template;

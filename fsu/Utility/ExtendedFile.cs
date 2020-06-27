@@ -1,10 +1,11 @@
-﻿using Shell32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
+﻿namespace Maxstupo.Fsu.Utility {
 
-namespace Maxstupo.Fsu.Utility {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Runtime.InteropServices;
+    using Shell32;
+
     public enum FileDetail {
         FrameWidth,
         FrameHeight,

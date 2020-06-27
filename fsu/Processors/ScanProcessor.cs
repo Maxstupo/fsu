@@ -1,8 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Processor;
-using System.Collections.Generic;
-using System.IO;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System.Collections.Generic;
+    using System.IO;
+    using Maxstupo.Fsu.Core.Processor;
 
     public class ScanProcessor : IProcessor {
 

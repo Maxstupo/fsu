@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-namespace Maxstupo.Fsu.Core.Dsl.Lexer {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class TokenStack<T> : IEnumerable<Token<T>> where T : Enum {
 
@@ -66,6 +66,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
+ 
     }
 
 }

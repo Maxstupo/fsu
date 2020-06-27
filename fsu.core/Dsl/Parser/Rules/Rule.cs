@@ -1,10 +1,11 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
     public class Rule<T> where T : Enum {
 
         public T[] TokenTypes { get; }

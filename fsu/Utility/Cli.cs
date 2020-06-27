@@ -1,9 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Maxstupo.Fsu.Utility {
 
-namespace Maxstupo.Fsu.Utility {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using Maxstupo.Fsu.Core.Utility;
+
     public class Cli {
         public string Prompt { get; set; } = "&-e;>>&-^; ";
         public int MaxCommandHistory { get; set; } = 25;

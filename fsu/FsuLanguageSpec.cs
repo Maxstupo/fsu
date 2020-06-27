@@ -1,19 +1,20 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Dsl.Parser;
-using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
-using Maxstupo.Fsu.Core.Filtering;
-using Maxstupo.Fsu.Core.Format;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Processors;
-using Maxstupo.Fsu.Providers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿namespace Maxstupo.Fsu {
+   
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Dsl.Parser;
+    using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
+    using Maxstupo.Fsu.Core.Filtering;
+    using Maxstupo.Fsu.Core.Format;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Processors;
+    using Maxstupo.Fsu.Providers;
 
-namespace Maxstupo.Fsu {
     public class FsuLanguageSpec {
 
         public static void Init(ITokenizer<TokenType> tokenizer, ITokenParser<TokenType, IProcessor> parser, IPropertyProviderList propertyProviderList) {
@@ -152,7 +153,7 @@ namespace Maxstupo.Fsu {
                     Rules = {
                          new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
-                        },  
+                        },
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
                         },

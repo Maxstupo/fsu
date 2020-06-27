@@ -1,10 +1,11 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     public class RepeatingSequenceRule<T> : Rule<T>, IEnumerable<Rule<T>> where T : Enum {
 
         private readonly List<Rule<T>> rules = new List<Rule<T>>();
@@ -54,6 +55,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
+ 
     }
 
 }

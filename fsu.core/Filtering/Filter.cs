@@ -1,11 +1,11 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Maxstupo.Fsu.Core.Filtering {
 
-namespace Maxstupo.Fsu.Core.Filtering {
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Filter {
 

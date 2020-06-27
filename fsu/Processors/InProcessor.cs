@@ -1,11 +1,12 @@
-﻿using Maxstupo.Fsu.Core.Processor;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using Maxstupo.Fsu.Core.Processor;
+
     public class InProcessor : IProcessor {
 
         private readonly string path;

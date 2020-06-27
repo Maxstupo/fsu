@@ -1,6 +1,7 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
+﻿namespace Maxstupo.Fsu {
 
-namespace Maxstupo.Fsu {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+
     public enum TokenType {
         Invalid,
         Eol,

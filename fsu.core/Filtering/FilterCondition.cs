@@ -1,12 +1,12 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Format;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿namespace Maxstupo.Fsu.Core.Filtering {
 
-namespace Maxstupo.Fsu.Core.Filtering {
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Format;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     public class FilterCondition : IFilterEntry {
         private static readonly Regex regex = new Regex(@"^(\d+(?:\.\d+)?)\s*([a-z]{1,2})?$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);

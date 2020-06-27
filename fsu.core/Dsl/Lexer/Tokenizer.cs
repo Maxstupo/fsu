@@ -1,12 +1,13 @@
-﻿using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-namespace Maxstupo.Fsu.Core.Dsl.Lexer {
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
     public class Tokenizer<T> : ITokenizer<T> where T : Enum {
+    
         private readonly IConsole console;
         private readonly T invalidToken;
         private readonly T eolToken;

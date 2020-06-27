@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-namespace Maxstupo.Fsu.Core.Dsl.Lexer {
+    using System;
+    using System.Collections.Generic;
 
     public interface ITokenizer<T> where T : Enum {
 

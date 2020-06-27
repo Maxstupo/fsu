@@ -1,8 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-namespace Maxstupo.Fsu.Core.Dsl.Lexer {
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Represents a sub-string of the string provided by the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.
@@ -110,6 +110,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Lexer {
         public static bool operator !=(Token<T> left, Token<T> right) {
             return !(left == right);
         }
+
     }
 
 }
