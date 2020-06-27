@@ -37,6 +37,7 @@ namespace Maxstupo.Fsu {
             tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "out"));
             tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "eval"));
             tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "exec"));
+            tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "copy"));
             tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "sort"));
             tknr.Add(new TokenDefinition<TokenType>(TokenType.Function, "regex"));
         }
@@ -143,6 +144,18 @@ namespace Maxstupo.Fsu {
                         new OptionalRule<TokenType>(TokenType.Constant, false, "nowindow|no-window") {
                             TokenConverter = token => token.Value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || token.Value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
                         }
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "copy") {
+                    Construct = x=>new CopyProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1)),
+                    Rules = {
+                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                        },  
+                        new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                        },
                     }
                 }
             };

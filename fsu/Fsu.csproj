@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Processors\CopyProcessor.cs" />
     <Compile Include="Processors\RegexProcessor.cs" />
     <Compile Include="Processors\SortProcessor.cs" />
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />
