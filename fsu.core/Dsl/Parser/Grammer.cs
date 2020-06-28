@@ -1,13 +1,13 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
 
     public class Grammer<T, V> : IEnumerable<Rule<T>> where T : Enum where V : class {
 
@@ -92,6 +92,7 @@ namespace Maxstupo.Fsu.Core.Dsl.Parser {
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
+ 
     }
 
 }

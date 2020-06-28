@@ -1,6 +1,7 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Utility.Table {
 
-namespace Maxstupo.Fsu.Core.Utility.Table {
+    using System;
+
     public class ConsoleTableColumns : ConsoleTableCollection<ConsoleTableColumn> {
 
         public ConsoleTableColumns Set(params string[] headers) {
@@ -17,9 +18,11 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         public ConsoleTableCollection<ConsoleTableColumn> Insert(int index, string headerText) {
             return Insert(index, new ConsoleTableColumn(headerText));
         }
+
     }
 
     public class ConsoleTableColumn {
+     
         public string HeaderText { get; }
         public int Width { get; set; }
         public int Padding => Math.Max(0, Width - HeaderText.Length);
@@ -28,6 +31,7 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
             HeaderText = headerText ?? throw new ArgumentNullException(nameof(headerText));
             this.Width = width;
         }
+ 
     }
 
 }

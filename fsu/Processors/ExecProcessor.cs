@@ -1,9 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Format;
-using Maxstupo.Fsu.Core.Processor;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using Maxstupo.Fsu.Core.Format;
+    using Maxstupo.Fsu.Core.Processor;
+
     public class ExecProcessor : IProcessor {
 
         private readonly FormatTemplate exeTemplate;

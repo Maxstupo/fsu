@@ -1,12 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+
     public class SortProcessor : IProcessor {
 
         private readonly string itemPropertyName;

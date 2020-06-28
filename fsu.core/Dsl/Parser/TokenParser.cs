@@ -1,10 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
-namespace Maxstupo.Fsu.Core.Dsl.Parser {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     /// <summary>
     /// A parser that converts a sequence of tokens into a list of objects, while ensuring correct grammer is adhered to with the token sequence.

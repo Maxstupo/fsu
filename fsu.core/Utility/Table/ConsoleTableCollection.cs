@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Utility.Table {
 
-namespace Maxstupo.Fsu.Core.Utility.Table {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     public abstract class ConsoleTableCollection<T> : IEnumerable<T> {
 
         public T this[int i] => list[i];
@@ -56,7 +57,7 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         public IEnumerator<T> GetEnumerator() {
             return list.GetEnumerator();
         }
+ 
     }
-
 
 }

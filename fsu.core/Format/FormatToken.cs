@@ -1,8 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
-using System;
+﻿namespace Maxstupo.Fsu.Core.Format {
 
-namespace Maxstupo.Fsu.Core.Format {
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+    using System;
 
     public class FormatToken {
 
@@ -41,6 +41,7 @@ namespace Maxstupo.Fsu.Core.Format {
                 default:
                     return null;
             }
+ 
         }
 
     }

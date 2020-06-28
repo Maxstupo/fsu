@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Filtering {
 
-namespace Maxstupo.Fsu.Core.Filtering {
+    using System;
 
     [Flags]
     public enum Operator {

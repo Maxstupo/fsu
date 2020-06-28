@@ -1,9 +1,10 @@
-﻿using Maxstupo.Fsu.Core.Dsl.Lexer;
-using Maxstupo.Fsu.Core.Dsl.Parser;
-using System;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Dsl {
 
-namespace Maxstupo.Fsu.Core.Dsl {
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Dsl.Parser;
+    using System;
+    using System.Collections.Generic;
+
     public class DslInterpreter<T, V> : IDslInterpreter<V> where T : Enum where V : class {
 
         private readonly ITokenizer<T> tokenizer;
@@ -20,4 +21,5 @@ namespace Maxstupo.Fsu.Core.Dsl {
         }
 
     }
+
 }

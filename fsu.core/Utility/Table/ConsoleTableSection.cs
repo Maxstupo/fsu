@@ -1,6 +1,7 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Utility.Table {
 
-namespace Maxstupo.Fsu.Core.Utility.Table {
+    using System;
+
     [Flags]
     public enum ConsoleTableSection {
         None = 0,
@@ -11,6 +12,5 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         Padding = 16,
         Divider = 32,
     }
-
 
 }

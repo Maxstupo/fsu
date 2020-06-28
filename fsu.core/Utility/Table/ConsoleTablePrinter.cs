@@ -1,6 +1,7 @@
-﻿using System;
+﻿namespace Maxstupo.Fsu.Core.Utility.Table {
 
-namespace Maxstupo.Fsu.Core.Utility.Table {
+    using System;
+
     public class ConsoleTablePrinter : IConsoleTablePrinter {
 
         public void Write(string str, ConsoleTableSection type, int columnIndex, int rowIndex) {
@@ -15,7 +16,7 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
 
         public void EndTable() {
         }
+ 
     }
-
 
 }

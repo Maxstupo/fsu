@@ -1,9 +1,9 @@
-﻿using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Dsl;
-using Maxstupo.Fsu.Core.Utility;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Processor {
 
-namespace Maxstupo.Fsu.Core.Processor {
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Dsl;
+    using Maxstupo.Fsu.Core.Utility;
+    using System.Collections.Generic;
 
     public interface IProcessorPipeline {
 

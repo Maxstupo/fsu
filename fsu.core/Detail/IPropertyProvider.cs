@@ -1,6 +1,6 @@
-﻿using Maxstupo.Fsu.Core.Processor;
+﻿namespace Maxstupo.Fsu.Core.Detail {
 
-namespace Maxstupo.Fsu.Core.Detail {
+    using Maxstupo.Fsu.Core.Processor;
 
     public interface IPropertyProvider {
 

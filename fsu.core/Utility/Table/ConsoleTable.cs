@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Maxstupo.Fsu.Core.Utility.Table {
 
-namespace Maxstupo.Fsu.Core.Utility.Table {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
 
     public enum UpdateMode {
         OnChange,
@@ -10,8 +10,8 @@ namespace Maxstupo.Fsu.Core.Utility.Table {
         Disabled
     }
 
-
     public class ConsoleTable : IConsoleTable {
+
         public char RowSeperator { get; set; } = '-';
         public char RowColumnJunction { get; set; } = '+';
 

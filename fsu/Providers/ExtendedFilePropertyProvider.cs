@@ -1,11 +1,11 @@
-﻿using HeyRed.Mime;
-using Maxstupo.Fsu.Core.Detail;
-using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Utility;
-using System;
-using System.IO;
+﻿namespace Maxstupo.Fsu.Providers {
 
-namespace Maxstupo.Fsu.Providers {
+    using System;
+    using System.IO;
+    using HeyRed.Mime;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Utility;
 
     public class ExtendedFilePropertyProvider : IPropertyProvider {
 

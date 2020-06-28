@@ -1,10 +1,11 @@
-﻿using Maxstupo.Fsu.Core.Processor;
-using Maxstupo.Fsu.Core.Utility;
-using Maxstupo.Fsu.Core.Utility.Table;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using Maxstupo.Fsu.Core.Utility.Table;
+
     public class PrintProcessor : IProcessor {
 
         private readonly bool useTable = true;

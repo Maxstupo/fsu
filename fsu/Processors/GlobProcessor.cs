@@ -1,9 +1,10 @@
-﻿using GlobExpressions;
-using Maxstupo.Fsu.Core.Processor;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Maxstupo.Fsu.Processors {
 
-namespace Maxstupo.Fsu.Processors {
+    using System.Collections.Generic;
+    using System.Linq;
+    using GlobExpressions;
+    using Maxstupo.Fsu.Core.Processor;
+
     public class GlobProcessor : IProcessor {
 
         private readonly Glob glob;

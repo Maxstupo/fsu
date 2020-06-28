@@ -1,7 +1,8 @@
-﻿using Maxstupo.Fsu.Core.Utility.Table;
-using System;
+﻿namespace Maxstupo.Fsu.Core.Utility {
 
-namespace Maxstupo.Fsu.Core.Utility {
+    using Maxstupo.Fsu.Core.Utility.Table;
+    using System;
+
     public class ColorConsoleTablePrinter : IConsoleTablePrinter {
 
         private readonly IConsole console;
@@ -21,4 +22,5 @@ namespace Maxstupo.Fsu.Core.Utility {
         }
 
     }
+
 }
