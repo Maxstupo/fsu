@@ -35,7 +35,7 @@
         public Grammer<T, V> Add(Grammer<T, V> grammer) {
             if (grammer == null)
                 throw new ArgumentNullException(nameof(grammer));
-           // console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
+            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
             grammers.Add(grammer);
             return grammer;
         }
