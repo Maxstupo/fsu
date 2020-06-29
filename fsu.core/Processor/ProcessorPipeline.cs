@@ -13,12 +13,12 @@
 
         public IPropertyStore PropertyStore { get; }
 
-        public IDslInterpreter<IProcessor> Interpreter { get; }
+        public IInterpreter<IProcessor> Interpreter { get; }
 
         public IConsole Console { get; }
 
 
-        public ProcessorPipeline(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, IDslInterpreter<IProcessor> interpreter) {
+        public ProcessorPipeline(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, IInterpreter<IProcessor> interpreter) {
             Console = console ?? throw new ArgumentNullException(nameof(console));
             PropertyProvider = propertyProvider ?? throw new ArgumentNullException(nameof(propertyProvider));
             PropertyStore = propertyStore ?? throw new ArgumentNullException(nameof(propertyStore));

@@ -13,7 +13,7 @@
 
         IConsole Console { get; }
 
-        IDslInterpreter<IProcessor> Interpreter { get; }
+        IInterpreter<IProcessor> Interpreter { get; }
 
         IEnumerable<ProcessorItem> Process(List<IProcessor> processors);
 

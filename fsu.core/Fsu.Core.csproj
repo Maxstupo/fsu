@@ -49,8 +49,8 @@
     <Compile Include="Detail\PropertyStore.cs" />
     <Compile Include="Detail\Converters\IUnitConverter.cs" />
     <Compile Include="Detail\Converters\UnitNetPropertyConverter.cs" />
-    <Compile Include="Dsl\DslInterpreter.cs" />
-    <Compile Include="Dsl\IDslInterpreter.cs" />
+    <Compile Include="Dsl\Interpreter.cs" />
+    <Compile Include="Dsl\IInterpreter.cs" />
     <Compile Include="Dsl\Lexer\ITokenizer.cs" />
     <Compile Include="Dsl\Lexer\TokenDefinition.cs" />
     <Compile Include="Dsl\Lexer\Tokenizer.cs" />

@@ -23,11 +23,10 @@
 
         public ITokenParser<TokenType, IProcessor> Parser { get; }
 
-        public IDslInterpreter<IProcessor> Interpreter { get; }
+        public IInterpreter<IProcessor> Interpreter { get; }
 
         public IProcessorPipeline Pipeline { get; }
 
-        public IPropertyProviderList PropertyProviders { get; }
 
         public Cli Cli { get; }
 
@@ -38,16 +37,16 @@
 
             Console = new ColorConsole(System.Console.Out);
 
-            Tokenizer = new Tokenizer<TokenType>(Console, TokenType.Invalid, TokenType.Eol, TokenType.Eof);
+            Tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof);
             Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof, TokenType.Invalid);
 
-            Interpreter = new DslInterpreter<TokenType, IProcessor>(Tokenizer, Parser);
+            Interpreter = new Interpreter<TokenType, IProcessor>(Tokenizer, Parser);
 
-            PropertyProviders = new PropertyProviderList(new BasicFilePropertyProvider());
+            IPropertyProviderList propertyProviders = new PropertyProviderList(new BasicFilePropertyProvider());
             IPropertyStore propertyStore = new PropertyStore();
-            Pipeline = new ProcessorPipeline(Console, PropertyProviders, propertyStore, Interpreter);
+            Pipeline = new ProcessorPipeline(Console, propertyProviders, propertyStore, Interpreter);
 
-            FsuLanguageSpec.Init(Tokenizer, Parser, PropertyProviders);
+            FsuLanguageSpec.Init(Tokenizer, Parser, propertyProviders);
 
             Cli = new Cli(Console);
             Cli.OnCommand += Cli_OnCommand;
