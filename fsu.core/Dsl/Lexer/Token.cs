@@ -1,8 +1,8 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
+    using Maxstupo.Fsu.Core.Utility;
 
     /// <summary>
     /// Represents a sub-string of the string provided by the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.

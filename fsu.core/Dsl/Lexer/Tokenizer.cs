@@ -1,22 +1,22 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
+    /// <summary>
+    /// This class converts text into a series of tokens, based on the regex patterns of each token definition.
+    /// </summary>
     public class Tokenizer<T> : ITokenizer<T> where T : Enum {
     
-        private readonly IConsole console;
         private readonly T invalidToken;
         private readonly T eolToken;
         private readonly T eofToken;
 
         private readonly List<TokenDefinition<T>> tokenDefinitions = new List<TokenDefinition<T>>();
 
-        public Tokenizer(IConsole console, T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
-            this.console = console;
+        public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;
             this.eolToken = eolToken;
             this.eofToken = eofToken;
@@ -43,6 +43,11 @@
 
         }
 
+        /// <summary>
+        /// Registers the specified <see cref="TokenDefinition{T}"/> with this <see cref="Tokenizer{T}"/>. Throws an <see cref="ArgumentException"/> if the token has already been registered or is a reserved token (invalid, eol, eof).
+        /// </summary>
+        /// <param name="definition"></param>
+        /// <exception cref="ArgumentException">Throws if the token has already been registered or is a reserved token (invalid, eol, eof).</exception>
         public void Add(TokenDefinition<T> definition) {
 
             if (definition.TokenType.Equals(invalidToken) || definition.TokenType.Equals(eolToken) || definition.TokenType.Equals(eofToken))
@@ -51,15 +56,22 @@
             if (tokenDefinitions.Contains(definition))
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Regex}'", nameof(definition));
 
-            console.WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
+       //     console.WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
 
             tokenDefinitions.Add(definition);
         }
 
+        /// <summary>
+        /// Clears all registered token definitions.
+        /// </summary>
         public void Clear() {
             tokenDefinitions.Clear();
         }
 
+        /// <summary>
+        /// Tokenizes an enumerable, treating each item in the enumerable as a seperate line.
+        /// </summary>
+        /// <returns>The tokenized representation of the provided input.</returns>
         public IEnumerable<Token<T>> Tokenize(IEnumerable<string> input) {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -77,6 +89,10 @@
             yield return new Token<T>(eofToken, lineNumber - 1);
         }
 
+        /// <summary>
+        /// Tokenizes a given string, treating it as a single line of text.
+        /// </summary>
+        /// <returns>The tokenized representation of the provided input.</returns>
         public IEnumerable<Token<T>> Tokenize(string input, int lineNumber) {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -127,6 +143,9 @@
             yield return new Token<T>(eolToken, eolIndex, lineNumber);
         }
 
+        /// <summary>
+        /// Returns an IEnumerable of tokens for all possible token matches for the provided <paramref name="input"/> string.
+        /// </summary>
         public IEnumerable<Token<T>> FindAllTokenMatches(string input, int lineNumber) {
             return tokenDefinitions.SelectMany(definition => definition.FindMatches(input, lineNumber));
         }
