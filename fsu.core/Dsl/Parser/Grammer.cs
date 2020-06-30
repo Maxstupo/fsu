@@ -9,7 +9,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Grammer<T, V> : IEnumerable<Rule<T>> where T : Enum where V : class {
+    public class Grammer<T, V> : IEnumerable<Rule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
 
         public T[] TriggerTokenTokens { get; }
 
@@ -92,7 +92,38 @@
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
- 
+
+        public override bool Equals(object obj) {
+            return Equals(obj as Grammer<T, V>);
+        }
+
+        public bool Equals(Grammer<T, V> other) {
+            return other != null &&
+                   EqualityComparer<T[]>.Default.Equals(this.TriggerTokenTokens, other.TriggerTokenTokens) &&
+                   this.TriggerTokenValuePattern == other.TriggerTokenValuePattern &&
+                   this.CleanRuleData == other.CleanRuleData &&
+                   this.IncludeTriggerToken == other.IncludeTriggerToken &&
+                   EqualityComparer<List<Rule<T>>>.Default.Equals(this.Rules, other.Rules);
+        }
+
+        public override int GetHashCode() {
+            int hashCode = 206486245;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T[]>.Default.GetHashCode(this.TriggerTokenTokens);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.TriggerTokenValuePattern);
+            hashCode = hashCode * -1521134295 + this.CleanRuleData.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.IncludeTriggerToken.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Rule<T>>>.Default.GetHashCode(this.Rules);
+            return hashCode;
+        }
+
+        public static bool operator ==(Grammer<T, V> left, Grammer<T, V> right) {
+            return EqualityComparer<Grammer<T, V>>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(Grammer<T, V> left, Grammer<T, V> right) {
+            return !(left == right);
+        }
+
     }
 
 }

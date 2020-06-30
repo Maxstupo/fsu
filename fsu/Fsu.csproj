@@ -57,10 +57,6 @@
       <Project>{a74702f9-8461-4586-9d5b-8a4dda97ac62}</Project>
       <Name>Fsu.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\fsu.standard\Fsu.Standard.csproj">
-      <Project>{86b3b224-5fa3-4687-9a2f-2e6106615c89}</Project>
-      <Name>Fsu.Standard</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser">

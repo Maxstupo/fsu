@@ -13,6 +13,8 @@
         /// </summary>
         void Add(TokenDefinition<T> definition);
 
+        void Remove(TokenDefinition<T> definition);
+        
         /// <summary>
         /// Clears all registered token definitions.
         /// </summary>
@@ -29,6 +31,11 @@
         /// </summary>
         /// <returns>The tokenized representation of the provided input.</returns>
         IEnumerable<Token<T>> Tokenize(string input, int lineNumber);
+
+        /// <summary>
+        /// Dynamically loads token definitions using reflection. Finds <see cref="TokenDef"/> attributes.
+        /// </summary>
+        void LoadTokenDefinitions();
 
     }
 

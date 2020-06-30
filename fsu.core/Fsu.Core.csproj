@@ -75,12 +75,24 @@
     <Compile Include="Format\FormatToken.cs" />
     <Compile Include="Format\PropertyType.cs" />
     <Compile Include="FsuEngine.cs" />
-    <Compile Include="Plugins\IFsuPlugin.cs" />
+    <Compile Include="FsuLanguageSpec.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\ItemsProcessor.cs" />
     <Compile Include="Processor\ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
+    <Compile Include="Processor\Processors\CopyProcessor.cs" />
+    <Compile Include="Processor\Processors\EvalProcessor.cs" />
+    <Compile Include="Processor\Processors\ExecProcessor.cs" />
+    <Compile Include="Processor\Processors\FilterProcessor.cs" />
+    <Compile Include="Processor\Processors\GlobProcessor.cs" />
+    <Compile Include="Processor\Processors\InProcessor.cs" />
+    <Compile Include="Processor\Processors\OutProcessor.cs" />
+    <Compile Include="Processor\Processors\PrintProcessor.cs" />
+    <Compile Include="Processor\Processors\RegexProcessor.cs" />
+    <Compile Include="Processor\Processors\ScanProcessor.cs" />
+    <Compile Include="Processor\Processors\SortProcessor.cs" />
+    <Compile Include="Processor\Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />
     <Compile Include="TokenType.cs" />
@@ -100,6 +112,9 @@
     <Compile Include="Utility\Util.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Glob">
+      <Version>1.1.6</Version>
+    </PackageReference>
     <PackageReference Include="MimeTypesMap">
       <Version>1.0.8</Version>
     </PackageReference>

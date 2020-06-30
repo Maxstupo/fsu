@@ -1,9 +1,12 @@
 ﻿namespace Maxstupo.Fsu {
 
     using System;
+    using System.IO;
     using System.Reflection;
+    using System.Text;
     using Maxstupo.Fsu.Core;
     using Maxstupo.Fsu.Core.Utility;
+    using Maxstupo.Fsu.Providers;
     using Maxstupo.Fsu.Utility;
 
     public class Program {
@@ -19,18 +22,20 @@
 
 
         public Program() {
-            // System.Console.OutputEncoding = Encoding.Unicode;
+            System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
 
             console = new ColorConsole(System.Console.Out);
+
             fsu = new FsuEngine(console);
+            fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
 
             cli = new Cli(console);
             cli.OnCommand += Cli_OnCommand;
 
             //Temp
-            //   if (File.Exists("fsu_on_start.txt"))
-            //        Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
+            if (File.Exists("fsu_on_start.txt"))
+                fsu.Evaluate(File.ReadAllText("fsu_on_start.txt"));
         }
 
         public void Run() {

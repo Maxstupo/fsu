@@ -18,7 +18,7 @@
         private readonly T eofToken;
         private readonly T invalidToken;
 
-        private readonly List<Grammer<T, V>> grammers = new List<Grammer<T, V>>();
+        private readonly ISet<Grammer<T, V>> grammers = new HashSet<Grammer<T, V>>();
 
         public TokenParser(IConsole console, T commentToken, T eolToken, T eofToken, T invalidToken) {
             this.console = console;
@@ -38,6 +38,10 @@
             console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
             grammers.Add(grammer);
             return grammer;
+        }
+
+        public void Remove(Grammer<T, V> grammer) {
+            grammers.Remove(grammer);
         }
 
         public List<V> Parse(IEnumerable<Token<T>> tokens) {

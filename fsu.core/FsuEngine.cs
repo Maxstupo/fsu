@@ -1,31 +1,27 @@
 ﻿namespace Maxstupo.Fsu.Core {
 
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Dsl;
     using Maxstupo.Fsu.Core.Dsl.Lexer;
     using Maxstupo.Fsu.Core.Dsl.Parser;
     using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
-    using Maxstupo.Fsu.Core.Filtering;
-    using Maxstupo.Fsu.Core.Format;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Providers;
     using Maxstupo.Fsu.Core.Utility;
 
     public class FsuEngine {
+
         public IConsole Console { get; }
 
-        protected ITokenizer<TokenType> Tokenizer { get; }
+        public ITokenizer<TokenType> Tokenizer { get; }
 
-        protected ITokenParser<TokenType, IProcessor> Parser { get; }
+        public ITokenParser<TokenType, IProcessor> Parser { get; }
 
         public IInterpreter<IProcessor> Interpreter { get; }
 
         public IProcessorPipeline Pipeline { get; }
-
 
         public IPropertyProviderList PropertyProviders { get; }
 
@@ -43,19 +39,13 @@
             PropertyProviders = new PropertyProviderList(new BasicFilePropertyProvider());
             PropertyStore = new PropertyStore();
 
-            InitTokenizer();
-            InitParser();
-
             Pipeline = new ProcessorPipeline(Console, PropertyProviders, PropertyStore, Interpreter);
+
+            Init();
         }
 
-        protected virtual void InitTokenizer() {
-
-
-        }
-
-        protected virtual void InitParser() {
-            List<Grammer<TokenType, IProcessor>> grammers = new List<Grammer<TokenType, IProcessor>> {
+        protected virtual void Init() {
+            ISet<Grammer<TokenType, IProcessor>> grammers = new HashSet<Grammer<TokenType, IProcessor>> {
 
                 new Grammer<TokenType, IProcessor>(TokenType.Pipe) {
                     Rules = { new LookaheadRule<TokenType>(TokenType.Function, TokenType.TextValue, TokenType.StringValue) }
@@ -73,15 +63,24 @@
 
             };
 
-            // TODO: Concat all plugin grammers with the grammers list above.
+
+
+            Tokenizer.Clear();
+            Tokenizer.LoadTokenDefinitions();
+
+            foreach (TokenDefinition<TokenType> def in FsuLanguageSpec.GetTokenDefinitions())
+                Tokenizer.Add(def);
+
+
+
+            IEnumerable<Grammer<TokenType, IProcessor>> allGrammers = grammers.Concat(FsuLanguageSpec.GetGrammers());
 
             // Ensure that all functions have a pipe or be the end of line after them.
-            foreach (Grammer<TokenType, IProcessor> grammer in grammers.Where(x => x.TriggerTokenTokens[0].Equals(TokenType.Function))) {
+            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers.Where(x => x.TriggerTokenTokens[0].Equals(TokenType.Function)))
                 grammer.Rules.Add(new LookaheadRule<TokenType>(TokenType.Pipe, TokenType.Eol));
-            }
 
             Parser.Clear();
-            foreach (Grammer<TokenType, IProcessor> grammer in grammers)
+            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers)
                 Parser.Add(grammer);
         }
 

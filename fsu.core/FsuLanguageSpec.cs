@@ -1,22 +1,20 @@
-﻿namespace Maxstupo.Fsu.Standard {
+﻿namespace Maxstupo.Fsu.Core {
 
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text.RegularExpressions;
-    using Maxstupo.Fsu.Core;
     using Maxstupo.Fsu.Core.Dsl.Lexer;
     using Maxstupo.Fsu.Core.Dsl.Parser;
     using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
     using Maxstupo.Fsu.Core.Filtering;
     using Maxstupo.Fsu.Core.Format;
-    using Maxstupo.Fsu.Core.Plugins;
     using Maxstupo.Fsu.Core.Processor;
-    using Maxstupo.Fsu.Standard.Processors;
+    using Maxstupo.Fsu.Core.Processor.Processors;
 
-    public class FsuStandardPlugin : FsuPlugin {
+    public static class FsuLanguageSpec {
 
-        public override ISet<TokenDefinition<TokenType>> GetPluginTokenDefinitions() {
+        public static ISet<TokenDefinition<TokenType>> GetTokenDefinitions() {
             return new HashSet<TokenDefinition<TokenType>> {
                 new TokenDefinition<TokenType>(TokenType.Constant, "files|dirs|directories|top"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"),
@@ -37,7 +35,7 @@
             };
         }
 
-        public override ISet<Grammer<TokenType, IProcessor>> GetPluginGrammers() {
+        public static ISet<Grammer<TokenType, IProcessor>> GetGrammers() {
             // Filter processor.
             RepeatingSequenceRule<TokenType> rsr = new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
                 new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
@@ -48,7 +46,6 @@
                 new OptionalRule<TokenType>(TokenType.Unit) { TokenConverter = value => value },
             };
             rsr.TokenConverter = value => value;
-
 
 
             return new HashSet<Grammer<TokenType, IProcessor>> {

@@ -15,7 +15,7 @@
         private readonly T eolToken;
         private readonly T eofToken;
 
-        private readonly List<TokenDefinition<T>> tokenDefinitions = new List<TokenDefinition<T>>();
+        private readonly ISet<TokenDefinition<T>> tokenDefinitions = new HashSet<TokenDefinition<T>>();
 
         public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;
@@ -60,6 +60,13 @@
             //new ColorConsole().WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
 
             tokenDefinitions.Add(definition);
+        }
+
+        /// <summary>
+        /// Removes the specified token from this tokenizer. Does nothing if token doesn't exist.
+        /// </summary>
+        public void Remove(TokenDefinition<T> definition) {
+            tokenDefinitions.Remove(definition);
         }
 
         /// <summary>
