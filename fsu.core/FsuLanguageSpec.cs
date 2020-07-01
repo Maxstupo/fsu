@@ -31,7 +31,6 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "exec"),
                 new TokenDefinition<TokenType>(TokenType.Function, "copy"),
                 new TokenDefinition<TokenType>(TokenType.Function, "sort"),
-                new TokenDefinition<TokenType>(TokenType.Function, "regex")
             };
         }
 
@@ -50,19 +49,10 @@
 
             return new HashSet<Grammer<TokenType, IProcessor>> {
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "regex") {
-                    Construct = x=> new RegexProcessor(x.Get<string>(0), x.Get<string>(1),x.Get<string>(2)),
-                    Rules = {
-                        new Rule<TokenType>(TokenType.TextValue,TokenType.StringValue),
-                        new OptionalRule<TokenType>("{0}",TokenType.TextValue, TokenType.StringValue),
-                        new OptionalRule<TokenType>(null, TokenType.TextValue,TokenType.StringValue)
-                    }
-                },
-
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
-                    Construct = x => new PrintProcessor(x.Get<bool>(0), '|'),
+                    Construct = x => new PrintProcessor(x.Get<string>(0)),
                     Rules = {
-                        new OptionalRule<TokenType>(false, TokenType.TextValue)
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
                 },
 
