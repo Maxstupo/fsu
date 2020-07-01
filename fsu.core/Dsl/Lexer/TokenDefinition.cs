@@ -94,14 +94,24 @@
 
         public bool Equals(TokenDefinition<T> other) {
             return other != null &&
-                   EqualityComparer<T>.Default.Equals(TokenType, other.TokenType) &&
-                   Regex == other.Regex;
+                   EqualityComparer<T>.Default.Equals(this.TokenType, other.TokenType) &&
+                   this.Regex == other.Regex &&
+                   this.Template == other.Template &&
+                   this.Precedence == other.Precedence &&
+                   this.HasVariableValue == other.HasVariableValue &&
+                   this.RetargetToGroup == other.RetargetToGroup &&
+                   this.RemoveRegex == other.RemoveRegex;
         }
 
         public override int GetHashCode() {
-            var hashCode = -1694758725;
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(TokenType);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Regex);
+            int hashCode = 1672288865;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(this.TokenType);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.Regex);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.Template);
+            hashCode = hashCode * -1521134295 + this.Precedence.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.HasVariableValue.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.RetargetToGroup.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.RemoveRegex);
             return hashCode;
         }
 

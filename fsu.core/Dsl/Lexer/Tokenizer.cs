@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Maxstupo.Fsu.Core.Utility;
 
     /// <summary>
     /// This class converts text into a series of tokens, based on the regex patterns of each token definition.
@@ -14,7 +15,7 @@
         private readonly T eolToken;
         private readonly T eofToken;
 
-        private readonly List<TokenDefinition<T>> tokenDefinitions = new List<TokenDefinition<T>>();
+        private readonly ISet<TokenDefinition<T>> tokenDefinitions = new HashSet<TokenDefinition<T>>();
 
         public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;
@@ -56,9 +57,16 @@
             if (tokenDefinitions.Contains(definition))
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Regex}'", nameof(definition));
 
-       //     console.WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
+            //new ColorConsole().WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
 
             tokenDefinitions.Add(definition);
+        }
+
+        /// <summary>
+        /// Removes the specified token from this tokenizer. Does nothing if token doesn't exist.
+        /// </summary>
+        public void Remove(TokenDefinition<T> definition) {
+            tokenDefinitions.Remove(definition);
         }
 
         /// <summary>

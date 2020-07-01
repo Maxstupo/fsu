@@ -8,6 +8,8 @@
 
         Grammer<T, V> Add(Grammer<T, V> grammer);
 
+        void Remove(Grammer<T, V> grammer);
+
         void Clear();
 
         List<V> Parse(IEnumerable<Token<T>> tokens);

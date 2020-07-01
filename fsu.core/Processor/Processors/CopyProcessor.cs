@@ -1,4 +1,4 @@
-﻿namespace Maxstupo.Fsu.Processors {
+﻿namespace Maxstupo.Fsu.Core.Processor.Processors {
 
     using System.Collections.Generic;
     using System.IO;
@@ -43,8 +43,8 @@
             return items;
         }
 
-        public override string ToString() {
-            return $"{GetType().Name}[{srcTemplate}, {dstTemplate}]";
+        public override string ToString() { 
+            return $"{GetType().Name}[srcTemplate={srcTemplate}, dstTemplate={dstTemplate}]";
         }
 
     }
