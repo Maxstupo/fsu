@@ -82,7 +82,6 @@
 
                 } else if (!inComment) {
 
-                    // TODO: Should we allow multiple matching grammers?
                     List<Grammer<T, V>> matchedGrammers = grammers.Where(x => x.IsMatch(token)).ToList();
 
                     if (matchedGrammers.Count == 0) // No grammers exist for the token.

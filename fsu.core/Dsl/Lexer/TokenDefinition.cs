@@ -47,7 +47,7 @@
             HasVariableValue = hasVariableValue;
             RemoveRegex = removeRegex;
             RetargetToGroup = retargetToGroup;
-            //TODO: Move RegexOptions into variable.
+
             this.regex = new Regex(regex, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
             if (!string.IsNullOrWhiteSpace(RemoveRegex))

@@ -10,7 +10,7 @@
         public int MaxCommandHistory { get; set; } = 25;
 
         public event EventHandler<string> OnCommand;
-        public event Func<string, int, string> OnAutoComplete; // TODO: Use a IAutoCompleteProvider pattern.
+        public event Func<string, int, string> OnAutoComplete;
 
         private int caretIndex = 0;
         private readonly StringBuilder sb = new StringBuilder();

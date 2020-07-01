@@ -120,7 +120,6 @@
             foreach (IGrouping<int, Token<T>> grouping in groupedByStartIndex) {
                 Token<T> token = grouping.OrderBy(x => x.Precedence).First();
 
-                //TODO: Improve error reporting code (cleanup).
                 if (lastMatch != null) {  // Find invalid tokens.
                     int length = token.StartIndex - lastMatch.EndIndex;
 
