@@ -70,14 +70,14 @@
                     if (!File.Exists(item.Value))
                         break;
                     long size = new FileInfo(item.Value).Length;
-                    return new PropertyItem(size) { Unit = InformationUnit.Byte };
+                    return new PropertyItem(size, InformationUnit.Byte );
 
                 case "megapixels": // Composite property
                     PropertyItem width = item.GetProperty(providerList, "width");
                     PropertyItem height = item.GetProperty(providerList, "height");
                     if (!width.IsNumeric || !height.IsNumeric)
                         break;
-                    return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0);
+                    return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0, null);
 
                 case "mime":
                     return new PropertyItem(MimeTypesMap.GetMimeType(filepath));

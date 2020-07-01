@@ -153,7 +153,7 @@
                     string numberPart = match.Groups[1].Value;
 
                     if (double.TryParse(numberPart, out double value)) {
-                        PropertyItem property = new PropertyItem(value);
+                        PropertyItem property = new PropertyItem(value, null);
                         if (isLeft) propLeft = property; else propRight = property;
                         return property;
                     }

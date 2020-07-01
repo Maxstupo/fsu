@@ -4,29 +4,22 @@
 
     public class PropertyItem {
 
-        public object Value { get; private set; }
+        public object Value { get;  }
 
-        public string ValueText { get => Value as string; set => Value = value; }
+        public string ValueText => Value as string;
 
-        public double ValueNumber {
-            get => IsNumeric ? Convert.ToDouble(Value) : throw new InvalidCastException("Failed to get number value for non-numeric property!");
-            set {
-                if (!IsNumeric)
-                    throw new InvalidCastException("Failed to set number value for non-numeric property!");
-                Value = value;
-            }
-        }
+        public double ValueNumber => IsNumeric ? Convert.ToDouble(Value) : throw new InvalidCastException("Failed to get number value for non-numeric property!");
 
         public bool IsNumeric { get; }
 
-        public Enum Unit { get; set; }
+        public Enum Unit { get; }
 
         public PropertyItem(string value) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
             IsNumeric = false;
         }
 
-        public PropertyItem(double value, Enum unit = null) {
+        public PropertyItem(double value, Enum unit) {
             Value = value;
             Unit = unit;
             IsNumeric = true;

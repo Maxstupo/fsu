@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Maxstupo.Fsu.Core.Utility {
+﻿namespace Maxstupo.Fsu.Core.Utility {
 
     public enum Level : int {
         None = -1,

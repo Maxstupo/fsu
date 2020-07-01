@@ -1,7 +1,6 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
     using Maxstupo.Fsu.Core.Dsl.Lexer;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
