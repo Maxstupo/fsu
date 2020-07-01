@@ -89,7 +89,6 @@
     <Compile Include="Processor\Processors\InProcessor.cs" />
     <Compile Include="Processor\Processors\OutProcessor.cs" />
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
-    <Compile Include="Processor\Processors\RegexProcessor.cs" />
     <Compile Include="Processor\Processors\ScanProcessor.cs" />
     <Compile Include="Processor\Processors\SortProcessor.cs" />
     <Compile Include="Processor\Processors\TransformProcessor.cs" />

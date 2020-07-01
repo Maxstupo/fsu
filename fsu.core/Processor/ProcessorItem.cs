@@ -20,7 +20,7 @@
 
         public string Origin { get; set; }
 
-        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>();
+        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>(StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessorItem(string value, string origin = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
@@ -29,13 +29,13 @@
         }
 
         public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
+            
             if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
-                property = propertyProvider.GetProperty(propertyProvider, this, propertyName);
+                property = propertyProvider.GetProperty(propertyProvider, this, propertyName.ToLowerInvariant());
 
-                if (property != null)
-                    cachedProperties.Add(propertyName, property);
+                TryCachePropertyValue(propertyName, property);
 
                 return property;
             }
@@ -45,7 +45,7 @@
             if (property != null)
                 cachedProperties.Add(propertyName, property);
         }
- 
+
     }
 
 }
