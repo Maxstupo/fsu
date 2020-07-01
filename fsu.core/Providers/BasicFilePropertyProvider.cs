@@ -55,13 +55,15 @@
                 case "ifilepath":
                     return new PropertyItem(item.InitialValue);
 
-                case "origin":
-                    return item.Origin == null ? null : new PropertyItem(item.Origin);
-
                 case "relpath":
-                    if (item.Origin == null || !item.Value.StartsWith(item.Origin))
+                    PropertyItem originItem = item.GetProperty(providerList, "origin");
+                    if (originItem.IsNumeric || originItem == null)
                         return null;
-                    return new PropertyItem(item.Value.Substring(item.Origin.Length + 1));
+
+                    string origin = originItem.ValueText;
+                    if (!item.Value.StartsWith(origin))
+                        return null;
+                    return new PropertyItem(item.Value.Substring(origin.Length + 1));
 
                 case "size":
                     if (!File.Exists(item.Value))

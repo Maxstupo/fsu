@@ -18,18 +18,17 @@
             }
         }
 
-        public string Origin { get; set; }
-
         private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>(StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessorItem(string value, string origin = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
             InitialValue = value;
-            Origin = origin;
+            if (origin != null)
+                TryCachePropertyValue("origin", new PropertyItem(origin));
         }
 
         public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
-            
+
             if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
