@@ -43,8 +43,8 @@
             return items;
         }
 
-        public override string ToString() {
-            return $"{GetType().Name}[{srcTemplate}, {dstTemplate}]";
+        public override string ToString() { 
+            return $"{GetType().Name}[srcTemplate={srcTemplate}, dstTemplate={dstTemplate}]";
         }
 
     }
