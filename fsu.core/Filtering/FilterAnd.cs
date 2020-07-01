@@ -16,7 +16,7 @@
             Right = right;
         }
 
-        public bool Evaluate(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public bool Evaluate(IOutput console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             return Left.Evaluate(console, propertyProvider, propertyStore, item) && Right.Evaluate(console, propertyProvider, propertyStore, item);
         }
 

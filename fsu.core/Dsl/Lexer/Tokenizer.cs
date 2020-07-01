@@ -10,12 +10,16 @@
     /// This class converts text into a series of tokens, based on the regex patterns of each token definition.
     /// </summary>
     public class Tokenizer<T> : ITokenizer<T> where T : Enum {
-    
+
         private readonly T invalidToken;
         private readonly T eolToken;
         private readonly T eofToken;
 
         private readonly ISet<TokenDefinition<T>> tokenDefinitions = new HashSet<TokenDefinition<T>>();
+
+        public event EventHandler<TokenDefinition<T>> OnDefinitionAdded;
+        public event EventHandler<TokenDefinition<T>> OnDefinitionRemoved;
+        public event EventHandler OnDefinitionsCleared;
 
         public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;
@@ -37,7 +41,7 @@
                 foreach (TokenDef tokenDef in member.GetCustomAttributes<TokenDef>()) {
                     T tokenType = (T) member.GetValue(typeof(T));
 
-                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue, tokenDef.RemoveRegex,tokenDef.RetargetToGroup));
+                    Add(new TokenDefinition<T>(tokenType, tokenDef.Regex, tokenDef.Template, tokenDef.Precedence, tokenDef.HasVariableValue, tokenDef.RemoveRegex, tokenDef.RetargetToGroup));
                 }
             }
 
@@ -57,9 +61,9 @@
             if (tokenDefinitions.Contains(definition))
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{definition.TokenType} '{definition.Regex}'", nameof(definition));
 
-            //new ColorConsole().WriteLine($"Adding token definition: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
-
             tokenDefinitions.Add(definition);
+
+            OnDefinitionAdded?.Invoke(this, definition);
         }
 
         /// <summary>
@@ -67,6 +71,7 @@
         /// </summary>
         public void Remove(TokenDefinition<T> definition) {
             tokenDefinitions.Remove(definition);
+            OnDefinitionRemoved?.Invoke(this, definition);
         }
 
         /// <summary>
@@ -74,6 +79,7 @@
         /// </summary>
         public void Clear() {
             tokenDefinitions.Clear();
+            OnDefinitionsCleared?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

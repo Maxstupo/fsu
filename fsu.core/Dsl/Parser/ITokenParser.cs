@@ -5,6 +5,12 @@
     using System.Collections.Generic;
 
     public interface ITokenParser<T, V> where T : Enum where V : class {
+        
+        event EventHandler<Grammer<T, V>> OnGrammerAdded;
+        event EventHandler<Grammer<T, V>> OnGrammerRemoved;
+        event EventHandler OnGrammersCleared;
+        event EventHandler<Token<T>> OnTokenError;
+        event EventHandler<Token<T>> OnTokenParsing;
 
         Grammer<T, V> Add(Grammer<T, V> grammer);
 

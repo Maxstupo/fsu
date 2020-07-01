@@ -8,18 +8,17 @@
     using Maxstupo.Fsu.Core.Dsl.Parser;
     using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
     using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Processor.Processors;
     using Maxstupo.Fsu.Core.Providers;
     using Maxstupo.Fsu.Core.Utility;
 
     public class FsuEngine {
 
-        public IConsole Console { get; }
+        public IOutput Output { get; }
 
         public ITokenizer<TokenType> Tokenizer { get; }
 
         public ITokenParser<TokenType, IProcessor> Parser { get; }
-
-        public IInterpreter<IProcessor> Interpreter { get; }
 
         public IProcessorPipeline Pipeline { get; }
 
@@ -27,19 +26,33 @@
 
         public IPropertyStore PropertyStore { get; }
 
+        private readonly IInterpreter<IProcessor> interpreter;
 
-        public FsuEngine(IConsole console) {
-            Console = console;
+        public FsuEngine(IOutput output) {
+            Output = output;
 
-            Tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof);
-            Parser = new TokenParser<TokenType, IProcessor>(Console, TokenType.Comment, TokenType.Eol, TokenType.Eof, TokenType.Invalid);
+            Tokenizer = new Tokenizer<TokenType>(TokenType.Invalid, TokenType.Eol, TokenType.Eof, false);
+            Tokenizer.OnDefinitionAdded += (sender, definition) => {
+                output.WriteLine(Level.Fine, $"Added Token: '&-e;{definition.Regex}&-^;' &-9;{definition.Precedence}&-^; (&-a;{definition.TokenType}&-^;)");
+            };
 
-            Interpreter = new Interpreter<TokenType, IProcessor>(Tokenizer, Parser);
+            Parser = new TokenParser<TokenType, IProcessor>(TokenType.Comment, TokenType.Eol, TokenType.Eof, TokenType.Invalid);
+            Parser.OnGrammerAdded += (sender, grammer) => {
+                output.WriteLine(Level.Fine, $"Added Grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
+            };
+
+            Parser.OnTokenError += (sender, token) => {
+                output.WriteLine(Level.Error, $"&-c;ERROR - Unexpected token: '{token.Value}' ({token.TokenType}) {token.Location}&-^;");
+            };
+            Parser.OnTokenParsing += (sender, token) => {
+                token.WriteLine(output, Level.Debug);
+            };
+            interpreter = new Interpreter<TokenType, IProcessor>(Tokenizer, Parser);
 
             PropertyProviders = new PropertyProviderList(new BasicFilePropertyProvider());
             PropertyStore = new PropertyStore();
 
-            Pipeline = new ProcessorPipeline(Console, PropertyProviders, PropertyStore, Interpreter);
+            Pipeline = new ProcessorPipeline(Output, PropertyProviders, PropertyStore, interpreter);
 
             Init();
         }
@@ -55,9 +68,10 @@
                     IncludeTriggerToken = true,
                     Construct = x => new ItemsProcessor(x.Cast<string>()),
                     Rules = {
-                        new RepeatingSequenceRule<TokenType>(false,TokenType.Seperator) {
-                           new Rule<TokenType>(TokenType.StringValue,TokenType.TextValue)
-                        }
+                        new RepeatingSequenceRule<TokenType>(false, TokenType.Seperator) {
+                           new Rule<TokenType>(TokenType.StringValue, TokenType.TextValue)
+                        },
+                        new LookaheadRule<TokenType>(TokenType.Pipe,TokenType.Eol)
                     }
                 },
 
@@ -65,9 +79,7 @@
 
 
 
-            Tokenizer.Clear();
             Tokenizer.LoadTokenDefinitions();
-
             foreach (TokenDefinition<TokenType> def in FsuLanguageSpec.GetTokenDefinitions())
                 Tokenizer.Add(def);
 
@@ -76,7 +88,7 @@
             IEnumerable<Grammer<TokenType, IProcessor>> allGrammers = grammers.Concat(FsuLanguageSpec.GetGrammers());
 
             // Ensure that all functions have a pipe or be the end of line after them.
-            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers.Where(x => x.TriggerTokenTokens[0].Equals(TokenType.Function)))
+            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers.Where(x => x.TriggerTokens[0].Equals(TokenType.Function)))
                 grammer.Rules.Add(new LookaheadRule<TokenType>(TokenType.Pipe, TokenType.Eol));
 
             Parser.Clear();
@@ -91,30 +103,25 @@
         public IEnumerable<ProcessorItem> Evaluate(IEnumerable<string> input) {
             List<Token<TokenType>> tokens = Tokenizer.Tokenize(input).ToList();
 
-#if DEBUG
-            Console.WriteLine("\n----------------------- Tokens ----------------------------\n");
+            Output.WriteLine(Level.Debug, "\n----------------------- Tokens ----------------------------\n");
 
+            foreach (Token<TokenType> token in tokens)
+                token.WriteLine(Output, Level.Debug, 'a');
 
-            foreach (Token<TokenType> token in tokens) {
-                token.WriteLine(Console, 'a');
-            }
+            Output.WriteLine(Level.Debug, "\n----------------------- Parsing ----------------------------\n");
 
-            Console.WriteLine("\n----------------------- Parsing ----------------------------\n");
-#endif
 
             List<IProcessor> objs = Parser.Parse(tokens);
 
-#if DEBUG
-            Console.WriteLine("\n-------------------- Processor List ----------------------\n");
 
+            Output.WriteLine(Level.Debug, "\n-------------------- Processor List ----------------------\n");
 
             foreach (IProcessor a in objs) {
-                if (a != null)
-                    Console.WriteLine(a.ToString());
+                Output.WriteLine(Level.Debug, a.ToString());
             }
 
-            Console.WriteLine("\n--------------------- Pipeline Output --------------------\n");
-#endif
+            Output.WriteLine(Level.Debug, "\n--------------------- Pipeline Output --------------------\n");
+
 
             return Pipeline.Process(objs);
         }

@@ -15,7 +15,7 @@
             this.conditions = new List<IFilterEntry>(conditions);
         }
 
-        public bool Check(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public bool Check(IOutput console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             propertyProvider.Begin();
 
             bool result = conditions.All(x => x.Evaluate(console, propertyProvider, propertyStore, item));

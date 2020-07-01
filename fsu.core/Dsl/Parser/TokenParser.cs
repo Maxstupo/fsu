@@ -11,8 +11,6 @@
     /// </summary>
     public class TokenParser<T, V> : ITokenParser<T, V> where T : Enum where V : class {
 
-        private readonly IConsole console;
-
         private readonly T commentToken;
         private readonly T eolToken;
         private readonly T eofToken;
@@ -20,8 +18,14 @@
 
         private readonly ISet<Grammer<T, V>> grammers = new HashSet<Grammer<T, V>>();
 
-        public TokenParser(IConsole console, T commentToken, T eolToken, T eofToken, T invalidToken) {
-            this.console = console;
+        public event EventHandler<Grammer<T, V>> OnGrammerAdded;
+        public event EventHandler<Grammer<T, V>> OnGrammerRemoved;
+        public event EventHandler OnGrammersCleared;
+
+        public event EventHandler<Token<T>> OnTokenError;
+        public event EventHandler<Token<T>> OnTokenParsing;
+
+        public TokenParser(T commentToken, T eolToken, T eofToken, T invalidToken) {
             this.commentToken = commentToken;
             this.eolToken = eolToken;
             this.eofToken = eofToken;
@@ -29,19 +33,25 @@
         }
 
         public void Clear() {
+            OnGrammersCleared?.Invoke(this, EventArgs.Empty);
             grammers.Clear();
         }
 
         public Grammer<T, V> Add(Grammer<T, V> grammer) {
             if (grammer == null)
                 throw new ArgumentNullException(nameof(grammer));
-            console.WriteLine($"Adding grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokenTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
+
             grammers.Add(grammer);
+
+            OnGrammerAdded?.Invoke(this, grammer);
+
+
             return grammer;
         }
 
         public void Remove(Grammer<T, V> grammer) {
             grammers.Remove(grammer);
+            OnGrammerRemoved?.Invoke(this, grammer);
         }
 
         public List<V> Parse(IEnumerable<Token<T>> tokens) {
@@ -84,6 +94,8 @@
 
                         stack.Mark();
 
+                        OnTokenParsing?.Invoke(this, stack.Peek());
+
                         if (grammer.Eval(ref stack, out V result)) {
                             if (result != null)
                                 objects.Add(result);
@@ -99,7 +111,7 @@
                 }
 
                 if (hasError) {
-                    console.WriteLine($"&-c;ERROR - Unexpected token: '{token.Value}' ({token.TokenType}) {token.Location}&-^;");
+                    OnTokenError?.Invoke(this, token);
                     objects.Clear();
                     break;
                 }

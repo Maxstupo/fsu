@@ -1,8 +1,7 @@
-﻿namespace Maxstupo.Fsu.Core.Processor {
+﻿namespace Maxstupo.Fsu.Core.Processor.Processors {
 
     using System.Collections.Generic;
     using System.Linq;
-    using Maxstupo.Fsu.Core.Processor;
 
     public class ItemsProcessor : IProcessor {
         private readonly IEnumerable<string> newItems;

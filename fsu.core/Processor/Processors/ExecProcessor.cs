@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using Maxstupo.Fsu.Core.Format;
     using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
 
     public class ExecProcessor : IProcessor {
 
@@ -38,25 +39,25 @@
                 info.FileName = exeFilepath;
                 info.Arguments = exeArguments;
 
-                System.Diagnostics.Process process = new System.Diagnostics.Process { StartInfo = info };
 
-                if (noWindow) {
-                    process.OutputDataReceived += (p, data) => pipeline.Console.WriteLine(data.Data, true);
-                    process.ErrorDataReceived += (p, data) => pipeline.Console.WriteLine(data.Data, true);
+                System.Diagnostics.Process process = !pipeline.Simulate ? new System.Diagnostics.Process { StartInfo = info } : null;
 
+                if (noWindow && !pipeline.Simulate) {
+                    process.OutputDataReceived += (p, data) => pipeline.Output.WriteLine(Level.None, data.Data, true);
+                    process.ErrorDataReceived += (p, data) => pipeline.Output.WriteLine(Level.None, data.Data, true);
                 }
 
                 try {
-                    process.Start();
+                    process?.Start();
 
-                    pipeline.Console.WriteLine($"Exec: {exeFilepath} {exeArguments}");
+                    pipeline.Output.WriteLine(Level.None, $"Executing: {exeFilepath} {exeArguments}");
 
                     if (noWindow) {
-                        process.BeginErrorReadLine();
-                        process.BeginOutputReadLine();
+                        process?.BeginErrorReadLine();
+                        process?.BeginOutputReadLine();
                     }
                 } catch (Win32Exception) {
-                    pipeline.Console.WriteLine($"&-c;Exec failed: {exeFilepath} {exeArguments}&-^;");
+                    pipeline.Output.WriteLine(Level.Error, $"&-c;Failed to execute: {exeFilepath} {exeArguments}&-^;");
                 }
             }
 

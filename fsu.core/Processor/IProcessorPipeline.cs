@@ -7,11 +7,13 @@
 
     public interface IProcessorPipeline {
 
+        bool Simulate { get; set; }
+
         IPropertyStore PropertyStore { get; }
 
         IPropertyProvider PropertyProvider { get; }
 
-        IConsole Console { get; }
+        IOutput Output { get; }
 
         IInterpreter<IProcessor> Interpreter { get; }
 

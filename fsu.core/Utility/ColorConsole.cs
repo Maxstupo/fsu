@@ -6,7 +6,7 @@
     using System.IO;
     using System.Text.RegularExpressions;
 
-    public class ColorConsole : IConsole {
+    public class ColorConsole : IOutput {
         private static readonly Regex Regex = new Regex(@"\&([0-9a-fA-F\^\-]{1})([0-9a-fA-F\^\-]{1})\;", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
         private readonly object _lock = new object();
@@ -15,6 +15,8 @@
         private readonly Stack<ConsoleColor> backgroundStack = new Stack<ConsoleColor>();
 
         private readonly TextWriter output;
+
+        public Level Level { get; set; } = Level.Fine;
 
         public ColorConsole(TextWriter output = null) {
             this.output = output ?? Console.Out;
@@ -26,7 +28,10 @@
             Console.Clear();
         }
 
-        public void WriteLine() {
+        public void WriteLine(Level level) {
+            if (!CanWrite(level))
+                return;
+
             lock (_lock)
                 output.WriteLine();
         }
@@ -34,7 +39,10 @@
         /// <summary>
         /// Accepts color stack syntax. 
         /// </summary>
-        public void WriteLine(string line, bool disableColor = false) {
+        public void WriteLine(Level level, string line, bool disableColor = false) {
+            if (!CanWrite(level))
+                return;
+
             if (!disableColor) {
                 WriteText(line, true);
             } else {
@@ -46,7 +54,10 @@
         /// <summary>
         /// Accepts color stack syntax. 
         /// </summary>
-        public void Write(string str, bool disableColor = false) {
+        public void Write(Level level, string str, bool disableColor = false) {
+            if (!CanWrite(level))
+                return;
+
             if (!disableColor) {
                 WriteText(str, false);
             } else {
@@ -56,7 +67,9 @@
         }
 
 
-        public void Write(char c) {
+        public void Write(Level level, char c) {
+            if (!CanWrite(level))
+                return;
             lock (_lock)
                 output.Write(c);
         }
@@ -96,6 +109,10 @@
                 if (newline)
                     output.Write(Environment.NewLine);
             }
+        }
+
+        private bool CanWrite(Level level) {
+            return level == Level.None || level >= this.Level;
         }
 
         /// <summary>

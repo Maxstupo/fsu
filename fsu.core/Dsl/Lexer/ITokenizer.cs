@@ -7,12 +7,19 @@
     /// Represents something that can convert text into a series of tokens.
     /// </summary>
     public interface ITokenizer<T> where T : Enum {
+      
+        event EventHandler<TokenDefinition<T>> OnDefinitionAdded;
+        event EventHandler<TokenDefinition<T>> OnDefinitionRemoved;
+        event EventHandler OnDefinitionsCleared;
 
         /// <summary>
         /// Registers the specified <see cref="TokenDefinition{T}"/> with this tokenizer.
         /// </summary>
         void Add(TokenDefinition<T> definition);
 
+        /// <summary>
+        /// Removes the specified token from this tokenizer. Does nothing if the token doesn't exist.
+        /// </summary>
         void Remove(TokenDefinition<T> definition);
         
         /// <summary>

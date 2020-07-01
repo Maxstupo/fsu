@@ -77,11 +77,10 @@
     <Compile Include="FsuEngine.cs" />
     <Compile Include="FsuLanguageSpec.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
-    <Compile Include="Processor\ItemsProcessor.cs" />
+    <Compile Include="Processor\Processors\ItemsProcessor.cs" />
     <Compile Include="Processor\ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
-    <Compile Include="Processor\Processors\CopyProcessor.cs" />
     <Compile Include="Processor\Processors\EvalProcessor.cs" />
     <Compile Include="Processor\Processors\ExecProcessor.cs" />
     <Compile Include="Processor\Processors\FilterProcessor.cs" />
@@ -97,7 +96,7 @@
     <Compile Include="TokenType.cs" />
     <Compile Include="Utility\ColorConsole.cs" />
     <Compile Include="Utility\ColorConsoleTablePrinter.cs" />
-    <Compile Include="Utility\IConsole.cs" />
+    <Compile Include="Utility\IOutput.cs" />
     <Compile Include="Utility\Table\ConsoleTable.cs" />
     <Compile Include="Utility\Table\ConsoleTableCollection.cs" />
     <Compile Include="Utility\Table\ConsoleTableColumns.cs" />

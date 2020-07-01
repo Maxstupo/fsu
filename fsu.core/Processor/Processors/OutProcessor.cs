@@ -16,7 +16,8 @@
         }
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
-            File.WriteAllLines(path, items.Select(x => x.Value), Encoding.UTF8);
+            if (!pipeline.Simulate)
+                File.WriteAllLines(path, items.Select(x => x.Value), Encoding.UTF8);
             return items;
         }
 

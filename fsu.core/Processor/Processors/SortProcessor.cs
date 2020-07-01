@@ -8,19 +8,23 @@
     public class SortProcessor : IProcessor {
 
         private readonly string itemPropertyName;
+        private readonly bool isDescending;
 
-        public SortProcessor(string itemPropertyName) {
+        public SortProcessor(string itemPropertyName, bool isDescending) {
             this.itemPropertyName = itemPropertyName;
+            this.isDescending = isDescending;
         }
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
 
-            return items.OrderByDescending(item => {
+            object selector(ProcessorItem item) {
                 PropertyItem property = item.GetProperty(pipeline.PropertyProvider, itemPropertyName);
                 return property?.ValueNumber ?? 0;
-            });
+            }
 
+            return isDescending ? items.OrderByDescending(selector) : items.OrderBy(selector);
         }
+
         public override string ToString() {
             return $"{GetType().Name}[itemPropertyName={itemPropertyName}]";
         }

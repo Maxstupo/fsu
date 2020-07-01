@@ -30,9 +30,9 @@
 
         public override bool Eval(ref TokenStack<T> stack, ref RuleData data) {
             //TEMP
-#if DEBUG
-            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
-#endif
+
+//            new ColorConsole().WriteLine(Level.Fine, $"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
+
             foreach (Rule<T> rule in rules) {
                 if (!rule.Eval(ref stack, ref data))
                     return false;

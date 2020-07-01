@@ -8,13 +8,13 @@
 
         public string InitialValue { get; }
 
-        private string _value;
+        private string value;
         public string Value {
-            get => _value;
+            get => value;
             set {
-                if (_value != value)
-                    cachedProperties.Clear();
-                _value = value;
+                if (this.value != value)
+                    this.cachedProperties.Clear();
+                this.value = value;
             }
         }
 

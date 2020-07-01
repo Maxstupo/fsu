@@ -20,7 +20,7 @@
             if (separator != null) {
 
                 ConsoleTable table = new ConsoleTable {
-                    Printer = new ColorConsoleTablePrinter(pipeline.Console)
+                    Printer = new ColorConsoleTablePrinter(pipeline.Output, Level.None)
                 };
 
 
@@ -45,7 +45,7 @@
             } else {
                 int i = 0;
                 foreach (ProcessorItem item in items)
-                    pipeline.Console.WriteLine($"&-8;{i++,3}:&-^; {item.Value}");
+                    pipeline.Output.WriteLine(Level.None, $"&-8;{i++,3}:&-^; {item.Value}");
             }
 
 

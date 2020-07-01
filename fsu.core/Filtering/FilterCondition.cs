@@ -5,6 +5,7 @@
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
     using System;
+    using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
 
@@ -42,16 +43,16 @@
                 Right = Right.Substring(1);
         }
 
-        public bool Evaluate(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
+        public bool Evaluate(IOutput output, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {
             if (ignored)
                 return false;
 
-            PropertyItem valueLeft = GetValue(console, propertyProvider, propertyStore, item, true);
+            PropertyItem valueLeft = GetValue(output, propertyProvider, propertyStore, item, true);
             if (valueLeft == null)
                 return false;
 
 
-            PropertyItem valueRight = GetValue(console, propertyProvider, propertyStore, item, false);
+            PropertyItem valueRight = GetValue(output, propertyProvider, propertyStore, item, false);
             if (valueRight == null)
                 return false;
 
@@ -60,7 +61,7 @@
 
                 if (Operator.HasFlag(Operator.StartsWith) || Operator.HasFlag(Operator.EndsWith) || Operator.HasFlag(Operator.Contains) || Operator.HasFlag(Operator.Regex)) {
                     ignored = true;
-                    console.WriteLine($"&-c;Unsupported operator for numeric comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
+                    output.WriteLine(Level.Warn, $"&-c;Unsupported operator for numeric comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition: {Left} {Operator} {Right}&-^;");
                     return true;
                 }
 
@@ -102,20 +103,20 @@
                     return Regex.IsMatch(vl, vr, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) == !Operator.HasFlag(Operator.Not);
                 } else {
                     ignored = true;
-                    console.WriteLine($"&-c;Unsupported operator for string comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition...&-^;");
+                    output.WriteLine(Level.Warn, $"&-c;Unsupported operator for string comparison &-e;'{Operator}'&-^;, unable to compare values, ignoring condition: {Left} {Operator} {Right}&-^;");
                     return true;
                 }
 
             } else {
                 ignored = true;
-                console.WriteLine($"&-c;Condition type mismatch, unable to compare values, ignoring condition...&-^;");
+                output.WriteLine(Level.Warn, $"&-c;Condition type mismatch, unable to compare values, ignoring condition: {Left} {Operator} {Right}&-^;");
                 return true;
             }
 
         }
 
 
-        private PropertyItem GetValue(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item, bool isLeft) {
+        private PropertyItem GetValue(IOutput output, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item, bool isLeft) {
             if (isLeft && propLeft != null)
                 return propLeft;
             else if (!isLeft && propRight != null)
@@ -141,7 +142,7 @@
                     return property;
                 }
                 ignored = true;
-                console.WriteLine($"  &-c;Global property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
+                output.WriteLine(Level.Warn, $"  &-c;Global property named '&-e;{text}&-^;' doesn't exist or isn't numeric, ignoring condition: {Left} {Operator} {Right}&-^;");
                 return null;
 
             } else {
@@ -162,7 +163,7 @@
                     return property;
                 }
                 ignored = true;
-                console.WriteLine($"  &-c;Constant value isn't numeric '&-e;{text}&-^;', ignoring condition...&-^;");
+                output.WriteLine(Level.Warn, $"  &-c;Constant value isn't numeric '&-e;{text}&-^;', ignoring condition: {Left} {Operator} {Right}&-^;");
                 return null;
             }
         }

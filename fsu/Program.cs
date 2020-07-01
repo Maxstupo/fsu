@@ -26,7 +26,7 @@
             System.Console.Title = Title;
 
             console = new ColorConsole(System.Console.Out);
-
+            console.Level = Level.Debug;
             fsu = new FsuEngine(console);
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
 

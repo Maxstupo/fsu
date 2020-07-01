@@ -1,13 +1,15 @@
 ﻿namespace Maxstupo.Fsu.Core.Processor {
 
-    using Maxstupo.Fsu.Core.Detail;
-    using Maxstupo.Fsu.Core.Dsl;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Dsl;
+    using Maxstupo.Fsu.Core.Utility;
 
     public class ProcessorPipeline : IProcessorPipeline {
+
+        public bool Simulate { get; set; }
 
         public IPropertyProvider PropertyProvider { get; }
 
@@ -15,11 +17,11 @@
 
         public IInterpreter<IProcessor> Interpreter { get; }
 
-        public IConsole Console { get; }
+        public IOutput Output { get; }
 
 
-        public ProcessorPipeline(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, IInterpreter<IProcessor> interpreter) {
-            Console = console ?? throw new ArgumentNullException(nameof(console));
+        public ProcessorPipeline(IOutput output, IPropertyProvider propertyProvider, IPropertyStore propertyStore, IInterpreter<IProcessor> interpreter) {
+            Output = output ?? throw new ArgumentNullException(nameof(output));
             PropertyProvider = propertyProvider ?? throw new ArgumentNullException(nameof(propertyProvider));
             PropertyStore = propertyStore ?? throw new ArgumentNullException(nameof(propertyStore));
             Interpreter = interpreter ?? throw new ArgumentNullException(nameof(interpreter));
@@ -31,7 +33,7 @@
             IEnumerable<ProcessorItem> items = Enumerable.Empty<ProcessorItem>();
 
             foreach (IProcessor processor in processors) {
-                Console.WriteLine($"&03;Executing: {processor.GetType().Name,-20}&^^;");
+                Output.WriteLine(Level.Debug, $"&03;Executing: {processor.GetType().Name,-20}&^^;");
 
                 items = processor.Process(this, items);
             }

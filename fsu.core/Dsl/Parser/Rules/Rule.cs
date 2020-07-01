@@ -44,9 +44,9 @@
 
             Token<T> token = tokenStack.Next();
 
-#if DEBUG   // TEMP
-            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-#endif
+            // TEMP
+            //   new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+
             bool isMatch = IsTokenTypeMatch(token) && IsPatternMatch(token);
 
             UpdateData(ref data, token, isMatch);

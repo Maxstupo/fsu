@@ -66,6 +66,7 @@
                     return new PropertyItem(item.Value.Substring(origin.Length + 1));
 
                 case "size":
+                case "filesize":
                     if (!File.Exists(item.Value))
                         break;
                     long size = new FileInfo(item.Value).Length;
@@ -77,6 +78,7 @@
                     if (!width.IsNumeric || !height.IsNumeric)
                         break;
                     return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0);
+
                 case "mime":
                     return new PropertyItem(MimeTypesMap.GetMimeType(filepath));
 

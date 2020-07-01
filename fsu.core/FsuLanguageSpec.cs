@@ -19,6 +19,7 @@
                 new TokenDefinition<TokenType>(TokenType.Constant, "files|dirs|directories|top"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "nowindow|no-window"),
+                new TokenDefinition<TokenType>(TokenType.Constant, "asc|desc"),
 
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
                 new TokenDefinition<TokenType>(TokenType.Function, "transform"),
@@ -29,7 +30,6 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "out"),
                 new TokenDefinition<TokenType>(TokenType.Function, "eval"),
                 new TokenDefinition<TokenType>(TokenType.Function, "exec"),
-                new TokenDefinition<TokenType>(TokenType.Function, "copy"),
                 new TokenDefinition<TokenType>(TokenType.Function, "sort"),
             };
         }
@@ -57,9 +57,12 @@
                 },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "sort") {
-                    Construct = x => new SortProcessor(x.Get<string>(0)),
+                    Construct = x => new SortProcessor(x.Get<string>(0), x.Get<bool>(1)),
                     Rules = {
-                        new OptionalRule<TokenType>("size", TokenType.TextValue, TokenType.StringValue)
+                        new OptionalRule<TokenType>("filesize", TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(TokenType.Constant, "asc", "asc|desc") {
+                            TokenConverter = token => token.Value.Equals("asc", StringComparison.InvariantCultureIgnoreCase)
+                        }
                     }
                 },
 
@@ -124,18 +127,6 @@
                         new OptionalRule<TokenType>(TokenType.Constant, false, "nowindow|no-window") {
                             TokenConverter = token => token.Value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || token.Value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
                         }
-                    }
-                },
-
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "copy") {
-                    Construct = x=>new CopyProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1)),
-                    Rules = {
-                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
-                        },
-                        new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
-                        },
                     }
                 },
 

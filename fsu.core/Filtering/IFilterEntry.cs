@@ -6,7 +6,7 @@
 
     public interface IFilterEntry {
 
-        bool Evaluate(IConsole console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item);
+        bool Evaluate(IOutput console, IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item);
 
     }
 
