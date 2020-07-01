@@ -6,6 +6,7 @@
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Utility;
+    using UnitsNet.Units;
 
     public class ExtendedFilePropertyProvider : IPropertyProvider {
 
@@ -64,12 +65,19 @@
             if (value is string str) {
                 return new PropertyItem(str);
             } else {
-                if (detail == FileDetail.Duration) // HACK: Work out a better solution for file detail value translation.
-                    value /= 10000;
-                else if (detail == FileDetail.TotalBitrate)
-                    value /= 1000;
+                double numericValue = Convert.ChangeType(value, typeof(double));
 
-                return new PropertyItem(Convert.ChangeType(value, typeof(double)));
+                Enum unit = null;
+
+                if (detail == FileDetail.Duration) { 
+                    numericValue /= 10000;
+                    unit = DurationUnit.Millisecond;
+
+                } else if (detail == FileDetail.TotalBitrate) {
+                    unit = BitRateUnit.BitPerSecond;
+                }
+
+                return new PropertyItem(numericValue, unit);
             }
         }
 
