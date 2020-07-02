@@ -88,6 +88,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers_Debug.xml" />
+    <None Include="FodyWeavers_Release.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if $(ConfigurationName) == Debug (
+xcopy $(ProjectDir)FodyWeavers_Debug.xml $(ProjectDir)FodyWeavers.xml* /Y
+) ELSE (
+xcopy $(ProjectDir)FodyWeavers_Release.xml $(ProjectDir)FodyWeavers.xml* /Y
+)</PreBuildEvent>
+  </PropertyGroup>
 </Project>

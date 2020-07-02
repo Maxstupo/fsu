@@ -12,6 +12,7 @@
 *_excluded/
 *.testing.sqlite3
 *.ignore.cs
+fsu/FodyWeavers.xml
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
