@@ -1,6 +1,7 @@
 ﻿namespace Maxstupo.Fsu.Core {
 
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Dsl;
@@ -25,6 +26,8 @@
         public IPropertyProviderList PropertyProviders { get; }
 
         public IPropertyStore PropertyStore { get; }
+
+        public string[] FallbackItems { get; set; }
 
         private readonly IInterpreter<IProcessor> interpreter;
 
@@ -113,6 +116,9 @@
 
             List<IProcessor> objs = Parser.Parse(tokens);
 
+            // If no initial items are provided, use the fallback.
+            if (FallbackItems != null && FallbackItems.Length > 0 && objs.Count > 0 && !(objs[0] is ItemsProcessor) && !(objs[0] is InProcessor))
+                objs.Insert(0, new ItemsProcessor(FallbackItems));
 
             Output.WriteLine(Level.Debug, "\n-------------------- Processor List ----------------------\n");
 

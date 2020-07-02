@@ -30,8 +30,10 @@
 
             console = new ColorConsole(System.Console.Out);
             console.Level = Level.Debug;
+
             fsu = new FsuEngine(console);
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
+            fsu.FallbackItems = new string[] { Directory.GetCurrentDirectory() };
 
             cli = new Cli(console);
             cli.OnCommand += Cli_OnCommand;
@@ -46,9 +48,7 @@
         }
 
         private void Cli_OnCommand(object sender, string input) {
-            //fsu.Evaluate(input);
-            console.Clear();
-            fsu.Evaluate(File.ReadAllText("fsu_on_start.txt"));
+            fsu.Evaluate(input);
         }
 
         [STAThread]
