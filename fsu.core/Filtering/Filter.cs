@@ -1,11 +1,11 @@
 ﻿namespace Maxstupo.Fsu.Core.Filtering {
 
-    using Maxstupo.Fsu.Core.Detail;
-    using Maxstupo.Fsu.Core.Processor;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Maxstupo.Fsu.Core.Detail;
+    using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
 
     public class Filter {
 
@@ -29,77 +29,49 @@
 
             private readonly List<IFilterEntry> conditions = new List<IFilterEntry>();
 
-            public FilterBuilder Condition(string leftValue, string op, string rightValue) {
-                Operator operatorValue = 0;
-                string opValue = op.ToLowerInvariant();
+            private IFilterEntry left;
+            private bool isAnd;
+            private bool isOr;
+                       
+            public FilterBuilder Condition(Operand leftValue, Operator op, Operand rightValue) {
 
-                if (opValue.StartsWith("!")) {
-                    opValue = opValue.Substring(1);
-                    operatorValue |= Operator.Not;
-                }
-
-
-                if (opValue == "<>") {
-                    operatorValue |= Operator.Regex; 
-                } else if (opValue == "><") {
-                    operatorValue |= Operator.Contains;
-                } else if (opValue == "~<") {
-                    operatorValue |= Operator.EndsWith;
-                } else if (opValue == ">~") {
-                    operatorValue |= Operator.StartsWith;
-                } else {
-
-                    if (opValue.Contains("="))
-                        operatorValue |= Operator.Equal;
-
-                    if (opValue.Contains("<"))
-                        operatorValue |= Operator.LessThan;
-                    else if (opValue.Contains(">"))
-                        operatorValue |= Operator.GreaterThan;
-                }
-
-                return Condition(leftValue, operatorValue, rightValue);
-            }
-
-            public FilterBuilder Condition(string leftValue, Operator op, string rightValue) {
                 FilterCondition condition = new FilterCondition(leftValue, op, rightValue);
 
-                IFilterEntry entry = conditions.LastOrDefault();
-                if (entry != null) {
-                    if (entry is FilterAnd and && and.Right == null) {
-                        and.Right = condition;
-                    } else if (entry is FilterOr or && or.Right == null) {
-                        or.Right = condition;
-                    } else {
-                        conditions.Add(condition);
-                    }
+                if (isAnd) {
+                    conditions.Add(new FilterAnd(left, condition));
+                    isAnd = false;
+
+                } else if (isOr) {
+                    conditions.Add(new FilterOr(left, condition));
+                    isOr = false;
+
                 } else {
                     conditions.Add(condition);
+
                 }
 
                 return this;
             }
 
             public FilterBuilder And() {
+                if (isAnd)
+                    throw new InvalidOperationException("Cant start another AND filter until previous AND filter has right-side condition.");
+
                 IFilterEntry entry = conditions.LastOrDefault();
-                if (entry == null)
-                    throw new Exception("Can't use a And condition on an empty filter.");
-
-
+                left = entry ?? throw new Exception("Can't use a And condition on an empty filter.");
                 conditions.RemoveAt(conditions.Count - 1);
-                conditions.Add(new FilterAnd(entry, null));
-
+                isAnd = true;
                 return this;
             }
 
             public FilterBuilder Or() {
+                if (isOr)
+                    throw new InvalidOperationException("Cant start another OR filter until previous OR filter has right-side condition.");
+
                 IFilterEntry entry = conditions.LastOrDefault();
-                if (entry == null)
-                    throw new Exception("Can't use a Or condition on an empty filter.");
-
+                left = entry ?? throw new Exception("Can't use a Or condition on an empty filter.");
                 conditions.RemoveAt(conditions.Count - 1);
-                conditions.Add(new FilterOr(entry, null));
-
+                isOr = true;
                 return this;
             }
 

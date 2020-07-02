@@ -70,6 +70,7 @@
     <Compile Include="Filtering\FilterCondition.cs" />
     <Compile Include="Filtering\FilterOr.cs" />
     <Compile Include="Filtering\IFilterEntry.cs" />
+    <Compile Include="Filtering\Operand.cs" />
     <Compile Include="Filtering\Operator.cs" />
     <Compile Include="Format\FormatTemplate.cs" />
     <Compile Include="Format\FormatToken.cs" />

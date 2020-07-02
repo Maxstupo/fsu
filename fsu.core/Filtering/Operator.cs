@@ -4,14 +4,24 @@
 
     [Flags]
     public enum Operator {
-        LessThan = 1,
-        GreaterThan = 2,
-        Equal = 4,
+        
+        Equal = 1,
+
+        LessThan = 2,
+        GreaterThan = 4,
+
+        // String operations.
         EndsWith = 8,
         StartsWith = 16,
         Contains = 32,
-        Not = 64,
-        Regex = 128
+        Regex = 64,
+
+        /// <summary>Invert the operation.</summary>
+        Not = 128,
+
+        /// <summary>If an operand property doesn't exist, ignore the condition.</summary>
+        Ignore = 256
+
     }
 
 }
