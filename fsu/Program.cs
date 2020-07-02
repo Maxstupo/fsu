@@ -22,6 +22,9 @@
 
 
         public Program() {
+
+
+
             System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
 
@@ -43,7 +46,9 @@
         }
 
         private void Cli_OnCommand(object sender, string input) {
-            fsu.Evaluate(input);
+            //fsu.Evaluate(input);
+            console.Clear();
+            fsu.Evaluate(File.ReadAllText("fsu_on_start.txt"));
         }
 
         [STAThread]

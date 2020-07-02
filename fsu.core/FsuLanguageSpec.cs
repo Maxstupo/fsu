@@ -39,8 +39,9 @@
             RepeatingSequenceRule<TokenType> rsr = new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
                 new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
                 new OptionalRule<TokenType>(TokenType.Unit) { TokenConverter = value => value },
+                new OptionalRule<TokenType>(TokenType.Ignore) { TokenConverter = value => value },
                 new OptionalRule<TokenType>(TokenType.Not) { TokenConverter = value => value },
-                new Rule<TokenType>(TokenType.StringOperator, TokenType.NumericOperator) { TokenConverter = value => value },
+                new Rule<TokenType>(TokenType.Operator) { TokenConverter = value => value },
                 new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
                 new OptionalRule<TokenType>(TokenType.Unit) { TokenConverter = value => value },
             };
@@ -134,9 +135,9 @@
                     Construct = x => {
                         Filter.FilterBuilder builder = Filter.Builder();
 
-                        string leftValue = null;
+                        Token<TokenType> leftValueToken=null;
                         string op = null;
-                        string rightValue = null;
+                        bool ignore = false;
                         bool invert = false;
                         bool requiresLogic = false;
 
@@ -151,20 +152,30 @@
                                     if (requiresLogic)
                                         throw new Exception(token.Location);
 
-                                    if (leftValue == null) {
-                                        leftValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-                                    } else if (rightValue == null) {
+                                    if (leftValueToken == null) {
+                                        leftValueToken = token;
+                                    } else  {
                                         if (op == null)
                                             throw new Exception(token.Location);
 
-                                        rightValue = Regex.Replace(token.Value, @"[\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-                                        builder.Condition(leftValue, (invert ? "!" : string.Empty) + op, rightValue);
+                                        string leftValue = GetOperandValue(leftValueToken);
+                                        string rightValue = GetOperandValue(token);
+
+                                        Operand opLeft = GetOperand(leftValueToken);
+                                        Operand opRight = GetOperand(token);
+
+                                        Operator oper = GetOperator(op,ignore, invert);
+
+                                        builder.Condition(opLeft, oper, opRight);
+
                                         op = null;
-                                        leftValue = null;
-                                        rightValue = null;
+                                        leftValueToken = null;
                                         requiresLogic = true;
                                         invert = false;
                                     }
+                                    break;
+                                case TokenType.Ignore:
+                                    ignore = true;
                                     break;
                                 case TokenType.Not:
                                     invert = true;
@@ -178,8 +189,7 @@
                                         requiresLogic = false;
                                     }
                                     break;
-                                case TokenType.NumericOperator:
-                                case TokenType.StringOperator:
+                                case TokenType.Operator:
                                     op = token.Value;
                                     break;
                                 default:
@@ -187,13 +197,84 @@
                             }
 
                         }
-
                         return new FilterProcessor(builder.Create());
                     },
                     Rules = { rsr }
                 }
 
             };
+        }
+
+        private static OperandType GetOperandType(Token<TokenType> token) {
+            switch (token.TokenType) {
+                case TokenType.GlobalProperty: return OperandType.GlobalProperty;
+                case TokenType.ItemProperty: return OperandType.ItemProperty;
+                case TokenType.NumberValue: return OperandType.NumericConstant;
+                default: return OperandType.TextConstant;
+            }
+        }
+
+        private static string GetOperandValue(Token<TokenType> token) {
+            if (token.TokenType == TokenType.GlobalProperty || token.TokenType == TokenType.ItemProperty) {
+                return Regex.Replace(token.Value, @"[\@\$\{\}]", string.Empty, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            } else {
+                return token.Value;
+            }
+        }
+
+        private static Operand GetOperand(Token<TokenType> token) {
+            string value = GetOperandValue(token);
+
+            OperandType type = GetOperandType(token);
+
+            if (type == OperandType.NumericConstant) {
+                return new Operand(double.Parse(value));
+            } else {
+                return new Operand(value, type, null);
+            }
+        }
+
+        private static Operator GetOperator(string op, bool ignored, bool inverted) {
+            Operator oper = 0;
+
+            char c = op[0];
+            bool hasSecond = op.Length == 2;
+
+            if (c == '<') {
+
+                if (hasSecond && op[1] == '>') { // <>
+                    oper |= Operator.Regex;
+
+                } else { // <
+                    oper |= Operator.LessThan;
+
+                }
+
+            } else if (c == '>') {
+                if (hasSecond && op[1] == '<') { // ><
+                    oper |= Operator.Contains;
+
+                } else if (hasSecond && op[1] == '~') { // >~
+                    oper |= Operator.StartsWith;
+
+                } else { // >
+                    oper |= Operator.GreaterThan;
+
+                }
+            } else if (c == '~' && hasSecond && op[1] == '<') { // ~<
+                oper |= Operator.EndsWith;
+            }
+
+
+            if (c == '=' || (hasSecond && op[1] == '=')) // <=, >=, =
+                oper |= Operator.Equal;
+
+
+
+            if (inverted) oper |= Operator.Not;
+            if (ignored) oper |= Operator.Ignore;
+
+            return oper;
         }
 
     }

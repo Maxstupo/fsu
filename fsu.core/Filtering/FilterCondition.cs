@@ -5,7 +5,6 @@
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
 
-
     public class FilterCondition : IFilterEntry {
 
         public Operand LeftOperand { get; }
@@ -67,8 +66,8 @@
                 result = vl > vr;
             }
 
-            if (Operator.HasFlag(Operator.Equal) && !result)
-                result = vl == vr;
+            if (Operator.HasFlag(Operator.Equal))
+                result |= vl == vr;
 
             return result == !Operator.HasFlag(Operator.Not);
 
