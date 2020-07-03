@@ -30,7 +30,7 @@
         }
 
         public Operand(double value) {
-            this.Value = value.ToString();
+            this.Value = value;
             this.Type = OperandType.NumericConstant;
         }
 
@@ -43,7 +43,7 @@
                     if (propertyItem != null)
                         return propertyItem;
 
-                    output.WriteLine(Level.Warn, $"  &-c;Item property named '&-e;{ValueText}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
+                    output.WriteLine(Level.Fine, $"  &-c;Item property named '&-e;{ValueText}&-^;' doesn't exist...&-^;");
                     return null;
 
                 case OperandType.GlobalProperty:
@@ -51,7 +51,7 @@
                     if (property != null)
                         return property;
 
-                    output.WriteLine(Level.Warn, $"  &-c;Global property named '&-e;{ValueText}&-^;' doesn't exist or isn't numeric, ignoring condition...&-^;");
+                    output.WriteLine(Level.Fine, $"  &-c;Global property named '&-e;{ValueText}&-^;' doesn't exist...&-^;");
                     return null;
 
                 case OperandType.NumericConstant:

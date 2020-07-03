@@ -25,7 +25,6 @@
             if (leftValue == null)
                 return Operator.HasFlag(Operator.Ignore);
 
-
             PropertyItem rightValue = RightOperand.GetValue(output, propertyProvider, propertyStore, item);
             if (rightValue == null)
                 return Operator.HasFlag(Operator.Ignore);
@@ -46,7 +45,7 @@
                 return EvaluateText(vl, vr, output);
 
             } else {
-                output.WriteLine(Level.Warn, $"&-c;Condition type mismatch, unable to compare values, ignoring condition: {LeftOperand} {Operator} {RightOperand}&-^;");
+                output.WriteLine(Level.Warn, $"&-c;Condition type mismatch, unable to compare values, ignoring condition: {leftValue.Value} {Operator} {rightValue.Value}&-^;");
                 return true;
             }
         }
