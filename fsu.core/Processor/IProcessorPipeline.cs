@@ -7,13 +7,15 @@
 
     public interface IProcessorPipeline {
 
+        bool Simulate { get; set; }
+
         IPropertyStore PropertyStore { get; }
 
         IPropertyProvider PropertyProvider { get; }
 
-        IConsole Console { get; }
+        IOutput Output { get; }
 
-        IDslInterpreter<IProcessor> Interpreter { get; }
+        IInterpreter<IProcessor> Interpreter { get; }
 
         IEnumerable<ProcessorItem> Process(List<IProcessor> processors);
 

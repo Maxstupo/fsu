@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Core", "fsu.core\Fsu.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu", "fsu\Fsu.csproj", "{4F202C12-D18D-4088-91BB-4BC4D540A638}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Tests", "fsu.tests\Fsu.Tests.csproj", "{E6AE7965-00A8-49BD-818C-E310662519F3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{024A0BC5-0E80-49D4-92FA-90B3553221CD}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -17,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fsu.Tests", "fsu.tests\Fsu.Tests.csproj", "{E6AE7965-00A8-49BD-818C-E310662519F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

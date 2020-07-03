@@ -1,4 +1,4 @@
-﻿namespace Maxstupo.Fsu.Processors {
+﻿namespace Maxstupo.Fsu.Core.Processor.Processors {
 
     using System.Collections.Generic;
     using System.Linq;

@@ -25,12 +25,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Maxstupo.Fsu.Program</StartupObject>
@@ -46,25 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Processors\CopyProcessor.cs" />
-    <Compile Include="Processors\RegexProcessor.cs" />
-    <Compile Include="Processors\SortProcessor.cs" />
-    <Compile Include="Providers\BasicFilePropertyProvider.cs" />
     <Compile Include="Utility\Cli.cs" />
-    <Compile Include="TokenType.cs" />
     <Compile Include="Utility\ExtendedFile.cs" />
     <Compile Include="Providers\ExtendedFilePropertyProvider.cs" />
-    <Compile Include="FsuLanguageSpec.cs" />
-    <Compile Include="Processors\EvalProcessor.cs" />
-    <Compile Include="Processors\ExecProcessor.cs" />
-    <Compile Include="Processors\FilterProcessor.cs" />
-    <Compile Include="Processors\GlobProcessor.cs" />
-    <Compile Include="Processors\InProcessor.cs" />
-    <Compile Include="Processors\ItemsProcessor.cs" />
-    <Compile Include="Processors\OutProcessor.cs" />
-    <Compile Include="Processors\PrintProcessor.cs" />
-    <Compile Include="Processors\ScanProcessor.cs" />
-    <Compile Include="Processors\TransformProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -86,14 +71,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Glob">
-      <Version>1.1.6</Version>
-    </PackageReference>
     <PackageReference Include="MimeTypesMap">
       <Version>1.0.8</Version>
-    </PackageReference>
-    <PackageReference Include="String.Similarity">
-      <Version>3.0.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +88,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+    <None Include="FodyWeavers_Debug.xml" />
+    <None Include="FodyWeavers_Release.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>if $(ConfigurationName) == Debug (
+xcopy $(ProjectDir)FodyWeavers_Debug.xml $(ProjectDir)FodyWeavers.xml* /Y
+) ELSE (
+xcopy $(ProjectDir)FodyWeavers_Release.xml $(ProjectDir)FodyWeavers.xml* /Y
+)</PreBuildEvent>
+  </PropertyGroup>
 </Project>

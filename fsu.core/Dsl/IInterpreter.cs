@@ -2,7 +2,7 @@
 
     using System.Collections.Generic;
 
-    public interface IDslInterpreter<V> where V : class {
+    public interface IInterpreter<V> where V : class {
 
         List<V> Eval(params string[] text);
 

@@ -10,7 +10,7 @@
         }
 
         public static string SafeSubstring(this string str, int offset) {
-            if (string.IsNullOrEmpty(str) || offset < 0 || offset >= str.Length)
+            if (str.Length == 0 || offset < 0 || offset >= str.Length)
                 return str;
 
             return str.Substring(offset);

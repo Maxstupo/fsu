@@ -8,34 +8,33 @@
 
         public string InitialValue { get; }
 
-        private string _value;
+        private string value;
         public string Value {
-            get => _value;
+            get => value;
             set {
-                if (_value != value)
-                    cachedProperties.Clear();
-                _value = value;
+                if (this.value != value)
+                    this.cachedProperties.Clear();
+                this.value = value;
             }
         }
 
-        public string Origin { get; set; }
-
-        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>();
+        private readonly Dictionary<string, PropertyItem> cachedProperties = new Dictionary<string, PropertyItem>(StringComparer.InvariantCultureIgnoreCase);
 
         public ProcessorItem(string value, string origin = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
             InitialValue = value;
-            Origin = origin;
+            if (origin != null)
+                TryCachePropertyValue("origin", new PropertyItem(origin));
         }
 
         public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
+
             if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
-                property = propertyProvider.GetProperty(propertyProvider, this, propertyName);
+                property = propertyProvider.GetProperty(propertyProvider, this, propertyName.ToLowerInvariant());
 
-                if (property != null)
-                    cachedProperties.Add(propertyName, property);
+                TryCachePropertyValue(propertyName, property);
 
                 return property;
             }
@@ -45,7 +44,7 @@
             if (property != null)
                 cachedProperties.Add(propertyName, property);
         }
- 
+
     }
 
 }

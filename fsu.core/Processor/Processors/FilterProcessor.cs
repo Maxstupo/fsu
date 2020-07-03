@@ -1,4 +1,4 @@
-﻿namespace Maxstupo.Fsu.Processors {
+﻿namespace Maxstupo.Fsu.Core.Processor.Processors {
 
     using System;
     using System.Collections.Generic;
@@ -15,7 +15,7 @@
         }
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
-            return items.Where(item => filter.Check(pipeline.Console, pipeline.PropertyProvider, pipeline.PropertyStore, item));
+            return items.Where(item => filter.Check(pipeline.Output, pipeline.PropertyProvider, pipeline.PropertyStore, item));
         }
 
         public override string ToString() {

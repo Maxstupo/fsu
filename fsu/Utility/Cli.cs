@@ -10,7 +10,7 @@
         public int MaxCommandHistory { get; set; } = 25;
 
         public event EventHandler<string> OnCommand;
-        public event Func<string, int, string> OnAutoComplete; // TODO: Use a IAutoCompleteProvider pattern.
+        public event Func<string, int, string> OnAutoComplete;
 
         private int caretIndex = 0;
         private readonly StringBuilder sb = new StringBuilder();
@@ -18,9 +18,9 @@
         private int historyIndex = 0;
         private readonly List<string> commandHistory = new List<string>();
 
-        private readonly IConsole console;
+        private readonly IOutput console;
 
-        public Cli(IConsole console) {
+        public Cli(IOutput console) {
             this.console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
@@ -28,7 +28,7 @@
 
             while (true) {
                 if (!string.IsNullOrWhiteSpace(Prompt))
-                    console.Write(Prompt);
+                    console.Write(Level.None, Prompt);
 
                 while (true) {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
@@ -67,7 +67,7 @@
 
                 }
 
-                console.WriteLine();
+                console.WriteLine(Level.None);
 
                 string cmd = sb.ToString().Trim();
                 if (!string.IsNullOrWhiteSpace(cmd))
@@ -120,20 +120,20 @@
 
         private void InsertChar(char keyChar) {
             sb.Insert(caretIndex, keyChar); // Insert the new char into the buffer.
-            console.Write(keyChar);    // Write the new char to console.
+            console.Write(Level.None, keyChar);    // Write the new char to console.
 
             caretIndex++;
 
             for (int i = caretIndex; i < sb.Length; i++) // Replace the previous chars from buffer.
-                console.Write(sb[i]);
+                console.Write(Level.None, sb[i]);
 
-            console.Write(new string('\b', sb.Length - caretIndex), true);//Return to original caret location
+            console.Write(Level.None, new string('\b', sb.Length - caretIndex), true);//Return to original caret location
         }
 
 
         private bool MoveCaretRight() {
             if (caretIndex < sb.Length && sb.Length > 0) {
-                console.Write(sb[caretIndex]);
+                console.Write(Level.None, sb[caretIndex]);
                 caretIndex++;
                 return true;
             }
@@ -142,7 +142,7 @@
 
         private bool MoveCaretLeft() {
             if (caretIndex > 0 && sb.Length > 0) {
-                console.Write('\b');
+                console.Write(Level.None, '\b');
                 caretIndex--;
                 return true;
             }
@@ -152,18 +152,18 @@
         private bool Backspace() {
             if (sb.Length > 0) {
 
-                console.Write('\b');
+                console.Write(Level.None, '\b');
 
                 for (int i = caretIndex; i < sb.Length; i++) // Replace the previous chars from buffer.
-                    console.Write(sb[i]);
+                    console.Write(Level.None, sb[i]);
 
-                console.Write(' ');
+                console.Write(Level.None, ' ');
 
                 caretIndex--;
                 sb.Remove(caretIndex, 1);
 
 
-                console.Write(new string('\b', (sb.Length - caretIndex) + 1), true);
+                console.Write(Level.None, new string('\b', (sb.Length - caretIndex) + 1), true);
 
                 return true;
             }

@@ -1,8 +1,8 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
 
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
+    using Maxstupo.Fsu.Core.Utility;
 
     /// <summary>
     /// Represents a sub-string of the string provided by the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.
@@ -64,7 +64,7 @@
         /// Debug method for printing out this token with color coding using <see cref="ColorConsole"/>.<br/>
         /// Expects default(T) to be the invalid token type.
         /// </summary>
-        public void WriteLine(IConsole console, char color = 'a') {
+        public void WriteLine(IOutput output, Level level, char color = 'a') {
 
 
             string common = $"&-9;{Precedence}&-^; #&-c;{LineNumber}&-^; @&-c;{StartIndex}&-^;-&-c;{EndIndex}&-^;";
@@ -74,7 +74,7 @@
             if (default(T).Equals(TokenType))
                 color = 'c';
 
-            console.WriteLine($"&-{color};{TokenType,-20}&-^;{value}{common}");
+            output.WriteLine(level, $"&-{color};{TokenType,-20}&-^;{value}{common}");
 
         }
 

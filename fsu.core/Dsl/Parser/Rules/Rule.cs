@@ -3,10 +3,11 @@
     using Maxstupo.Fsu.Core.Dsl.Lexer;
     using Maxstupo.Fsu.Core.Utility;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Rule<T> where T : Enum {
+    public class Rule<T> : IEquatable<Rule<T>> where T : Enum {
 
         public T[] TokenTypes { get; }
 
@@ -43,9 +44,9 @@
 
             Token<T> token = tokenStack.Next();
 
-#if DEBUG   // TEMP
-            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-#endif
+            // TEMP
+            //   new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+
             bool isMatch = IsTokenTypeMatch(token) && IsPatternMatch(token);
 
             UpdateData(ref data, token, isMatch);
@@ -83,6 +84,30 @@
             return Pattern == null || Regex.IsMatch(token.Value, Pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
         }
 
+        public override bool Equals(object obj) {
+            return Equals(obj as Rule<T>);
+        }
+
+        public bool Equals(Rule<T> other) {
+            return other != null &&
+                   EqualityComparer<T[]>.Default.Equals(this.TokenTypes, other.TokenTypes) &&
+                   this.Pattern == other.Pattern;
+        }
+
+        public override int GetHashCode() {
+            int hashCode = 578428228;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T[]>.Default.GetHashCode(this.TokenTypes);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.Pattern);
+            return hashCode;
+        }
+
+        public static bool operator ==(Rule<T> left, Rule<T> right) {
+            return EqualityComparer<Rule<T>>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(Rule<T> left, Rule<T> right) {
+            return !(left == right);
+        }
     }
 
 }

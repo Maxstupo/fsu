@@ -5,14 +5,16 @@
 
     public class ColorConsoleTablePrinter : IConsoleTablePrinter {
 
-        private readonly IConsole console;
+        private readonly IOutput console;
+        private readonly Level level;
 
-        public ColorConsoleTablePrinter(IConsole console) {
+        public ColorConsoleTablePrinter(IOutput console, Level level) {
             this.console = console ?? throw new ArgumentNullException(nameof(console));
+            this.level = level;
         }
 
         public void Write(string str, ConsoleTableSection type, int columnIndex, int rowIndex) {
-            console.Write(str);
+            console.Write(level, str);
         }
 
         public void EndTable() {

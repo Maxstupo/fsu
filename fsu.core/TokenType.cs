@@ -1,4 +1,4 @@
-﻿namespace Maxstupo.Fsu {
+﻿namespace Maxstupo.Fsu.Core {
 
     using Maxstupo.Fsu.Core.Dsl.Lexer;
 
@@ -22,12 +22,12 @@
         [TokenDef(@"!", HasVariableValue = false)]
         Not,
 
-        [TokenDef(@"(?:(?:\<|\>)=?)|=", 2)]
-        NumericOperator,
+        [TokenDef(@"\?", HasVariableValue = false)]
+        Ignore,
 
-        [TokenDef(@"\>\<|\<\>")]
-        [TokenDef(@"~\<|\>~")]
-        StringOperator,
+        [TokenDef(@"(<>|><|<=|>=|>~|~<|<|>|=)", 2)]
+        Operator,
+
 
         [TokenDef(@"&|\|")]
         LogicOperator,

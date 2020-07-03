@@ -9,9 +9,9 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Grammer<T, V> : IEnumerable<Rule<T>> where T : Enum where V : class {
+    public class Grammer<T, V> : IEnumerable<Rule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
 
-        public T[] TriggerTokenTokens { get; }
+        public T[] TriggerTokens { get; }
 
         public string TriggerTokenValuePattern { get; }
 
@@ -31,13 +31,13 @@
         public Func<RuleData, V> Construct;
 
         public Grammer(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
-            TriggerTokenTokens = new T[] { triggerTokenType };
+            TriggerTokens = new T[] { triggerTokenType };
             TriggerTokenValuePattern = triggerTokenValuePattern;
             CleanRuleData = cleanRuleData;
         }
 
         public Grammer(params T[] triggerTokenType) {
-            TriggerTokenTokens = triggerTokenType;
+            TriggerTokens = triggerTokenType;
             TriggerTokenValuePattern = null;
             CleanRuleData = true;
         }
@@ -45,13 +45,9 @@
         public bool Eval(ref TokenStack<T> stack, out V result) {
             Token<T> token = stack.Peek();
 
-            if (IncludeTriggerToken)
-                stack.Prev();
-
-            //TEMP
-#if DEBUG
-            token.WriteLine(new ColorConsole());
-#endif
+            if (IncludeTriggerToken) 
+                 stack.Prev();
+                        
             RuleData data = new RuleData();
 
             foreach (Rule<T> rule in Rules) {
@@ -78,7 +74,7 @@
         /// Checks if the provided <paramref name="token"/> matches the any of the trigger token types and optionally the value pattern.
         /// </summary>
         public virtual bool IsMatch(Token<T> token) {
-            return TriggerTokenTokens.Any(x => x.Equals(token.TokenType)) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
+            return TriggerTokens.Any(x => x.Equals(token.TokenType)) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
         }
 
         public void Add(Rule<T> rule) {
@@ -92,7 +88,38 @@
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
- 
+
+        public override bool Equals(object obj) {
+            return Equals(obj as Grammer<T, V>);
+        }
+
+        public bool Equals(Grammer<T, V> other) {
+            return other != null &&
+                   EqualityComparer<T[]>.Default.Equals(this.TriggerTokens, other.TriggerTokens) &&
+                   this.TriggerTokenValuePattern == other.TriggerTokenValuePattern &&
+                   this.CleanRuleData == other.CleanRuleData &&
+                   this.IncludeTriggerToken == other.IncludeTriggerToken &&
+                   EqualityComparer<List<Rule<T>>>.Default.Equals(this.Rules, other.Rules);
+        }
+
+        public override int GetHashCode() {
+            int hashCode = 206486245;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T[]>.Default.GetHashCode(this.TriggerTokens);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.TriggerTokenValuePattern);
+            hashCode = hashCode * -1521134295 + this.CleanRuleData.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.IncludeTriggerToken.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Rule<T>>>.Default.GetHashCode(this.Rules);
+            return hashCode;
+        }
+
+        public static bool operator ==(Grammer<T, V> left, Grammer<T, V> right) {
+            return EqualityComparer<Grammer<T, V>>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(Grammer<T, V> left, Grammer<T, V> right) {
+            return !(left == right);
+        }
+
     }
 
 }
