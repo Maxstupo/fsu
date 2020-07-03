@@ -27,7 +27,7 @@
                 string value = items.FirstOrDefault()?.Value ?? null;
                 if (value != null) {
                     int columnCount = value.Split(separator, StringSplitOptions.RemoveEmptyEntries).Length;
-                    for (int y = 0; y < columnCount; y++)
+                    for (int y = 0; y <= columnCount; y++)
                         table.Columns.Add(string.Empty);
                 } else {
                     table.Columns.Set("#", "Value");
