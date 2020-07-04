@@ -19,7 +19,7 @@
 
             object selector(ProcessorItem item) {
                 PropertyItem property = item.GetProperty(pipeline.PropertyProvider, itemPropertyName);
-                return property?.ValueNumber ?? 0;
+                return property.IsNumeric ? property.ValueNumber : 0;
             }
 
             return isDescending ? items.OrderByDescending(selector) : items.OrderBy(selector);

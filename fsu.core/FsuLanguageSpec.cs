@@ -117,7 +117,7 @@
                 },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "exec") {
-                    Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1),x.Get<bool>(2)),
+                    Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1), x.Get<bool>(2)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
