@@ -48,10 +48,10 @@
                     return new PropertyItem(item.Value);
 
                 case "ivalue":
-                case "initalvalue":
-                case "initalpath":
+                case "initialvalue":
+                case "initialpath":
                 case "ipath":
-                case "initalfilepath":
+                case "initialfilepath":
                 case "ifilepath":
                     return new PropertyItem(item.InitialValue);
 
