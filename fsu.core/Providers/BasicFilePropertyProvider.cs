@@ -48,10 +48,10 @@
                     return new PropertyItem(item.Value);
 
                 case "ivalue":
-                case "initalvalue":
-                case "initalpath":
+                case "initialvalue":
+                case "initialpath":
                 case "ipath":
-                case "initalfilepath":
+                case "initialfilepath":
                 case "ifilepath":
                     return new PropertyItem(item.InitialValue);
 
@@ -70,7 +70,7 @@
                     if (!File.Exists(item.Value))
                         break;
                     long size = new FileInfo(item.Value).Length;
-                    return new PropertyItem(size, InformationUnit.Byte );
+                    return new PropertyItem(size, InformationUnit.Byte);
 
                 case "megapixels": // Composite property
                     PropertyItem width = item.GetProperty(providerList, "width");
@@ -81,6 +81,9 @@
 
                 case "mime":
                     return new PropertyItem(MimeTypesMap.GetMimeType(filepath));
+                case "type":
+                    string type = MimeTypesMap.GetMimeType(filepath).Split('/')[0];
+                    return new PropertyItem(type);
 
                 case "md5":
                     ha = TryGetOrCacheAlgorithm(propertyName, () => MD5.Create());
