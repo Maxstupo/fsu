@@ -8,7 +8,12 @@
 
         public string ValueText => Value as string;
 
-        public double ValueNumber => IsNumeric ? Convert.ToDouble(Value) : throw new InvalidCastException("Failed to get number value for non-numeric property!");
+        public double ValueNumber =>
+#if DEBUG
+            IsNumeric ? Convert.ToDouble(Value) : throw new InvalidCastException("Failed to get number value for non-numeric property!");
+#else
+            Convert.ToDouble(Value);
+#endif
 
         public bool IsNumeric { get; }
 

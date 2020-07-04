@@ -1,20 +1,27 @@
 ﻿namespace Maxstupo.Fsu.Core.Detail {
 
     using System;
+    using System.Collections.Generic;
 
     public class PropertyStore : IPropertyStore {
-        public void Clear() {
-            throw new NotImplementedException();
 
+        private readonly Dictionary<string, PropertyItem> items = new Dictionary<string, PropertyItem>(StringComparer.InvariantCultureIgnoreCase);
+
+        public void Clear() {
+            items.Clear();
         }
 
         public PropertyItem GetProperty(string propertyName) {
-            throw new NotImplementedException();
-
+            return items.TryGetValue(propertyName, out PropertyItem item) ? item : null;
         }
 
         public void SetProperty(string propertyName, PropertyItem property) {
-            throw new NotImplementedException();
+
+            if (items.ContainsKey(propertyName))
+                return;
+
+            items.Add(propertyName, property);
+
         }
 
     }
