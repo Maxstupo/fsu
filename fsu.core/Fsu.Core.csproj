@@ -79,6 +79,7 @@
     <Compile Include="FsuEngine.cs" />
     <Compile Include="FsuLanguageSpec.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
+    <Compile Include="Processor\Processors\AvgProcessor.cs" />
     <Compile Include="Processor\Processors\ItemsProcessor.cs" />
     <Compile Include="Processor\ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />

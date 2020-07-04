@@ -31,6 +31,7 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "eval"),
                 new TokenDefinition<TokenType>(TokenType.Function, "exec"),
                 new TokenDefinition<TokenType>(TokenType.Function, "sort"),
+                new TokenDefinition<TokenType>(TokenType.Function, "avg"),
             };
         }
 
@@ -200,6 +201,14 @@
                         return new FilterProcessor(builder.Create());
                     },
                     Rules = { rsr }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "avg") {
+                    Construct = x => new AvgProcessor(x.Get<string>(0), x.Get<string>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
+                    }
                 }
 
             };
