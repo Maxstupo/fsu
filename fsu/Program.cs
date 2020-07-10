@@ -1,10 +1,18 @@
 ﻿namespace Maxstupo.Fsu {
 
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Text;
+    using Maxstupo.Fsu.CommandTree;
+    using Maxstupo.Fsu.CommandTree.Attributes;
+    using Maxstupo.Fsu.CommandTree.Parameters;
+    using Maxstupo.Fsu.CommandTree.Providers;
     using Maxstupo.Fsu.Core;
+    using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
     using Maxstupo.Fsu.Providers;
     using Maxstupo.Fsu.Utility;
@@ -19,11 +27,11 @@
 
 
         public Cli cli;
+        private readonly CommandInterpreter commandLine;
 
+        private IEnumerable<ProcessorItem> results;
 
         public Program() {
-
-
 
             System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
@@ -38,9 +46,32 @@
             cli = new Cli(console);
             cli.OnCommand += Cli_OnCommand;
 
+            commandLine = new CommandInterpreter(console, true);
+            commandLine.MessageProvider.Set(StandardMessages.NoCommand, "No command called '&-a;{0}&-^;' was found.");
+            commandLine.MessageProvider.Set(StandardMessages.NextHelpPageTip, "Type '!help {0}( {1})' to read the next page.");
+
+            InitCommands();
+
             //Temp
             if (File.Exists("fsu_on_start.txt"))
-                fsu.Evaluate(File.ReadAllText("fsu_on_start.txt"));
+                Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
+        }
+
+        private void InitCommands() {
+            Command cmdOpen = new Command("Open", "open", description: "Opens a result with the default application.");
+            cmdOpen.Parameters.Add(new ParamDef("index", null, typeof(int), description: "The index of the item to open."));
+            cmdOpen.OnExecuted += OpenResult;
+
+            commandLine.Register(cmdOpen);
+        }
+
+        private void OpenResult(CommandData data) {
+            int index = data.Parameters.Get<int>(0);
+
+            ProcessorItem item = results.Skip(index).FirstOrDefault();
+
+            if (item != null && File.Exists(item.Value))
+                Process.Start(item.Value);
         }
 
         public void Run() {
@@ -48,7 +79,11 @@
         }
 
         private void Cli_OnCommand(object sender, string input) {
-            fsu.Evaluate(input);
+            if (input.StartsWith("!")) {
+                commandLine.Process(input.Substring(1));
+            } else {
+                results = fsu.Evaluate(input);
+            }
         }
 
         [STAThread]
