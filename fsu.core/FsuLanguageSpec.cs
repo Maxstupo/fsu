@@ -34,6 +34,7 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "avg"),
                 new TokenDefinition<TokenType>(TokenType.Function, "min"),
                 new TokenDefinition<TokenType>(TokenType.Function, "max"),
+                new TokenDefinition<TokenType>(TokenType.Function, "mkdir"),
             };
         }
 
@@ -225,6 +226,9 @@
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
                         new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "mkdir") {
+                    Construct = x => new MkDirProcessor(),
                 }
 
             };
