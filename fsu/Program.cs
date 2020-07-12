@@ -7,8 +7,9 @@
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using CommandLine;
+    using CommandLine.Text;
     using Maxstupo.Fsu.CommandTree;
-    using Maxstupo.Fsu.CommandTree.Attributes;
     using Maxstupo.Fsu.CommandTree.Parameters;
     using Maxstupo.Fsu.CommandTree.Providers;
     using Maxstupo.Fsu.Core;
@@ -16,20 +17,6 @@
     using Maxstupo.Fsu.Core.Utility;
     using Maxstupo.Fsu.Providers;
     using Maxstupo.Fsu.Utility;
-    using CommandLine;
-    using CommandLine.Text;
-
-    public class Options {
-
-        [Option('l', "level", Default = Level.Info, HelpText = "The logging level for fsu.")]
-        public Level Level { get; set; }
-
-        [Option('f', "file", Default = null, HelpText = "The file to evaluate at startup.")]
-        public string FileToEvaluate { get; set; }
-
-        [Option("fallback_items", Separator = ',', HelpText = "Processor stream input items to use when nothing is initially provided. Defaults to current directory.")]
-        public IEnumerable<string> FallbackItems { get; set; }
-    }
 
     public class Program {
 
@@ -77,13 +64,20 @@
             cmdClear.OnExecuted += data => console.Clear();
 
             commandLine.Register(cmdClear);
+
+            Command cmdExit = new Command("Exit", "exit", Aliases.Create("q", "quit", "stop"), "Exits the fsu shell.");
+            cmdExit.OnExecuted += data => cli.IsRunning = false;
+
+            commandLine.Register(cmdExit);
         }
 
         private int Start(Options options) {
             if (options.FileToEvaluate != null && File.Exists(options.FileToEvaluate))
                 Cli_OnCommand(null, File.ReadAllText(options.FileToEvaluate));
-
-            Run();
+          
+            if (!options.NoPrompt)
+                Run();
+            
             return 0;
         }
 
