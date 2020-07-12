@@ -20,17 +20,19 @@
 
         private readonly IOutput console;
 
+        public bool IsRunning { get; set; } = true;
+
         public Cli(IOutput console) {
             this.console = console ?? throw new ArgumentNullException(nameof(console));
         }
 
         public void Run() {
 
-            while (true) {
+            while (IsRunning) {
                 if (!string.IsNullOrWhiteSpace(Prompt))
                     console.Write(Level.None, Prompt);
 
-                while (true) {
+                while (IsRunning) {
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                     char keyChar = keyInfo.KeyChar;
 

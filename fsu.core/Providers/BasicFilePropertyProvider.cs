@@ -75,7 +75,7 @@
                 case "megapixels": // Composite property
                     PropertyItem width = item.GetProperty(providerList, "width");
                     PropertyItem height = item.GetProperty(providerList, "height");
-                    if (!width.IsNumeric || !height.IsNumeric)
+                    if (width == null || height == null || !width.IsNumeric || !height.IsNumeric)
                         break;
                     return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0, null);
 

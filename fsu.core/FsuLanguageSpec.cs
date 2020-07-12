@@ -31,6 +31,10 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "eval"),
                 new TokenDefinition<TokenType>(TokenType.Function, "exec"),
                 new TokenDefinition<TokenType>(TokenType.Function, "sort"),
+                new TokenDefinition<TokenType>(TokenType.Function, "avg"),
+                new TokenDefinition<TokenType>(TokenType.Function, "min"),
+                new TokenDefinition<TokenType>(TokenType.Function, "max"),
+                new TokenDefinition<TokenType>(TokenType.Function, "mkdir"),
             };
         }
 
@@ -200,6 +204,31 @@
                         return new FilterProcessor(builder.Create());
                     },
                     Rules = { rsr }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "avg") {
+                    Construct = x => new AvgProcessor(x.Get<string>(0), x.Get<string>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
+                    }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "min") {
+                    Construct = x => new MinProcessor(x.Get<string>(0), x.Get<string>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
+                    }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "max") {
+                    Construct = x => new MaxProcessor(x.Get<string>(0), x.Get<string>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
+                    }
+                },
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "mkdir") {
+                    Construct = x => new MkDirProcessor(),
                 }
 
             };

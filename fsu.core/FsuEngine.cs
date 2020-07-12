@@ -128,7 +128,7 @@
 
             Output.WriteLine(Level.Debug, "\n--------------------- Pipeline Output --------------------\n");
 
-
+            Pipeline.PropertyStore.Clear();
             return Pipeline.Process(objs);
         }
 
