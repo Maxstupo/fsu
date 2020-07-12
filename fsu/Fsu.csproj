@@ -66,6 +66,7 @@
     <Compile Include="CommandTree\Utility\BasicStringSplitter.cs" />
     <Compile Include="CommandTree\Utility\IStringSplitter.cs" />
     <Compile Include="CommandTree\Visibility.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Utility\Cli.cs" />
     <Compile Include="Utility\ExtendedFile.cs" />
     <Compile Include="Providers\ExtendedFilePropertyProvider.cs" />

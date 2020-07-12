@@ -41,7 +41,9 @@
 
             fsu = new FsuEngine(console);
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
-            fsu.FallbackItems = options.FallbackItems.Count() > 0 ? options.FallbackItems.ToArray() : new string[] { Directory.GetCurrentDirectory() };
+
+            string[] fallbackItems = options.FallbackItems.ToArray();
+            fsu.FallbackItems = fallbackItems.Length > 0 ? fallbackItems : new string[] { Directory.GetCurrentDirectory() };
 
             cli = new Cli(console);
             cli.OnCommand += Cli_OnCommand;
@@ -74,10 +76,10 @@
         private int Start(Options options) {
             if (options.FileToEvaluate != null && File.Exists(options.FileToEvaluate))
                 Cli_OnCommand(null, File.ReadAllText(options.FileToEvaluate));
-          
+
             if (!options.NoPrompt)
                 Run();
-            
+
             return 0;
         }
 
