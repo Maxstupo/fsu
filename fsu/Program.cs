@@ -63,14 +63,23 @@
             cmdOpen.OnExecuted += OpenResult;
 
             commandLine.Register(cmdOpen);
+
+            Command cmdClear = new Command("Clear", "clear", Aliases.Create("cls"), "Clears the window.");
+            cmdClear.OnExecuted += data => console.Clear();
+
+            commandLine.Register(cmdClear);
         }
 
         private void OpenResult(CommandData data) {
             int index = data.Parameters.Get<int>(0);
 
-            ProcessorItem item = results.Skip(index).FirstOrDefault();
+            List<ProcessorItem> items = results.ToList();
+            if (index < 0 || index >= items.Count)
+                return;
 
-            if (item != null && File.Exists(item.Value))
+            ProcessorItem item = items[index];
+
+            if (File.Exists(item.Value))
                 Process.Start(item.Value);
         }
 
