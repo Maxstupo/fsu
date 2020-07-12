@@ -16,32 +16,45 @@
     using Maxstupo.Fsu.Core.Utility;
     using Maxstupo.Fsu.Providers;
     using Maxstupo.Fsu.Utility;
+    using CommandLine;
+    using CommandLine.Text;
+
+    public class Options {
+
+        [Option('l', "level", Default = Level.Info, HelpText = "The logging level for fsu.")]
+        public Level Level { get; set; }
+
+        [Option('f', "file", Default = null, HelpText = "The file to evaluate at startup.")]
+        public string FileToEvaluate { get; set; }
+
+        [Option("fallback_items", Separator = ',', HelpText = "Processor stream input items to use when nothing is initially provided. Defaults to current directory.")]
+        public IEnumerable<string> FallbackItems { get; set; }
+    }
 
     public class Program {
 
         private string Title => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyTitleAttribute>().Title;
 
-        private readonly ColorConsole console;
-
-        private readonly FsuEngine fsu;
+        private ColorConsole console;
+        private FsuEngine fsu;
 
 
         public Cli cli;
-        private readonly CommandInterpreter commandLine;
+        private CommandInterpreter commandLine;
 
         private IEnumerable<ProcessorItem> results;
 
         public Program() {
-
             System.Console.OutputEncoding = Encoding.Unicode;
             System.Console.Title = Title;
+        }
 
-            console = new ColorConsole(System.Console.Out);
-            console.Level = Level.Debug;
+        private void Init(Options options) {
+            console = new ColorConsole(System.Console.Out) { Level = options.Level };
 
             fsu = new FsuEngine(console);
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
-            fsu.FallbackItems = new string[] { Directory.GetCurrentDirectory() };
+            fsu.FallbackItems = options.FallbackItems.Count() > 0 ? options.FallbackItems.ToArray() : new string[] { Directory.GetCurrentDirectory() };
 
             cli = new Cli(console);
             cli.OnCommand += Cli_OnCommand;
@@ -51,10 +64,6 @@
             commandLine.MessageProvider.Set(StandardMessages.NextHelpPageTip, "Type '!help {0}( {1})' to read the next page.");
 
             InitCommands();
-
-            //Temp
-            if (File.Exists("fsu_on_start.txt"))
-                Cli_OnCommand(null, File.ReadAllText("fsu_on_start.txt"));
         }
 
         private void InitCommands() {
@@ -68,6 +77,14 @@
             cmdClear.OnExecuted += data => console.Clear();
 
             commandLine.Register(cmdClear);
+        }
+
+        private int Start(Options options) {
+            if (options.FileToEvaluate != null && File.Exists(options.FileToEvaluate))
+                Cli_OnCommand(null, File.ReadAllText(options.FileToEvaluate));
+
+            Run();
+            return 0;
         }
 
         private void OpenResult(CommandData data) {
@@ -97,12 +114,47 @@
 
         [STAThread]
         static int Main(string[] args) {
+
+#if DEBUG
+            if (Debugger.IsAttached)
+                args = "-l Fine -f fsu_on_start.txt".Split(' ');
+#endif
+
+            Parser parser = new Parser(with => { with.HelpWriter = null; with.CaseInsensitiveEnumValues = true; });
+            ParserResult<Options> result = parser.ParseArguments<Options>(args);
+
+            int exitCode = 0;
+
             Program program = new Program();
-            program.Run();
 
+            result
+                .WithParsed(options => { program.Init(options); exitCode = program.Start(options); })
+                .WithNotParsed(errs => {
+                    DisplayHelp(result, errs);
+                    exitCode = -1;
+                });
 
-            return 0;
+#if DEBUG
+            if (Debugger.IsAttached) {
+                Console.Write("Press any key to continue...");
+                Console.ReadLine();
+            }
+#endif
+            return exitCode;
         }
+
+        static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs) {
+            HelpText helpText = HelpText.AutoBuild(result, h => {
+
+                h.AdditionalNewLineAfterOption = false;
+                h.AddEnumValuesToHelpText = true;
+
+                return HelpText.DefaultParsingErrorsHandler(result, h);
+            }, e => e);
+
+            Console.WriteLine(helpText);
+        }
+
 
     }
 
