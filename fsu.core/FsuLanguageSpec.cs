@@ -24,6 +24,7 @@
 
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
                 new TokenDefinition<TokenType>(TokenType.Function, "transform"),
+                new TokenDefinition<TokenType>(TokenType.Function, "rename"),
                 new TokenDefinition<TokenType>(TokenType.Function, "glob"),
                 new TokenDefinition<TokenType>(TokenType.Function, "print"),
                 new TokenDefinition<TokenType>(TokenType.Function, "filter"),
@@ -116,6 +117,15 @@
                     Construct = x => new TransformProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty) {
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                        }
+                    }
+                },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "rename") {
+                    Construct = x => new RenameProcessor(x.Get<FormatTemplate>(0)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty, TokenType.GlobalProperty) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
                         }
                     }
