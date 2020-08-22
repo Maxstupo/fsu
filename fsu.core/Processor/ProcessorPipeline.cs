@@ -9,7 +9,7 @@
 
     public class ProcessorPipeline : IProcessorPipeline {
 
-        public bool Simulate { get; set; }
+        public bool Simulate { get; set; } = true;
 
         public IPropertyProvider PropertyProvider { get; }
 

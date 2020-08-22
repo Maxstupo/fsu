@@ -40,6 +40,7 @@
             console = new ColorConsole(System.Console.Out) { Level = options.Level };
 
             fsu = new FsuEngine(console);
+            fsu.Pipeline.Simulate = true;
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
 
             string[] fallbackItems = options.FallbackItems.ToArray();
@@ -71,6 +72,13 @@
             cmdExit.OnExecuted += data => cli.IsRunning = false;
 
             commandLine.Register(cmdExit);
+
+            Command cmSim = new Command("Simulate", "sim", null, "Toggle simulation mode.");
+            cmSim.OnExecuted += data => {
+                fsu.Pipeline.Simulate = !fsu.Pipeline.Simulate;
+                data.Output.WriteLine(Level.Info, $"-- Simulation mode is {(fsu.Pipeline.Simulate ? "on" : "off")}");
+            };
+            commandLine.Register(cmSim);
         }
 
         private int Start(Options options) {
