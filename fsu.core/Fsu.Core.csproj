@@ -98,6 +98,7 @@
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
     <Compile Include="Processor\Processors\ScanProcessor.cs" />
     <Compile Include="Processor\Processors\SortProcessor.cs" />
+    <Compile Include="Processor\Processors\ExtractProcessor.cs" />
     <Compile Include="Processor\Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />

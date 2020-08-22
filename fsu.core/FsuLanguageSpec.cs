@@ -25,6 +25,7 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
                 new TokenDefinition<TokenType>(TokenType.Function, "transform"),
                 new TokenDefinition<TokenType>(TokenType.Function, "rename"),
+                new TokenDefinition<TokenType>(TokenType.Function, "extract"),
                 new TokenDefinition<TokenType>(TokenType.Function, "glob"),
                 new TokenDefinition<TokenType>(TokenType.Function, "print"),
                 new TokenDefinition<TokenType>(TokenType.Function, "filter"),
@@ -121,6 +122,16 @@
                         }
                     }
                 },
+
+                new Grammer<TokenType, IProcessor>(TokenType.Function, "extract") {
+                    Construct = x => new ExtractProcessor(x.Get<string>(2), x.Get<string>(1), x.Get<string>(0)),
+                    Rules = {
+                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue)
+                    }
+                },
+
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "rename") {
                     Construct = x => new RenameProcessor(x.Get<FormatTemplate>(0)),
