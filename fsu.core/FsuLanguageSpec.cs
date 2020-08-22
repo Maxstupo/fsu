@@ -18,7 +18,8 @@
             return new HashSet<TokenDefinition<TokenType>> {
                 new TokenDefinition<TokenType>(TokenType.Constant, "files|dirs|directories|top"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"),
-                new TokenDefinition<TokenType>(TokenType.Constant, "nowindow|no-window"),
+                new TokenDefinition<TokenType>(TokenType.Constant, "window|nowindow|no-window"),
+                new TokenDefinition<TokenType>(TokenType.Constant, "wait"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "asc|desc"),
 
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
@@ -121,7 +122,7 @@
                 },
 
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "exec") {
-                    Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1), x.Get<bool>(2)),
+                    Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1), x.Get<bool>(2),x.Get<bool>(3)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
@@ -129,8 +130,11 @@
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
                             TokenConverter = token => FormatTemplate.Build(token.Value)
                         },
-                        new OptionalRule<TokenType>(TokenType.Constant, false, "nowindow|no-window") {
+                        new OptionalRule<TokenType>(TokenType.Constant, false, "window|nowindow|no-window") {
                             TokenConverter = token => token.Value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || token.Value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
+                        },
+                        new OptionalRule<TokenType>(TokenType.Constant, false, "wait") {
+                            TokenConverter = token => token.Value.Equals("wait", StringComparison.InvariantCultureIgnoreCase)
                         }
                     }
                 },

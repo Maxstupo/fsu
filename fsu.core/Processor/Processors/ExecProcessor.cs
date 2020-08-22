@@ -2,6 +2,7 @@
 
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Text;
     using Maxstupo.Fsu.Core.Format;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
@@ -12,11 +13,13 @@
         private readonly FormatTemplate argsTemplate;
 
         private readonly bool noWindow;
+        private readonly bool wait;
 
-        public ExecProcessor(FormatTemplate execTemplate, FormatTemplate argumentsTemplate, bool noWindow) {
+        public ExecProcessor(FormatTemplate execTemplate, FormatTemplate argumentsTemplate, bool noWindow, bool wait) {
             this.exeTemplate = execTemplate;
             this.argsTemplate = argumentsTemplate;
             this.noWindow = noWindow;
+            this.wait = wait;
         }
 
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
@@ -25,8 +28,14 @@
                 ErrorDialog = false,
                 UseShellExecute = !noWindow,
                 RedirectStandardOutput = noWindow,
-                RedirectStandardError = noWindow
-            };
+                RedirectStandardError = noWindow,
+                StandardOutputEncoding = Encoding.Unicode,
+                StandardErrorEncoding = Encoding.Unicode
+            }; 
+            
+            if (pipeline.Simulate)
+                pipeline.Output.WriteLine(Utility.Level.Info, $"\n&-c;-------- Simulation Mode Active! --------&-^;\n");
+
 
             foreach (ProcessorItem item in items) {
 
@@ -56,6 +65,10 @@
                         process?.BeginErrorReadLine();
                         process?.BeginOutputReadLine();
                     }
+
+                    if (wait)
+                        process?.WaitForExit();
+
                 } catch (Win32Exception) {
                     pipeline.Output.WriteLine(Level.Error, $"&-c;Failed to execute: {exeFilepath} {exeArguments}&-^;");
                 }
