@@ -43,7 +43,14 @@
 
                     switch (keyInfo.Key) {
                         case ConsoleKey.Backspace:
-                            Backspace();
+                            if (keyInfo.Modifiers.HasFlag(ConsoleModifiers.Control)) {
+                                Clear();
+                            } else
+                                Backspace();
+                            break;
+                        case ConsoleKey.Delete:
+                            if (MoveCaretRight())
+                                Backspace();
                             break;
                         case ConsoleKey.UpArrow:
                             ShowHistory(-1);
