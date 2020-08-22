@@ -32,7 +32,7 @@
         private IEnumerable<ProcessorItem> results;
 
         public Program() {
-            System.Console.OutputEncoding = Encoding.Unicode;
+            System.Console.OutputEncoding = Encoding.UTF8;
             System.Console.Title = Title;
         }
 

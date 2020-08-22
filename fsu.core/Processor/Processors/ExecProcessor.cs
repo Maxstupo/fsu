@@ -28,9 +28,7 @@
                 ErrorDialog = false,
                 UseShellExecute = !noWindow,
                 RedirectStandardOutput = noWindow,
-                RedirectStandardError = noWindow,
-                StandardOutputEncoding = Encoding.Unicode,
-                StandardErrorEncoding = Encoding.Unicode
+                RedirectStandardError = noWindow
             }; 
             
             if (pipeline.Simulate)
