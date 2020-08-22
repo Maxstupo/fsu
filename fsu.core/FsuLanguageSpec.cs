@@ -228,7 +228,12 @@
                     }
                 },
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "mkdir") {
-                    Construct = x => new MkDirProcessor(),
+                    Construct = x => new MkDirProcessor(x.Get<FormatTemplate>(0)),
+                    Rules = {
+                        new OptionalRule<TokenType>(FormatTemplate.Build("@{value}"), TokenType.TextValue, TokenType.StringValue) {
+                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                        },
+                    }
                 }
 
             };
