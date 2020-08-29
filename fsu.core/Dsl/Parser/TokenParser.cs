@@ -15,10 +15,10 @@
         private readonly T eofToken;
         private readonly T invalidToken;
 
-        private readonly ISet<Grammer<T, V>> grammers = new HashSet<Grammer<T, V>>();
+        private readonly ISet<Grammar<T, V>> grammers = new HashSet<Grammar<T, V>>();
 
-        public event EventHandler<Grammer<T, V>> OnGrammerAdded;
-        public event EventHandler<Grammer<T, V>> OnGrammerRemoved;
+        public event EventHandler<Grammar<T, V>> OnGrammerAdded;
+        public event EventHandler<Grammar<T, V>> OnGrammerRemoved;
         public event EventHandler OnGrammersCleared;
 
         public event EventHandler<Token<T>> OnTokenError;
@@ -36,7 +36,7 @@
             grammers.Clear();
         }
 
-        public Grammer<T, V> Add(Grammer<T, V> grammer) {
+        public Grammar<T, V> Add(Grammar<T, V> grammer) {
             if (grammer == null)
                 throw new ArgumentNullException(nameof(grammer));
 
@@ -48,7 +48,7 @@
             return grammer;
         }
 
-        public void Remove(Grammer<T, V> grammer) {
+        public void Remove(Grammar<T, V> grammer) {
             grammers.Remove(grammer);
             OnGrammerRemoved?.Invoke(this, grammer);
         }
@@ -82,13 +82,13 @@
 
                 } else if (!inComment) {
 
-                    List<Grammer<T, V>> matchedGrammers = grammers.Where(x => x.IsMatch(token)).ToList();
+                    List<Grammar<T, V>> matchedGrammers = grammers.Where(x => x.IsMatch(token)).ToList();
 
                     if (matchedGrammers.Count == 0) // No grammers exist for the token.
                         hasError = true;
 
                     for (int i = 0; i < matchedGrammers.Count; i++) {
-                        Grammer<T, V> grammer = matchedGrammers[i];
+                        Grammar<T, V> grammer = matchedGrammers[i];
 
                         stack.Mark();
 

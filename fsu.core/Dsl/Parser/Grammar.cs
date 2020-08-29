@@ -9,7 +9,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Grammer<T, V> : IEnumerable<IRule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
+    public class Grammar<T, V> : IEnumerable<IRule<T>>, IEquatable<Grammar<T, V>> where T : Enum where V : class {
 
         public T[] TriggerTokens { get; }
 
@@ -30,13 +30,13 @@
         /// </summary>
         public Func<RuleData, V> Construct;
 
-        public Grammer(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
+        public Grammar(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
             TriggerTokens = new T[] { triggerTokenType };
             TriggerTokenValuePattern = triggerTokenValuePattern;
             CleanRuleData = cleanRuleData;
         }
 
-        public Grammer(params T[] triggerTokenType) {
+        public Grammar(params T[] triggerTokenType) {
             TriggerTokens = triggerTokenType;
             TriggerTokenValuePattern = null;
             CleanRuleData = true;
@@ -90,10 +90,10 @@
         }
 
         public override bool Equals(object obj) {
-            return Equals(obj as Grammer<T, V>);
+            return Equals(obj as Grammar<T, V>);
         }
 
-        public bool Equals(Grammer<T, V> other) {
+        public bool Equals(Grammar<T, V> other) {
             return other != null &&
                    EqualityComparer<T[]>.Default.Equals(this.TriggerTokens, other.TriggerTokens) &&
                    this.TriggerTokenValuePattern == other.TriggerTokenValuePattern &&
@@ -112,11 +112,11 @@
             return hashCode;
         }
 
-        public static bool operator ==(Grammer<T, V> left, Grammer<T, V> right) {
-            return EqualityComparer<Grammer<T, V>>.Default.Equals(left, right);
+        public static bool operator ==(Grammar<T, V> left, Grammar<T, V> right) {
+            return EqualityComparer<Grammar<T, V>>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(Grammer<T, V> left, Grammer<T, V> right) {
+        public static bool operator !=(Grammar<T, V> left, Grammar<T, V> right) {
             return !(left == right);
         }
 

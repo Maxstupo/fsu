@@ -61,13 +61,13 @@
         }
 
         protected virtual void Init() {
-            ISet<Grammer<TokenType, IProcessor>> grammers = new HashSet<Grammer<TokenType, IProcessor>> {
+            ISet<Grammar<TokenType, IProcessor>> grammers = new HashSet<Grammar<TokenType, IProcessor>> {
 
-                new Grammer<TokenType, IProcessor>(TokenType.Pipe) {
+                new Grammar<TokenType, IProcessor>(TokenType.Pipe) {
                     Rules = { new LookaheadRule<TokenType>(TokenType.Function, TokenType.TextValue, TokenType.StringValue) }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.StringValue, TokenType.TextValue) {
+                new Grammar<TokenType, IProcessor>(TokenType.StringValue, TokenType.TextValue) {
                     IncludeTriggerToken = true,
                     Construct = x => new ItemsProcessor(x.Cast<string>()),
                     Rules = {
@@ -88,14 +88,14 @@
 
 
 
-            IEnumerable<Grammer<TokenType, IProcessor>> allGrammers = grammers.Concat(FsuLanguageSpec.GetGrammers());
+            IEnumerable<Grammar<TokenType, IProcessor>> allGrammers = grammers.Concat(FsuLanguageSpec.GetGrammers());
 
             // Ensure that all functions have a pipe or be the end of line after them.
-            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers.Where(x => x.TriggerTokens[0].Equals(TokenType.Function)))
+            foreach (Grammar<TokenType, IProcessor> grammer in allGrammers.Where(x => x.TriggerTokens[0].Equals(TokenType.Function)))
                 grammer.Rules.Add(new LookaheadRule<TokenType>(TokenType.Pipe, TokenType.Eol));
 
             Parser.Clear();
-            foreach (Grammer<TokenType, IProcessor> grammer in allGrammers)
+            foreach (Grammar<TokenType, IProcessor> grammer in allGrammers)
                 Parser.Add(grammer);
         }
 

@@ -21,9 +21,11 @@
                 new TokenDefinition<TokenType>(TokenType.Constant, "window|nowindow|no-window"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "wait"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "asc|desc"),
+                new TokenDefinition<TokenType>(TokenType.Keyword, "from|to|as"),
 
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
                 new TokenDefinition<TokenType>(TokenType.Function, "transform"),
+                new TokenDefinition<TokenType>(TokenType.Function, "sum"),
                 new TokenDefinition<TokenType>(TokenType.Function, "rename"),
                 new TokenDefinition<TokenType>(TokenType.Function, "extract"),
                 new TokenDefinition<TokenType>(TokenType.Function, "glob"),
@@ -47,7 +49,7 @@
             return propertyName.Substring(0, propertyName.Length - 1);
         };
 
-        public static ISet<Grammer<TokenType, IProcessor>> GetGrammers() {
+        public static ISet<Grammar<TokenType, IProcessor>> GetGrammers() {
             // Filter processor.
             RepeatingSequenceRule<TokenType> rsr = new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
                 new Rule<TokenType>(TokenType.ItemProperty, TokenType.GlobalProperty, TokenType.NumberValue, TokenType.StringValue, TokenType.TextValue) { TokenConverter = value => value },
@@ -61,16 +63,16 @@
             rsr.TokenConverter = value => value;
 
 
-            return new HashSet<Grammer<TokenType, IProcessor>> {
+            return new HashSet<Grammar<TokenType, IProcessor>> {
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "print") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "print") {
                     Construct = x => new PrintProcessor(x.Get<string>(0)),
                     Rules = {
                         new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "sort") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "sort") {
                     Construct = x => new SortProcessor(x.Get<string>(0), x.Get<bool>(1)),
                     Rules = {
                         new OptionalRule<TokenType>("filesize", TokenType.TextValue, TokenType.StringValue),
@@ -80,7 +82,7 @@
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "eval") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "eval") {
                     Construct = x => new EvalProcessor(x.Get<bool>(0), x.Get<bool>(1)),
                     Rules = {
                         new OptionalRule<TokenType>(TokenType.Constant, false, "join|seq") {
@@ -92,7 +94,7 @@
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "scan") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "scan") {
                     Construct = x => new ScanProcessor(x.Get<bool>(0), x.Get<SearchOption>(1)),
                     Rules = {
                         new Rule<TokenType>(TokenType.Constant, "files|dirs|directories") {
@@ -105,22 +107,22 @@
                 },
 
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "glob") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "glob") {
                     Construct = x => new GlobProcessor(x.Get<string>(0)),
                     Rules = { new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "in") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "in") {
                     Construct = x => new InProcessor(x.Get<string>(0)),
                     Rules = { new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "out") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "out") {
                     Construct = x => new OutProcessor(x.Get<string>(0)),
                     Rules = { new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "transform") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "transform") {
                     Construct = x => new TransformProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty) {
@@ -130,7 +132,7 @@
                 },
                
              
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "extract") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "extract") {
                     Construct = x => {
                         if (x.Get<int>(1) == 0) { // first branch
                             return new ExtractProcessor(x.Get<string>(0), x.Get<string>(5), x.Get<string>(3));
@@ -161,7 +163,7 @@
                 },
 
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "rename") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "rename") {
                     Construct = x => new RenameProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty, TokenType.GlobalProperty) {
@@ -170,7 +172,7 @@
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "exec") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "exec") {
                     Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1), x.Get<bool>(2),x.Get<bool>(3)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
@@ -188,7 +190,7 @@
                     }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "filter") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "filter") {
                     Construct = x => {
                         Filter.FilterBuilder builder = Filter.Builder();
 
@@ -259,28 +261,35 @@
                     Rules = { rsr }
                 },
 
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "avg") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "avg") {
                     Construct = x => new AvgProcessor(x.Get<string>(0), x.Get<string>(1)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
                         new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
                 },
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "min") {
+                  new Grammar<TokenType, IProcessor>(TokenType.Function, "sum") {
+                    Construct = x => new SumProcessor(x.Get<string>(0), x.Get<string>(1)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
+                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
+                    }
+                },
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "min") {
                     Construct = x => new MinProcessor(x.Get<string>(0), x.Get<string>(1)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
                         new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
                 },
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "max") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "max") {
                     Construct = x => new MaxProcessor(x.Get<string>(0), x.Get<string>(1)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
                         new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
                     }
                 },
-                new Grammer<TokenType, IProcessor>(TokenType.Function, "mkdir") {
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "mkdir") {
                     Construct = x => new MkDirProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{value}"), TokenType.TextValue, TokenType.StringValue) {

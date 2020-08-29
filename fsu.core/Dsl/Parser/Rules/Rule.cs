@@ -20,7 +20,7 @@
         public string Pattern { get; }
 
         /// <summary>
-        /// Converts the token for this rule into an object usable within the <see cref="Grammer{T, V}.Construct"/> delegate. By default the value of the token is used.
+        /// Converts the token for this rule into an object usable within the <see cref="Grammar{T, V}.Construct"/> delegate. By default the value of the token is used.
         /// </summary>
         public Func<Token<T>, object> TokenConverter { get; set; }
 
@@ -68,7 +68,7 @@
         }
 
         /// <summary>
-        /// Returns the value of the provided <paramref name="token"/> converted into the correct format for <see cref="Grammer{T, V}.Construct"/>.
+        /// Returns the value of the provided <paramref name="token"/> converted into the correct format for <see cref="Grammar{T, V}.Construct"/>.
         /// </summary>
         protected virtual object GetValue(Token<T> token) {
             if (TokenConverter == null)
