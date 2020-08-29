@@ -6,7 +6,7 @@
     using System.Linq;
 
     /// <summary>
-    /// A parser that converts a sequence of tokens into a list of objects, while ensuring correct grammer is adhered to with the token sequence.
+    /// A parser that converts a sequence of tokens into a list of objects, while ensuring correct grammar is adhered to with the token sequence.
     /// </summary>
     public class TokenParser<T, V> : ITokenParser<T, V> where T : Enum where V : class {
 

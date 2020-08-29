@@ -24,7 +24,7 @@
         public List<IRule<T>> Rules { get; } = new List<IRule<T>>();
 
         /// <summary>
-        /// A function that is called when this Grammer evaluated sucessfully. 
+        /// A function that is called when this Grammar evaluated sucessfully. 
         /// Provides access to <see cref="RuleData"/> containing values from each rule, the returned value will be added to the parser result list.
         /// <br/>The Function can return null or the Construct delegate can be null doing so will cause the method and or result to be ignored.
         /// </summary>
