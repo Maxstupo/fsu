@@ -32,7 +32,7 @@
         private IEnumerable<ProcessorItem> results;
 
         public Program() {
-            System.Console.OutputEncoding = Encoding.Unicode;
+            System.Console.OutputEncoding = Encoding.UTF8;
             System.Console.Title = Title;
         }
 
@@ -40,6 +40,7 @@
             console = new ColorConsole(System.Console.Out) { Level = options.Level };
 
             fsu = new FsuEngine(console);
+            fsu.Pipeline.Simulate = true;
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
 
             string[] fallbackItems = options.FallbackItems.ToArray();
@@ -71,6 +72,14 @@
             cmdExit.OnExecuted += data => cli.IsRunning = false;
 
             commandLine.Register(cmdExit);
+
+            Command cmSim = new Command("Simulate", "simulate", Aliases.Create("sim"), "Enable/disable simulation mode.");
+            cmSim.Parameters.Add(new ParamDef("value", true, typeof(bool)));
+            cmSim.OnExecuted += data => {
+                fsu.Pipeline.Simulate = data.Parameters.Get<bool>("value");
+                data.Output.WriteLine(Level.Info, $"Simulation mode is {(fsu.Pipeline.Simulate ? "&-a;on" : "&-c;off")}&-^;");
+            };
+            commandLine.Register(cmSim);
         }
 
         private int Start(Options options) {

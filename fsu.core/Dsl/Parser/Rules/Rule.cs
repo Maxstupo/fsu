@@ -7,14 +7,20 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Rule<T> : IEquatable<Rule<T>> where T : Enum {
+    public interface IRule<T> where T : Enum {
+
+        bool Eval(ref TokenStack<T> tokenStack, ref RuleData data);
+
+    }
+
+    public class Rule<T> : IEquatable<Rule<T>>, IRule<T> where T : Enum {
 
         public T[] TokenTypes { get; }
 
         public string Pattern { get; }
 
         /// <summary>
-        /// Converts the token for this rule into an object usable within the <see cref="Grammer{T, V}.Construct"/> delegate. By default the value of the token is used.
+        /// Converts the token for this rule into an object usable within the <see cref="Grammar{T, V}.Construct"/> delegate. By default the value of the token is used.
         /// </summary>
         public Func<Token<T>, object> TokenConverter { get; set; }
 
@@ -62,7 +68,7 @@
         }
 
         /// <summary>
-        /// Returns the value of the provided <paramref name="token"/> converted into the correct format for <see cref="Grammer{T, V}.Construct"/>.
+        /// Returns the value of the provided <paramref name="token"/> converted into the correct format for <see cref="Grammar{T, V}.Construct"/>.
         /// </summary>
         protected virtual object GetValue(Token<T> token) {
             if (TokenConverter == null)

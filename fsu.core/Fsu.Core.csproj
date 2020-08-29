@@ -57,9 +57,10 @@
     <Compile Include="Dsl\Lexer\Tokenizer.cs" />
     <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="Dsl\Lexer\TokenStack.cs" />
-    <Compile Include="Dsl\Parser\Grammer.cs" />
+    <Compile Include="Dsl\Parser\Grammar.cs" />
     <Compile Include="Dsl\Parser\ITokenParser.cs" />
     <Compile Include="Dsl\Parser\RuleData.cs" />
+    <Compile Include="Dsl\Parser\Rules\BranchingRule.cs" />
     <Compile Include="Dsl\Parser\Rules\LookaheadRule.cs" />
     <Compile Include="Dsl\Parser\Rules\LookbackRule.cs" />
     <Compile Include="Dsl\Parser\Rules\OptionalRule.cs" />
@@ -80,6 +81,9 @@
     <Compile Include="FsuLanguageSpec.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\Processors\AggregateProcessor.cs" />
+    <Compile Include="Processor\Processors\FormulaProcessor.cs" />
+    <Compile Include="Processor\Processors\SumProcessor.cs" />
+    <Compile Include="Processor\Processors\RenameProcessor.cs" />
     <Compile Include="Processor\Processors\MkDirProcessor.cs" />
     <Compile Include="Processor\Processors\MaxProcessor.cs" />
     <Compile Include="Processor\Processors\MinProcessor.cs" />
@@ -97,6 +101,7 @@
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
     <Compile Include="Processor\Processors\ScanProcessor.cs" />
     <Compile Include="Processor\Processors\SortProcessor.cs" />
+    <Compile Include="Processor\Processors\ExtractProcessor.cs" />
     <Compile Include="Processor\Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />

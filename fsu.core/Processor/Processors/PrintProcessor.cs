@@ -1,8 +1,9 @@
 ﻿namespace Maxstupo.Fsu.Core.Processor.Processors {
-   
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
     using Maxstupo.Fsu.Core.Utility.Table;
@@ -47,8 +48,13 @@
                 foreach (ProcessorItem item in items)
                     pipeline.Output.WriteLine(Level.None, $"&-8;{i++,3}:&-^; {item.Value}");
             }
-
-
+            //
+            if (pipeline.PropertyStore.Count > 0) {
+                pipeline.Output.WriteLine(Level.None, "\n------------- Summary --------------");
+                foreach (KeyValuePair<string, PropertyItem> item in pipeline.PropertyStore) 
+                    pipeline.Output.WriteLine(Level.None, $"{item.Key}: {item.Value.Value}");
+                
+            }
             return items;
         }
 

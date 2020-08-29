@@ -9,7 +9,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Grammer<T, V> : IEnumerable<Rule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
+    public class Grammar<T, V> : IEnumerable<IRule<T>>, IEquatable<Grammar<T, V>> where T : Enum where V : class {
 
         public T[] TriggerTokens { get; }
 
@@ -21,22 +21,22 @@
         /// <summary>If true, include the trigger token when evaluating the rules.</summary>
         public bool IncludeTriggerToken { get; set; } = false;
 
-        public List<Rule<T>> Rules { get; } = new List<Rule<T>>();
+        public List<IRule<T>> Rules { get; } = new List<IRule<T>>();
 
         /// <summary>
-        /// A function that is called when this Grammer evaluated sucessfully. 
+        /// A function that is called when this Grammar evaluated sucessfully. 
         /// Provides access to <see cref="RuleData"/> containing values from each rule, the returned value will be added to the parser result list.
         /// <br/>The Function can return null or the Construct delegate can be null doing so will cause the method and or result to be ignored.
         /// </summary>
         public Func<RuleData, V> Construct;
 
-        public Grammer(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
+        public Grammar(T triggerTokenType, string triggerTokenValuePattern = null, bool cleanRuleData = true) {
             TriggerTokens = new T[] { triggerTokenType };
             TriggerTokenValuePattern = triggerTokenValuePattern;
             CleanRuleData = cleanRuleData;
         }
 
-        public Grammer(params T[] triggerTokenType) {
+        public Grammar(params T[] triggerTokenType) {
             TriggerTokens = triggerTokenType;
             TriggerTokenValuePattern = null;
             CleanRuleData = true;
@@ -77,11 +77,11 @@
             return TriggerTokens.Any(x => x.Equals(token.TokenType)) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
         }
 
-        public void Add(Rule<T> rule) {
+        public void Add(IRule<T> rule) {
             Rules.Add(rule);
         }
 
-        public IEnumerator<Rule<T>> GetEnumerator() {
+        public IEnumerator<IRule<T>> GetEnumerator() {
             return Rules.GetEnumerator();
         }
 
@@ -90,16 +90,16 @@
         }
 
         public override bool Equals(object obj) {
-            return Equals(obj as Grammer<T, V>);
+            return Equals(obj as Grammar<T, V>);
         }
 
-        public bool Equals(Grammer<T, V> other) {
+        public bool Equals(Grammar<T, V> other) {
             return other != null &&
                    EqualityComparer<T[]>.Default.Equals(this.TriggerTokens, other.TriggerTokens) &&
                    this.TriggerTokenValuePattern == other.TriggerTokenValuePattern &&
                    this.CleanRuleData == other.CleanRuleData &&
                    this.IncludeTriggerToken == other.IncludeTriggerToken &&
-                   EqualityComparer<List<Rule<T>>>.Default.Equals(this.Rules, other.Rules);
+                   EqualityComparer<List<IRule<T>>>.Default.Equals(this.Rules, other.Rules);
         }
 
         public override int GetHashCode() {
@@ -108,15 +108,15 @@
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.TriggerTokenValuePattern);
             hashCode = hashCode * -1521134295 + this.CleanRuleData.GetHashCode();
             hashCode = hashCode * -1521134295 + this.IncludeTriggerToken.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Rule<T>>>.Default.GetHashCode(this.Rules);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<IRule<T>>>.Default.GetHashCode(this.Rules);
             return hashCode;
         }
 
-        public static bool operator ==(Grammer<T, V> left, Grammer<T, V> right) {
-            return EqualityComparer<Grammer<T, V>>.Default.Equals(left, right);
+        public static bool operator ==(Grammar<T, V> left, Grammar<T, V> right) {
+            return EqualityComparer<Grammar<T, V>>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(Grammer<T, V> left, Grammer<T, V> right) {
+        public static bool operator !=(Grammar<T, V> left, Grammar<T, V> right) {
             return !(left == right);
         }
 

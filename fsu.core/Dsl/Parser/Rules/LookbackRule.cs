@@ -25,8 +25,7 @@
 
         public override bool Eval(ref TokenStack<T> tokenStack, ref RuleData data) {
             tokenStack.Prev();
-            bool isMatch = base.Eval(ref tokenStack, ref data);
-            return isMatch;
+            return base.Eval(ref tokenStack, ref data);
         }
 
         /// <summary>Disabled.<br/><br/>Dont generate any rule data.</summary>

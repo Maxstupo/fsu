@@ -6,15 +6,15 @@
 
     public interface ITokenParser<T, V> where T : Enum where V : class {
         
-        event EventHandler<Grammer<T, V>> OnGrammerAdded;
-        event EventHandler<Grammer<T, V>> OnGrammerRemoved;
+        event EventHandler<Grammar<T, V>> OnGrammerAdded;
+        event EventHandler<Grammar<T, V>> OnGrammerRemoved;
         event EventHandler OnGrammersCleared;
         event EventHandler<Token<T>> OnTokenError;
         event EventHandler<Token<T>> OnTokenParsing;
 
-        Grammer<T, V> Add(Grammer<T, V> grammer);
+        Grammar<T, V> Add(Grammar<T, V> grammer);
 
-        void Remove(Grammer<T, V> grammer);
+        void Remove(Grammar<T, V> grammer);
 
         void Clear();
 
