@@ -9,7 +9,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Grammer<T, V> : IEnumerable<Rule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
+    public class Grammer<T, V> : IEnumerable<IRule<T>>, IEquatable<Grammer<T, V>> where T : Enum where V : class {
 
         public T[] TriggerTokens { get; }
 
@@ -21,7 +21,7 @@
         /// <summary>If true, include the trigger token when evaluating the rules.</summary>
         public bool IncludeTriggerToken { get; set; } = false;
 
-        public List<Rule<T>> Rules { get; } = new List<Rule<T>>();
+        public List<IRule<T>> Rules { get; } = new List<IRule<T>>();
 
         /// <summary>
         /// A function that is called when this Grammer evaluated sucessfully. 
@@ -77,11 +77,11 @@
             return TriggerTokens.Any(x => x.Equals(token.TokenType)) && (TriggerTokenValuePattern == null || Regex.IsMatch(token.Value, TriggerTokenValuePattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant));
         }
 
-        public void Add(Rule<T> rule) {
+        public void Add(IRule<T> rule) {
             Rules.Add(rule);
         }
 
-        public IEnumerator<Rule<T>> GetEnumerator() {
+        public IEnumerator<IRule<T>> GetEnumerator() {
             return Rules.GetEnumerator();
         }
 
@@ -99,7 +99,7 @@
                    this.TriggerTokenValuePattern == other.TriggerTokenValuePattern &&
                    this.CleanRuleData == other.CleanRuleData &&
                    this.IncludeTriggerToken == other.IncludeTriggerToken &&
-                   EqualityComparer<List<Rule<T>>>.Default.Equals(this.Rules, other.Rules);
+                   EqualityComparer<List<IRule<T>>>.Default.Equals(this.Rules, other.Rules);
         }
 
         public override int GetHashCode() {
@@ -108,7 +108,7 @@
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.TriggerTokenValuePattern);
             hashCode = hashCode * -1521134295 + this.CleanRuleData.GetHashCode();
             hashCode = hashCode * -1521134295 + this.IncludeTriggerToken.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Rule<T>>>.Default.GetHashCode(this.Rules);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<IRule<T>>>.Default.GetHashCode(this.Rules);
             return hashCode;
         }
 

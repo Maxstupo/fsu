@@ -7,7 +7,13 @@
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public class Rule<T> : IEquatable<Rule<T>> where T : Enum {
+    public interface IRule<T> where T : Enum {
+
+        bool Eval(ref TokenStack<T> tokenStack, ref RuleData data);
+
+    }
+
+    public class Rule<T> : IEquatable<Rule<T>>, IRule<T> where T : Enum {
 
         public T[] TokenTypes { get; }
 
