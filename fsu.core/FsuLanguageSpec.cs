@@ -41,6 +41,12 @@
             };
         }
 
+        private static readonly Func<Token<TokenType>, object> TokenConverterFormatTemplate = token => FormatTemplate.Build(token.Value);
+        private static readonly Func<Token<TokenType>, object> TokenConverterPropertyName = token => {
+            string propertyName = token.Value.Substring(2);
+            return propertyName.Substring(0, propertyName.Length - 1);
+        };
+
         public static ISet<Grammer<TokenType, IProcessor>> GetGrammers() {
             // Filter processor.
             RepeatingSequenceRule<TokenType> rsr = new RepeatingSequenceRule<TokenType>(true, TokenType.LogicOperator) {
@@ -118,17 +124,39 @@
                     Construct = x => new TransformProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                            TokenConverter = TokenConverterFormatTemplate
                         }
                     }
                 },
-
+               
+             
                 new Grammer<TokenType, IProcessor>(TokenType.Function, "extract") {
-                    Construct = x => new ExtractProcessor(x.Get<string>(2), x.Get<string>(1), x.Get<string>(0)),
+                    Construct = x => {
+                        if (x.Get<int>(1) == 0) { // first branch
+                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(5), x.Get<string>(3));
+
+                        } else { // second branch
+                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(3), "value");
+                        }
+                    },
                     Rules = {
-                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue),
-                       new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue)
+                       new Rule<TokenType>(TokenType.StringValue),
+                       new BranchingRule<TokenType>() {
+                           Branches = {
+                                //extract "regex" from @{name} as @{ep}
+                                new List<Rule<TokenType>>() {
+                                    new Rule<TokenType>(TokenType.Keyword, "from"),
+                                    new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
+                                    new Rule<TokenType>(TokenType.Keyword, "as"),
+                                    new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
+                                },
+                                // extract "regex" as @{ep}
+                                new List<Rule<TokenType>>() {
+                                    new Rule<TokenType>(TokenType.Keyword, "as"),
+                                    new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
+                                }
+                           }
+                       }
                     }
                 },
 
@@ -137,7 +165,7 @@
                     Construct = x => new RenameProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty, TokenType.GlobalProperty) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                            TokenConverter = TokenConverterFormatTemplate
                         }
                     }
                 },
@@ -146,10 +174,10 @@
                     Construct = x => new ExecProcessor(x.Get<FormatTemplate>(0), x.Get<FormatTemplate>(1), x.Get<bool>(2),x.Get<bool>(3)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                            TokenConverter = TokenConverterFormatTemplate
                         },
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{filepath}"), TokenType.TextValue, TokenType.StringValue) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                            TokenConverter = TokenConverterFormatTemplate
                         },
                         new OptionalRule<TokenType>(TokenType.Constant, false, "window|nowindow|no-window") {
                             TokenConverter = token => token.Value.Equals("nowindow", StringComparison.InvariantCultureIgnoreCase) || token.Value.Equals("no-window", StringComparison.InvariantCultureIgnoreCase)
@@ -256,7 +284,7 @@
                     Construct = x => new MkDirProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new OptionalRule<TokenType>(FormatTemplate.Build("@{value}"), TokenType.TextValue, TokenType.StringValue) {
-                            TokenConverter = token => FormatTemplate.Build(token.Value)
+                            TokenConverter = TokenConverterFormatTemplate
                         },
                     }
                 }
