@@ -45,6 +45,10 @@
                 index = recordStack.Pop();
         }
 
+        public void Unmark() {
+            if (recordStack.Count > 0) recordStack.Pop();
+        }
+
         /// <summary>
         /// Sets the index of this stack to the beggining and clears all marks.
         /// </summary>
