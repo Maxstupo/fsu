@@ -60,6 +60,7 @@
     <Compile Include="Dsl\Parser\Grammer.cs" />
     <Compile Include="Dsl\Parser\ITokenParser.cs" />
     <Compile Include="Dsl\Parser\RuleData.cs" />
+    <Compile Include="Dsl\Parser\Rules\BranchingRule.cs" />
     <Compile Include="Dsl\Parser\Rules\LookaheadRule.cs" />
     <Compile Include="Dsl\Parser\Rules\LookbackRule.cs" />
     <Compile Include="Dsl\Parser\Rules\OptionalRule.cs" />
