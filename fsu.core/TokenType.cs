@@ -49,7 +49,7 @@
 
         [TokenDef(@"//")]
         Comment,
-
+        Keyword,
     }
 
 }

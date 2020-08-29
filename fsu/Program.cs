@@ -73,10 +73,11 @@
 
             commandLine.Register(cmdExit);
 
-            Command cmSim = new Command("Simulate", "sim", null, "Toggle simulation mode.");
+            Command cmSim = new Command("Simulate", "simulate", Aliases.Create("sim"), "Enable/disable simulation mode.");
+            cmSim.Parameters.Add(new ParamDef("value", true, typeof(bool)));
             cmSim.OnExecuted += data => {
-                fsu.Pipeline.Simulate = !fsu.Pipeline.Simulate;
-                data.Output.WriteLine(Level.Info, $"-- Simulation mode is {(fsu.Pipeline.Simulate ? "on" : "off")}");
+                fsu.Pipeline.Simulate = data.Parameters.Get<bool>("value");
+                data.Output.WriteLine(Level.Info, $"Simulation mode is {(fsu.Pipeline.Simulate ? "&-a;on" : "&-c;off")}&-^;");
             };
             commandLine.Register(cmSim);
         }

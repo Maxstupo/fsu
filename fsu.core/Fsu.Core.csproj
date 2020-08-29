@@ -81,6 +81,8 @@
     <Compile Include="FsuLanguageSpec.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\Processors\AggregateProcessor.cs" />
+    <Compile Include="Processor\Processors\FormulaProcessor.cs" />
+    <Compile Include="Processor\Processors\SumProcessor.cs" />
     <Compile Include="Processor\Processors\RenameProcessor.cs" />
     <Compile Include="Processor\Processors\MkDirProcessor.cs" />
     <Compile Include="Processor\Processors\MaxProcessor.cs" />
