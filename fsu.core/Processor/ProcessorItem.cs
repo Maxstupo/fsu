@@ -42,7 +42,7 @@
 
         public void TryCachePropertyValue(string propertyName, PropertyItem property) {
             if (property != null)
-                cachedProperties.Add(propertyName, property);
+                cachedProperties[propertyName] = property;
         }
 
     }

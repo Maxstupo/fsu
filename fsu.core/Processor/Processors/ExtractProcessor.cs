@@ -13,15 +13,15 @@
         private readonly string regexText;
         private readonly string key;
         private readonly string property;
-
+        private readonly bool all;
         private readonly Regex regex;
 
 
-        public ExtractProcessor(string regex, string key, string property) {
+        public ExtractProcessor(string regex, string key, string property, bool all) {
             this.regexText = regex ?? throw new ArgumentNullException(nameof(regex));
             this.key = key ?? throw new ArgumentNullException(nameof(key));
             this.property = property ?? throw new ArgumentNullException(nameof(property));
-
+            this.all = all;
             this.regex = new Regex(regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
         }
 
@@ -43,9 +43,13 @@
                             item.TryCachePropertyValue($"{key}{i - 1}", CreatePropertyItem(group.Value));
                         }
                     }
-                }
 
-                yield return item;
+                    if (!all)
+                        yield return item;
+                } 
+
+                if (all)
+                    yield return item;
             }
         }
 
@@ -54,7 +58,7 @@
         }
 
         public override string ToString() {
-            return $"{GetType().Name}[regex={regexText}, property={property}, key={key}]";
+            return $"{GetType().Name}[regex={regexText}, property={property}, key={key}, all={all}]";
         }
 
     }

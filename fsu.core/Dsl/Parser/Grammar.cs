@@ -45,20 +45,22 @@
         public bool Eval(ref TokenStack<T> stack, out V result) {
             Token<T> token = stack.Peek();
 
-            if (IncludeTriggerToken) 
-                 stack.Prev();
-                        
+            if (IncludeTriggerToken)
+                stack.Prev();
+
             RuleData data = new RuleData();
 
-            foreach (Rule<T> rule in Rules) {
+            foreach (IRule<T> rule in Rules) {
                 if (!rule.Eval(ref stack, ref data)) {
                     result = null;
                     return false;
                 }
             }
 
-            if (CleanRuleData)
-                data.RemoveAll(x => x == null);
+            if (CleanRuleData) {
+                foreach (string key in data.Where(x => x.Value == null).Select(x => x.Key).ToList())
+                    data.Remove(key);
+            }
 
             try {
                 result = Construct?.Invoke(data) ?? null;

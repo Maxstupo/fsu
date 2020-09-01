@@ -19,6 +19,8 @@
 
         public string Pattern { get; }
 
+        public string Key { get; set; }
+
         /// <summary>
         /// Converts the token for this rule into an object usable within the <see cref="Grammar{T, V}.Construct"/> delegate. By default the value of the token is used.
         /// </summary>
@@ -51,11 +53,12 @@
             Token<T> token = tokenStack.Next();
 
             // TEMP
-            //   new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+               new ColorConsole().WriteLine(Level.None,$"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
 
             bool isMatch = IsTokenTypeMatch(token) && IsPatternMatch(token);
+            new ColorConsole().WriteLine(Level.None, isMatch.ToString());
 
-            UpdateData(ref data, token, isMatch);
+          UpdateData(ref data, token, isMatch);
             return isMatch;
         }
 
@@ -63,8 +66,8 @@
         /// Adds the translated token value into the provided <paramref name="ruleData"/> object if the rule was a match.
         /// </summary>
         protected virtual void UpdateData(ref RuleData ruleData, Token<T> token, bool isMatch) {
-            if (isMatch)
-                ruleData.Add(GetValue(token));
+            if (isMatch && Key != null)
+                ruleData.Add(Key, GetValue(token));
         }
 
         /// <summary>

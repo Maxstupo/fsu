@@ -25,27 +25,27 @@
             Token<T> token = stack.Next();
 
             // TEMP
-//#if DEBUG
-//            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-//#endif
+            //#if DEBUG
+                     new ColorConsole().WriteLine(Level.None,$"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+            //#endif
             // Token type doesn't match, token isn't the one we are looking for... Revert stack, and return true.
-            if (!IsTokenTypeMatch(token)) {
+            if (!IsTokenTypeMatch(token) || !IsPatternMatch(token)) {
                 stack.Prev();
                 UpdateData(ref data, token, false);
 
                 //TEMP
-//#if DEBUG
-//                new ColorConsole().WriteLine("    - Optional token missing, reverting...");
-//#endif
+                //#if DEBUG
+                            new ColorConsole().WriteLine(Level.None, "    - Optional token missing, reverting...");
+                //#endif
+                return true;
+            } else {
+
+                UpdateData(ref data, token, true);
+
                 return true;
             }
 
-            // Token with correct type exists, check if pattern matches.
-            bool isMatch = IsPatternMatch(token);
-
-            UpdateData(ref data, token, isMatch);
-
-            return isMatch;
+        
         }
 
 
@@ -53,7 +53,8 @@
         /// Adds the translated token value into the provided <paramref name="ruleData"/> object if the rule was a match, else the  default value of this rule will be added.
         /// </summary>
         protected override void UpdateData(ref RuleData ruleData, Token<T> token, bool isMatch) {
-            ruleData.Add(isMatch ? GetValue(token) : DefaultValue);
+            if(Key!=null)
+            ruleData.Add(Key, isMatch ? GetValue(token) : DefaultValue);
         }
 
     }

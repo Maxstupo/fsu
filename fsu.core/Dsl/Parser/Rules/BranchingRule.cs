@@ -12,6 +12,12 @@
 
         public List<List<Rule<T>>> Branches { get; } = new List<List<Rule<T>>>();
 
+        private readonly bool noMatchFail;
+
+        public BranchingRule(bool noMatchFail = false) {
+            this.noMatchFail = noMatchFail;
+        }
+
         public bool Eval(ref TokenStack<T> stack, ref RuleData data) {
 
             int originalIndex = data.Count;
@@ -21,16 +27,17 @@
                 stack.Mark();
                 {
                     if (EvalRules(ref stack, ref data, rules)) {
-                        data.Insert(originalIndex, i);
+                    //    data.Insert(originalIndex, i);
                         stack.Unmark();
                         return true;
                     }
                 }
                 stack.Jump();
-                data.RemoveRange(originalIndex, data.Count - originalIndex);
+              //  if (noMatchFail)
+                //    data.RemoveRange(originalIndex, data.Count - originalIndex);
             }
             stack.Next();
-            return false;
+            return noMatchFail;
         }
 
         private static bool EvalRules(ref TokenStack<T> stack, ref RuleData data, List<Rule<T>> rules) {

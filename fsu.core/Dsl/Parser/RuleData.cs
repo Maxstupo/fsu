@@ -3,15 +3,10 @@
     using System;
     using System.Collections.Generic;
 
-    public class RuleData : List<object> {
+    public class RuleData : Dictionary<string, object> {
 
-        public T Get<T>(int index) {
-            if (index < 0 || index >= Count)
-                return default;
-
-            object value = this[index];
-
-            return (T) Convert.ChangeType(value, typeof(T));
+        public T Get<T>(string key) {
+            return TryGetValue(key, out object value) ? ((T) Convert.ChangeType(value, typeof(T))) : default;
         }
 
     }
