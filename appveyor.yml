@@ -37,4 +37,4 @@ build:
 test_script:
   - cmd: >-
       
-      %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[*]Maxstupo.*.Tests*" -coverbytest:"*.Tests.dll" -output:".\coverage_%CONFIGURATION%.xml"
+      %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[*]Maxstupo.*.Tests*" -coverbytest:"*.Test.dll" -output:".\coverage_%CONFIGURATION%.xml"
