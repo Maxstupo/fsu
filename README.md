@@ -1,5 +1,5 @@
 # fsu
-[![Coverage Status](https://coveralls.io/repos/github/Maxstupo/fsu/badge.svg?branch=master)](https://coveralls.io/github/Maxstupo/fsu?branch=develop)
+[![Coverage Status](https://coveralls.io/repos/github/Maxstupo/fsu/badge.svg?branch=develop)](https://coveralls.io/github/Maxstupo/fsu?branch=develop)
 
 ### Example Usage
 Print all files in C:\Pictures to console and text file:
