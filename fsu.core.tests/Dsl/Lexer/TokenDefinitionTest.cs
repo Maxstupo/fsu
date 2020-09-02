@@ -45,9 +45,9 @@
         }
 
         [Theory]
-        [InlineData(2, false)]
-        [InlineData(8, true)]
-        public void FindMatches_TokenProperties_MatchDefinition(int precedence, bool hasVariableValue) {
+        [InlineData(2, false, "#5 @ 0/11")]
+        [InlineData(8, true, "#5 @ 0/11")]
+        public void FindMatches_TokenProperties_MatchDefinition(int precedence, bool hasVariableValue, string location) {
             var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.MyToken2, ".+", null, precedence, hasVariableValue, null, -1, true);
 
             var matches = td.FindMatches("hello_world", 5);
@@ -57,6 +57,7 @@
                 Assert.Equal(precedence, match.Precedence);
                 Assert.Equal(hasVariableValue, match.HasVariableValue);
                 Assert.Equal(5, match.LineNumber);
+                Assert.Equal(location, match.Location);
             }
         }
 

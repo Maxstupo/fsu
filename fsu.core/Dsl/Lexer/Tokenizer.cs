@@ -14,7 +14,10 @@
         private readonly T eolToken;
         private readonly T eofToken;
 
-        private readonly ISet<TokenDefinition<T>> tokenDefinitions = new HashSet<TokenDefinition<T>>();
+        private readonly List<TokenDefinition<T>> tokenDefinitions = new List<TokenDefinition<T>>();
+
+        public IReadOnlyCollection<TokenDefinition<T>> TokenDefinitions => tokenDefinitions.AsReadOnly();
+
 
         public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;

@@ -16,6 +16,16 @@
             E
         }
 
+        public enum TokenTypeTestAuto {
+            A,
+            B,
+            C,
+            [TokenDef(@"S\d\d")]
+            D,
+            [TokenDef(@"E\d\d")]
+            E
+        }
+
         [Fact]
         public void Add_NullTokenDefinition_ThrowsArgumentNullException() {
             var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
@@ -66,6 +76,51 @@
             Assert.Throws<ArgumentException>(() => tokenizer.Add(td));
         }
 
+        [Fact]
+        public void Add_Count_ExpectsOne() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, ""));
+
+            Assert.Single(tokenizer.TokenDefinitions);
+        }
+
+        [Fact]
+        public void LoadTokenDefinitions_Count_ExpectsTwo() {
+            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.A, TokenTypeTestAuto.B, TokenTypeTestAuto.C, false);
+            tokenizer.LoadTokenDefinitions();
+
+            Assert.Equal(2, tokenizer.TokenDefinitions.Count);
+        }
+
+        [Fact]
+        public void LoadTokenDefinitionsCtor_Count_ExpectsTwo() {
+            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.A, TokenTypeTestAuto.B, TokenTypeTestAuto.C, true);
+            Assert.Equal(2, tokenizer.TokenDefinitions.Count);
+        }
+
+        [Fact]
+        public void Remove_NonExistingTokenDefinition_ExpectsNoChange() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+
+            var td1 = new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, "");
+            tokenizer.Add(td1);
+
+            var td2 = new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, "");
+            tokenizer.Remove(td2);
+
+            Assert.Single(tokenizer.TokenDefinitions);
+        }
+
+        [Fact]
+        public void Remove_ExistingTokenDefinition_ExpectsDecrease() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+
+            var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, "");
+            tokenizer.Add(td);
+            tokenizer.Remove(td);
+
+            Assert.DoesNotContain(td, tokenizer.TokenDefinitions);
+        }
 
         [Fact]
         public void Tokenize_NullInput_ThrowsArgumentNullException() {
@@ -98,6 +153,16 @@
             var lastToken = matches.Last();
 
             Assert.Equal(TokenTypeTest.B, lastToken.TokenType);
+        }
+
+        [Fact]
+        public void Clear_AddTokenDef_ExpectsZero() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"S\d\d"));
+
+            tokenizer.Clear();
+
+            Assert.Empty(tokenizer.TokenDefinitions);
         }
 
     }
