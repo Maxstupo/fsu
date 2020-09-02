@@ -9,17 +9,17 @@
     public class TokenizerTest {
 
         public enum TokenTypeTest {
-            A,
-            B,
-            C,
+            Invalid,
+            Eol,
+            Eof,
             D,
             E
         }
 
         public enum TokenTypeTestAuto {
-            A,
-            B,
-            C,
+            Invalid,
+            Eol,
+            Eof,
             [TokenDef(@"S\d\d")]
             D,
             [TokenDef(@"E\d\d")]
@@ -28,36 +28,36 @@
 
         [Fact]
         public void Add_NullTokenDefinition_ThrowsArgumentNullException() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             Assert.Throws<ArgumentNullException>(() => tokenizer.Add(null));
         }
 
         [Fact]
         public void Remove_NullTokenDefinition_ThrowsArgumentNullException() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             Assert.Throws<ArgumentNullException>(() => tokenizer.Remove(null));
         }
 
         [Fact]
         public void FindAllTokenMatches_NullInput_ThrowsArgumentNullException() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             Assert.Throws<ArgumentNullException>(() => tokenizer.FindAllTokenMatches(null, 1).ToList());
         }
 
         [Theory]
-        [InlineData(TokenTypeTest.A, TokenTypeTest.A, TokenTypeTest.B)]
-        [InlineData(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.B)]
-        [InlineData(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.A)]
+        [InlineData(TokenTypeTest.Invalid, TokenTypeTest.Invalid, TokenTypeTest.Eol)]
+        [InlineData(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eol)]
+        [InlineData(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Invalid)]
         public void Ctor_DuplicateReservedTokens_ThrowsArgumentException(TokenTypeTest invalid, TokenTypeTest eol, TokenTypeTest eof) {
             Assert.Throws<ArgumentException>(() => new Tokenizer<TokenTypeTest>(invalid, eol, eof, false));
         }
 
         [Fact]
         public void Add_DuplicateTokenDefinition_ThrowsArgumentException() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, "");
             tokenizer.Add(td);
@@ -66,11 +66,11 @@
         }
 
         [Theory]
-        [InlineData(TokenTypeTest.A)]
-        [InlineData(TokenTypeTest.B)]
-        [InlineData(TokenTypeTest.C)]
+        [InlineData(TokenTypeTest.Invalid)]
+        [InlineData(TokenTypeTest.Eol)]
+        [InlineData(TokenTypeTest.Eof)]
         public void Add_ReservedTokenDefinition_ThrowsArgumentException(TokenTypeTest token) {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             var td = new TokenDefinition<TokenTypeTest>(token, "");
             Assert.Throws<ArgumentException>(() => tokenizer.Add(td));
@@ -78,7 +78,7 @@
 
         [Fact]
         public void Add_Count_ExpectsOne() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, ""));
 
             Assert.Single(tokenizer.TokenDefinitions);
@@ -86,7 +86,7 @@
 
         [Fact]
         public void LoadTokenDefinitions_Count_ExpectsTwo() {
-            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.A, TokenTypeTestAuto.B, TokenTypeTestAuto.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.Invalid, TokenTypeTestAuto.Eol, TokenTypeTestAuto.Eof, false);
             tokenizer.LoadTokenDefinitions();
 
             Assert.Equal(2, tokenizer.TokenDefinitions.Count);
@@ -94,13 +94,13 @@
 
         [Fact]
         public void LoadTokenDefinitionsCtor_Count_ExpectsTwo() {
-            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.A, TokenTypeTestAuto.B, TokenTypeTestAuto.C, true);
+            var tokenizer = new Tokenizer<TokenTypeTestAuto>(TokenTypeTestAuto.Invalid, TokenTypeTestAuto.Eol, TokenTypeTestAuto.Eof, true);
             Assert.Equal(2, tokenizer.TokenDefinitions.Count);
         }
 
         [Fact]
         public void Remove_NonExistingTokenDefinition_ExpectsNoChange() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             var td1 = new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, "");
             tokenizer.Add(td1);
@@ -113,7 +113,7 @@
 
         [Fact]
         public void Remove_ExistingTokenDefinition_ExpectsDecrease() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
 
             var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, "");
             tokenizer.Add(td);
@@ -124,13 +124,60 @@
 
         [Fact]
         public void Tokenize_NullInput_ThrowsArgumentNullException() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             Assert.Throws<ArgumentNullException>(() => tokenizer.Tokenize(null, 1).ToList());
         }
 
         [Fact]
+        public void TokenizeEnumerable_EmptyInput_ExpectsEof() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
+
+            var matches = tokenizer.Tokenize(Enumerable.Empty<string>()).ToList();
+
+            Assert.Single(matches);
+            Assert.Equal(TokenTypeTest.Eof, matches[0].TokenType);
+        }
+
+        [Fact]
+        public void Tokenize_MultipleMatches_ExpectsOrderedByPresidence() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"hellowo", precedence: 2));
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"helloworld", precedence: 1));
+
+            var matches = tokenizer.Tokenize("helloworld", 1).ToList();
+
+            Assert.Equal(TokenTypeTest.D, matches[0].TokenType);
+        }
+
+        [Fact]
+        public void Tokenize_InvalidInputMiddle_ExpectsInvalidType() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"e"));
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"d"));
+
+            var matches = tokenizer.Tokenize("eabcd", 1).ToList();
+
+            var token = matches[1];
+            Assert.Equal(TokenTypeTest.Invalid, token.TokenType);
+            Assert.Equal("abc", token.Value);
+        }
+
+        [Fact]
+        public void Tokenize_InvalidInputStart_ExpectsInvalidType() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"e"));
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"d"));
+
+            var matches = tokenizer.Tokenize("abced", 1).ToList();
+
+            var token = matches[0];
+            Assert.Equal(TokenTypeTest.Invalid, token.TokenType);
+            Assert.Equal("abc", token.Value);
+        }
+
+        [Fact]
         public void FindAllTokenMatches_MultipleMatches_ExpectedCountAndValue() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"S\d\d"));
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"E\d\d"));
 
@@ -146,18 +193,18 @@
 
         [Fact]
         public void Tokenize_AnyInputString_EndsWithEolToken() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"S\d\d"));
 
             var matches = tokenizer.Tokenize("MyVideoS23E13OtherE12S11", 1).ToList();
             var lastToken = matches.Last();
 
-            Assert.Equal(TokenTypeTest.B, lastToken.TokenType);
+            Assert.Equal(TokenTypeTest.Eol, lastToken.TokenType);
         }
 
         [Fact]
         public void Clear_AddTokenDef_ExpectsZero() {
-            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.A, TokenTypeTest.B, TokenTypeTest.C, false);
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"S\d\d"));
 
             tokenizer.Clear();
