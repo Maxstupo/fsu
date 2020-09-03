@@ -2,22 +2,14 @@
 
     using Xunit;
 
+#pragma warning disable IDE0008 // Use explicit type
+
     public class TokenTest {
 
         public enum TokenTypeTest : int {
             A = 2,
             B = 4
         }
-
-        [Fact]
-        public void GetHashCode_Unchanging_ExpectsEquals() {
-            var token = new Token<TokenTypeTest>(TokenTypeTest.B, "Test", 123, 533, 32, true, 12);
-
-            var hashCode = token.GetHashCode();
-
-            Assert.Equal(-1089497087, hashCode);
-        }
-
 
         // Should use theory with inline data.
         [Fact]
@@ -31,5 +23,7 @@
         }
 
     }
+
+#pragma warning restore IDE0008 // Use explicit type
 
 }
