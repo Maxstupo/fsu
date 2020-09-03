@@ -41,11 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Detail\IPropertyProvider.cs" />
+    <Compile Include="Detail\IPropertyStore.cs" />
+    <Compile Include="Detail\PropertyItem.cs" />
+    <Compile Include="Dsl\IInterpreter.cs" />
     <Compile Include="Dsl\Lexer\ITokenizer.cs" />
     <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="Dsl\Lexer\TokenDefinition.cs" />
     <Compile Include="Dsl\Lexer\Tokenizer.cs" />
+    <Compile Include="Processor\IProcessor.cs" />
+    <Compile Include="Processor\IProcessorPipeline.cs" />
+    <Compile Include="Processor\ProcessorItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

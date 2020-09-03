@@ -70,7 +70,6 @@
 
         }
 
-
         public IEnumerable<Token<T>> Tokenize(IEnumerable<string> input) {
             int lineNumber = 1;
 
