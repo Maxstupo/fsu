@@ -1,12 +1,12 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer.Tests {
-    
+
     using Xunit;
 
     public class TokenTest {
 
-        public enum TokenTypeTest {
-            A,
-            B
+        public enum TokenTypeTest : int {
+            A = 2,
+            B = 4
         }
 
         [Fact]
@@ -15,7 +15,7 @@
 
             var hashCode = token.GetHashCode();
 
-            Assert.Equal(-718224602, hashCode);
+            Assert.Equal(-1089497087, hashCode);
         }
 
 
