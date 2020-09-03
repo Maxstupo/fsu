@@ -139,6 +139,25 @@
         }
 
         [Fact]
+        public void TokenizeEnumerable_MultipleLines_ExpectsValidLineNumbers() {
+            var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"a"));
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"b"));
+            tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.D, @"c"));
+
+            var matches = tokenizer.Tokenize(new string[] {
+                "b a",
+                "c"
+            }).ToList();
+
+            var token = matches[0];
+            Assert.Equal(1, token.LineNumber);
+
+            token = matches[matches.Count - 2];
+            Assert.Equal(2, token.LineNumber);
+        }
+
+        [Fact]
         public void Tokenize_MultipleMatches_ExpectsOrderedByPresidence() {
             var tokenizer = new Tokenizer<TokenTypeTest>(TokenTypeTest.Invalid, TokenTypeTest.Eol, TokenTypeTest.Eof, false);
             tokenizer.Add(new TokenDefinition<TokenTypeTest>(TokenTypeTest.E, @"hellowo", precedence: 2));
