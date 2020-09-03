@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Dsl\Lexer\TokenDefinitionTest.cs" />
     <Compile Include="Dsl\Lexer\TokenizerTest.cs" />
+    <Compile Include="Dsl\Lexer\TokenTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
