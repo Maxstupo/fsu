@@ -46,20 +46,28 @@
         /// <param name="propertyProvider">The provider to use as the source of property item lookups.</param>
         /// <param name="propertyName">The name of the property to obtain.</param>
         public PropertyItem GetProperty(IPropertyProvider propertyProvider, string propertyName) {
+            if (propertyProvider == null)
+                throw new ArgumentNullException(nameof(propertyProvider));
 
             if (cachedProperties.TryGetValue(propertyName, out PropertyItem property)) {
                 return property;
             } else {
                 property = propertyProvider.GetProperty(propertyProvider, this, propertyName.ToLowerInvariant());
 
-                TryCachePropertyValue(propertyName, property);
+                if (property != null)
+                    TryCachePropertyValue(propertyName, property);
 
                 return property;
             }
         }
 
         public void TryCachePropertyValue(string propertyName, PropertyItem property) {
-            if (propertyName != null && property != null && !cachedProperties.ContainsKey(propertyName))
+            if (propertyName == null)
+                throw new ArgumentNullException(nameof(propertyName));
+            if (property == null)
+                throw new ArgumentNullException(nameof(property));
+
+            if (!cachedProperties.ContainsKey(propertyName))
                 cachedProperties.Add(propertyName, property);
         }
 

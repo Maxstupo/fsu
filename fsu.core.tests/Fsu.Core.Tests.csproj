@@ -41,12 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detail\PropertyItemTest.cs" />
     <Compile Include="Dsl\Lexer\TokenDefinitionTest.cs" />
     <Compile Include="Dsl\Lexer\TokenizerTest.cs" />
     <Compile Include="Dsl\Lexer\TokenTest.cs" />
+    <Compile Include="Processor\ProcessorItemTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\UtilTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Moq">
+      <Version>4.14.5</Version>
+    </PackageReference>
     <PackageReference Include="OpenCover">
       <Version>4.7.922</Version>
     </PackageReference>
