@@ -53,6 +53,7 @@
     <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\BasicFilePropertyProvider.cs" />
     <Compile Include="Utility\Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
