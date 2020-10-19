@@ -2,9 +2,9 @@
 
     using System.Collections.Generic;
 
-    public interface IInterpreter<V> where V : class {
+    public interface IInterpreter<T> where T : class {
 
-        List<V> Eval(params string[] text);
+        List<T> Eval(params string[] text);
 
     }
 

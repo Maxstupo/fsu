@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿namespace Maxstupo.Fsu.Core.Detail {
 
-namespace Maxstupo.Fsu.Core.Detail {
+    using System.Collections.Generic;
 
-    public interface IPropertyStore :IEnumerable<KeyValuePair<string, PropertyItem>>{
+    public interface IPropertyStore : IEnumerable<KeyValuePair<string, PropertyItem>> {
 
         int Count { get; }
 
 
-   
         void Clear();
 
         void ClearAll();

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A74702F9-8461-4586-9D5B-8A4DDA97AC62}</ProjectGuid>
+    <ProjectGuid>{418B37B6-2060-48E7-AA7C-F74D2D4702D3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Maxstupo.Fsu.Core</RootNamespace>
@@ -23,13 +23,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -42,20 +41,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Detail\Converters\IUnitConverter.cs" />
+    <Compile Include="Detail\Converters\UnitNetPropertyConverter.cs" />
     <Compile Include="Detail\IPropertyProvider.cs" />
     <Compile Include="Detail\IPropertyProviderList.cs" />
     <Compile Include="Detail\IPropertyStore.cs" />
     <Compile Include="Detail\PropertyItem.cs" />
     <Compile Include="Detail\PropertyProviderList.cs" />
     <Compile Include="Detail\PropertyStore.cs" />
-    <Compile Include="Detail\Converters\IUnitConverter.cs" />
-    <Compile Include="Detail\Converters\UnitNetPropertyConverter.cs" />
-    <Compile Include="Dsl\Interpreter.cs" />
     <Compile Include="Dsl\IInterpreter.cs" />
+    <Compile Include="Dsl\Interpreter.cs" />
     <Compile Include="Dsl\Lexer\ITokenizer.cs" />
+    <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="Dsl\Lexer\TokenDefinition.cs" />
     <Compile Include="Dsl\Lexer\Tokenizer.cs" />
-    <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="Dsl\Lexer\TokenStack.cs" />
     <Compile Include="Dsl\Parser\Grammar.cs" />
     <Compile Include="Dsl\Parser\ITokenParser.cs" />
@@ -65,8 +64,8 @@
     <Compile Include="Dsl\Parser\Rules\LookbackRule.cs" />
     <Compile Include="Dsl\Parser\Rules\OptionalRule.cs" />
     <Compile Include="Dsl\Parser\Rules\RepeatingSequenceRule.cs" />
-    <Compile Include="Dsl\Parser\TokenParser.cs" />
     <Compile Include="Dsl\Parser\Rules\Rule.cs" />
+    <Compile Include="Dsl\Parser\TokenParser.cs" />
     <Compile Include="Filtering\Filter.cs" />
     <Compile Include="Filtering\FilterAnd.cs" />
     <Compile Include="Filtering\FilterCondition.cs" />
@@ -79,35 +78,34 @@
     <Compile Include="Format\PropertyType.cs" />
     <Compile Include="FsuEngine.cs" />
     <Compile Include="FsuLanguageSpec.cs" />
-    <Compile Include="Processor\IProcessorPipeline.cs" />
-    <Compile Include="Processor\Processors\AggregateProcessor.cs" />
-    <Compile Include="Processor\Processors\FormulaProcessor.cs" />
-    <Compile Include="Processor\Processors\SumProcessor.cs" />
-    <Compile Include="Processor\Processors\RenameProcessor.cs" />
-    <Compile Include="Processor\Processors\MkDirProcessor.cs" />
-    <Compile Include="Processor\Processors\MaxProcessor.cs" />
-    <Compile Include="Processor\Processors\MinProcessor.cs" />
-    <Compile Include="Processor\Processors\AvgProcessor.cs" />
-    <Compile Include="Processor\Processors\ItemsProcessor.cs" />
-    <Compile Include="Processor\ProcessorPipeline.cs" />
     <Compile Include="Processor\IProcessor.cs" />
+    <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
+    <Compile Include="Processor\ProcessorPipeline.cs" />
+    <Compile Include="Processor\Processors\AggregateProcessor.cs" />
+    <Compile Include="Processor\Processors\AvgProcessor.cs" />
     <Compile Include="Processor\Processors\EvalProcessor.cs" />
     <Compile Include="Processor\Processors\ExecProcessor.cs" />
+    <Compile Include="Processor\Processors\ExtractProcessor.cs" />
     <Compile Include="Processor\Processors\FilterProcessor.cs" />
+    <Compile Include="Processor\Processors\FormulaProcessor.cs" />
     <Compile Include="Processor\Processors\GlobProcessor.cs" />
     <Compile Include="Processor\Processors\InProcessor.cs" />
+    <Compile Include="Processor\Processors\ItemsProcessor.cs" />
+    <Compile Include="Processor\Processors\MaxProcessor.cs" />
+    <Compile Include="Processor\Processors\MinProcessor.cs" />
+    <Compile Include="Processor\Processors\MkDirProcessor.cs" />
     <Compile Include="Processor\Processors\OutProcessor.cs" />
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
+    <Compile Include="Processor\Processors\RenameProcessor.cs" />
     <Compile Include="Processor\Processors\ScanProcessor.cs" />
     <Compile Include="Processor\Processors\SortProcessor.cs" />
-    <Compile Include="Processor\Processors\ExtractProcessor.cs" />
+    <Compile Include="Processor\Processors\SumProcessor.cs" />
     <Compile Include="Processor\Processors\TransformProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />
     <Compile Include="TokenType.cs" />
     <Compile Include="Utility\ColorConsole.cs" />
-    <Compile Include="Utility\ColorConsoleTablePrinter.cs" />
     <Compile Include="Utility\IOutput.cs" />
     <Compile Include="Utility\Table\ConsoleTable.cs" />
     <Compile Include="Utility\Table\ConsoleTableCollection.cs" />
@@ -121,15 +119,13 @@
     <Compile Include="Utility\Table\IConsoleTablePrinter.cs" />
     <Compile Include="Utility\Util.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <PackageReference Include="Glob">
-      <Version>1.1.6</Version>
-    </PackageReference>
-    <PackageReference Include="MimeTypesMap">
-      <Version>1.0.8</Version>
+      <Version>1.1.8</Version>
     </PackageReference>
     <PackageReference Include="UnitsNet">
-      <Version>4.67.0</Version>
+      <Version>4.72.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

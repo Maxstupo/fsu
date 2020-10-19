@@ -1,28 +1,28 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
-    using Maxstupo.Fsu.Core.Dsl.Lexer;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
 
     /// <summary>
     /// A parser that converts a sequence of tokens into a list of objects, while ensuring correct grammar is adhered to with the token sequence.
     /// </summary>
     public class TokenParser<T, V> : ITokenParser<T, V> where T : Enum where V : class {
 
+        private readonly ISet<Grammar<T, V>> grammars = new HashSet<Grammar<T, V>>();
+
+        public event EventHandler<Grammar<T, V>> OnGrammarAdded;
+        public event EventHandler<Grammar<T, V>> OnGrammarRemoved;
+        public event EventHandler OnGrammarsCleared;
+
+        public event EventHandler<Token<T>> OnTokenError;
+        public event EventHandler<Token<T>> OnTokenParsing;
+
         private readonly T commentToken;
         private readonly T eolToken;
         private readonly T eofToken;
         private readonly T invalidToken;
-
-        private readonly ISet<Grammar<T, V>> grammers = new HashSet<Grammar<T, V>>();
-
-        public event EventHandler<Grammar<T, V>> OnGrammerAdded;
-        public event EventHandler<Grammar<T, V>> OnGrammerRemoved;
-        public event EventHandler OnGrammersCleared;
-
-        public event EventHandler<Token<T>> OnTokenError;
-        public event EventHandler<Token<T>> OnTokenParsing;
 
         public TokenParser(T commentToken, T eolToken, T eofToken, T invalidToken) {
             this.commentToken = commentToken;
@@ -31,26 +31,37 @@
             this.invalidToken = invalidToken;
         }
 
+        /// <summary>
+        /// Clears all registered grammars, and notifies event handlers. 
+        /// </summary>
         public void Clear() {
-            OnGrammersCleared?.Invoke(this, EventArgs.Empty);
-            grammers.Clear();
+            grammars.Clear();
+            OnGrammarsCleared?.Invoke(this, EventArgs.Empty);
         }
 
-        public Grammar<T, V> Add(Grammar<T, V> grammer) {
-            if (grammer == null)
-                throw new ArgumentNullException(nameof(grammer));
+        /// <summary>
+        /// Adds the specified <paramref name="grammar"/> to this <see cref="TokenParser{T, V}"/>, and notifies event handlers.
+        /// </summary>
+        /// <returns>The providied <paramref name="grammar"/> object.</returns>
+        public Grammar<T, V> Add(Grammar<T, V> grammar) {
+            if (grammar == null)
+                throw new ArgumentNullException(nameof(grammar));
 
-            grammers.Add(grammer);
+            if (grammars.Add(grammar))
+                OnGrammarAdded?.Invoke(this, grammar);
 
-            OnGrammerAdded?.Invoke(this, grammer);
-
-
-            return grammer;
+            return grammar;
         }
 
-        public void Remove(Grammar<T, V> grammer) {
-            grammers.Remove(grammer);
-            OnGrammerRemoved?.Invoke(this, grammer);
+        /// <summary>
+        /// Removes the specified <paramref name="grammar"/> from this <see cref="TokenParser{T, V}"/>, and notifies event handlers.
+        /// </summary>
+        public void Remove(Grammar<T, V> grammar) {
+            if (grammar == null)
+                throw new ArgumentNullException(nameof(grammar));
+
+            if (grammars.Remove(grammar))
+                OnGrammarRemoved?.Invoke(this, grammar);
         }
 
         public List<V> Parse(IEnumerable<Token<T>> tokens) {
@@ -82,27 +93,27 @@
 
                 } else if (!inComment) {
 
-                    List<Grammar<T, V>> matchedGrammers = grammers.Where(x => x.IsMatch(token)).ToList();
+                    List<Grammar<T, V>> matchedGrammars = grammars.Where(x => x.IsMatch(token)).ToList();
 
-                    if (matchedGrammers.Count == 0) // No grammers exist for the token.
+                    if (matchedGrammars.Count == 0) // No grammars exist for the token.
                         hasError = true;
 
-                    for (int i = 0; i < matchedGrammers.Count; i++) {
-                        Grammar<T, V> grammer = matchedGrammers[i];
+                    for (int i = 0; i < matchedGrammars.Count; i++) {
+                        Grammar<T, V> grammar = matchedGrammars[i];
 
                         stack.Mark();
 
                         OnTokenParsing?.Invoke(this, stack.Peek());
 
-                        if (grammer.Eval(ref stack, out V result)) {
+                        if (grammar.Eval(ref stack, out V result)) {
                             if (result != null)
                                 objects.Add(result);
                             break;
-                        } else if (i == matchedGrammers.Count - 1) { // Last grammer available failed, indicate an error.
+                        } else if (i == matchedGrammars.Count - 1) { // Last grammar available failed, indicate an error.
                             hasError = true;
                             token = stack.Peek(); // update token location for error reporting.
                         } else {
-                            stack.Jump(); // Revert back for next grammer test.
+                            stack.Jump(); // Revert back for next grammar test.
                         }
                     }
 
@@ -120,6 +131,6 @@
 
         }
 
-    }
 
+    }
 }

@@ -1,13 +1,12 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser {
 
-    using Maxstupo.Fsu.Core.Dsl.Lexer;
-    using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
+    using Maxstupo.Fsu.Core.Dsl.Parser.Rules;
 
     public class Grammar<T, V> : IEnumerable<IRule<T>>, IEquatable<Grammar<T, V>> where T : Enum where V : class {
 
@@ -45,9 +44,9 @@
         public bool Eval(ref TokenStack<T> stack, out V result) {
             Token<T> token = stack.Peek();
 
-            if (IncludeTriggerToken) 
-                 stack.Prev();
-                        
+            if (IncludeTriggerToken)
+                stack.Prev();
+
             RuleData data = new RuleData();
 
             foreach (Rule<T> rule in Rules) {

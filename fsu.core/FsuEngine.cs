@@ -40,7 +40,7 @@
             };
 
             Parser = new TokenParser<TokenType, IProcessor>(TokenType.Comment, TokenType.Eol, TokenType.Eof, TokenType.Invalid);
-            Parser.OnGrammerAdded += (sender, grammer) => {
+            Parser.OnGrammarAdded += (sender, grammer) => {
                 output.WriteLine(Level.Fine, $"Added Grammer: '&-b;{grammer.TriggerTokenValuePattern}&-^;' (&-a;{string.Join(", ", grammer.TriggerTokens)}&-^;) with {grammer.Rules.Count} rule(s)");
             };
 

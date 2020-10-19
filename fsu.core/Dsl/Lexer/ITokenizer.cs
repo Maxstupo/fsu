@@ -1,40 +1,40 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Lexer {
-
+ 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
 
-    /// <summary>
-    /// Represents something that can convert text into a series of tokens.
-    /// </summary>
     public interface ITokenizer<T> where T : Enum {
-      
+
         event EventHandler<TokenDefinition<T>> OnDefinitionAdded;
         event EventHandler<TokenDefinition<T>> OnDefinitionRemoved;
         event EventHandler OnDefinitionsCleared;
 
         /// <summary>
-        /// Registers the specified <see cref="TokenDefinition{T}"/> with this tokenizer.
+        /// Registers the specified <paramref name="tokenDefinition"/> with this tokenizer.
         /// </summary>
-        void Add(TokenDefinition<T> definition);
+        void Add(TokenDefinition<T> tokenDefinition);
 
         /// <summary>
-        /// Removes the specified token from this tokenizer. Does nothing if the token doesn't exist.
+        /// Removes the specified <paramref name="tokenDefinition"/> from this tokenizer. Does nothing if the token doesn't exist.
         /// </summary>
-        void Remove(TokenDefinition<T> definition);
-        
+        void Remove(TokenDefinition<T> tokenDefinition);
+
         /// <summary>
         /// Clears all registered token definitions.
         /// </summary>
         void Clear();
 
         /// <summary>
-        /// Tokenizes an enumerable, treating each item in the enumerable as a seperate line.
+        /// Tokenizes an enumerable. Each item in the enumerable is considered a seperate line.
         /// </summary>
         /// <returns>The tokenized representation of the provided input.</returns>
         IEnumerable<Token<T>> Tokenize(IEnumerable<string> input);
 
         /// <summary>
-        /// Tokenizes a given string, treating it as a single line of text.
+        /// Tokenizes a given string.
         /// </summary>
         /// <returns>The tokenized representation of the provided input.</returns>
         IEnumerable<Token<T>> Tokenize(string input, int lineNumber);

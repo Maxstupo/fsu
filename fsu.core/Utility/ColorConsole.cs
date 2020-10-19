@@ -25,7 +25,8 @@
         }
 
         public void Clear() {
-            Console.Clear();
+            lock (_lock)
+                Console.Clear();
         }
 
         public void WriteLine(Level level) {

@@ -5,10 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    /// <summary>
-    /// A list of tokens, with features simialr to a <see cref="Stack"/>.
-    /// </summary>
-    public class TokenStack<T> : IEnumerable<Token<T>> where T : Enum {
+    public sealed class TokenStack<T> : IEnumerable<Token<T>> where T : Enum {
 
         /// <summary>Returns true if calling <see cref="Next"/> will result in a next element.</summary>
         public bool HasNext => index < list.Count - 1;
@@ -23,8 +20,14 @@
 
         private readonly Stack<int> recordStack = new Stack<int>();
 
+        /// <summary>
+        /// Creates an empty token stack.
+        /// </summary>
         public TokenStack() : this(Enumerable.Empty<Token<T>>()) { }
 
+        /// <summary>
+        /// Creates a <see cref="TokenStack{T}"/> filled with the provided enumerable.
+        /// </summary>
         public TokenStack(IEnumerable<Token<T>> collection) {
             list = new List<Token<T>>(collection);
             Reset();
@@ -45,8 +48,14 @@
                 index = recordStack.Pop();
         }
 
+        /// <summary>
+        /// Removes the last marked index in the stack.
+        /// </summary>
+        /// <seealso cref="Mark"/>
+        /// <seealso cref="Jump"/>
         public void Unmark() {
-            if (recordStack.Count > 0) recordStack.Pop();
+            if (recordStack.Count > 0)
+                recordStack.Pop();
         }
 
         /// <summary>
@@ -84,6 +93,8 @@
         /// Returns the current item, without advancing to the next element.
         /// </summary>
         public Token<T> Peek() {
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index), "TokenStack requires Next() to be called once before Peek()");
             return list[index];
         }
 
@@ -94,7 +105,7 @@
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
- 
+
     }
 
 }

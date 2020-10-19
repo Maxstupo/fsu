@@ -5,7 +5,7 @@
     using Maxstupo.Fsu.Core.Utility;
 
     /// <summary>
-    /// Represents a sub-string of the string provided by the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.
+    /// Represents a sub-string of the string given to the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.
     /// </summary>
     /// <typeparam name="T">The enum type that represent this token.</typeparam>
     public class Token<T> : IEquatable<Token<T>> where T : Enum {
@@ -31,8 +31,8 @@
         /// <summary>The line number this token was on. Will be -1 if line number isn't applicable for this token.</summary>
         public int LineNumber { get; }
 
-        /// <summary>The file location of this token, formatted: #linenumber @ start-end </summary>
-        public string Location => $"#{LineNumber} @ {StartIndex}-{EndIndex}";
+        /// <summary>The file location of this token, formatted: #linenumber @ start/end </summary>
+        public string Location => $"#{LineNumber} @ {StartIndex}/{EndIndex}";
 
         /// <summary>
         /// End of file ctor.
@@ -78,28 +78,30 @@
 
         }
 
+        #region Equals() & GetHashCode()
+
         public override bool Equals(object obj) {
             return Equals(obj as Token<T>);
         }
 
         public bool Equals(Token<T> other) {
             return other != null &&
-                   EqualityComparer<T>.Default.Equals(TokenType, other.TokenType) &&
-                   Value == other.Value &&
-                   StartIndex == other.StartIndex &&
-                   EndIndex == other.EndIndex &&
-                   LineNumber == other.LineNumber &&
-                   Location == other.Location;
+                   EqualityComparer<T>.Default.Equals(this.TokenType, other.TokenType) &&
+                   this.Value == other.Value &&
+                   this.StartIndex == other.StartIndex &&
+                   this.EndIndex == other.EndIndex &&
+                   this.Precedence == other.Precedence &&
+                   this.LineNumber == other.LineNumber;
         }
 
         public override int GetHashCode() {
-            var hashCode = -735772877;
-            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(TokenType);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Value);
-            hashCode = hashCode * -1521134295 + StartIndex.GetHashCode();
-            hashCode = hashCode * -1521134295 + EndIndex.GetHashCode();
-            hashCode = hashCode * -1521134295 + LineNumber.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Location);
+            int hashCode = 1578793106;
+            hashCode = hashCode * -1521134295 + EqualityComparer<T>.Default.GetHashCode(this.TokenType);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(this.Value);
+            hashCode = hashCode * -1521134295 + this.StartIndex.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.EndIndex.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.Precedence.GetHashCode();
+            hashCode = hashCode * -1521134295 + this.LineNumber.GetHashCode();
             return hashCode;
         }
 
@@ -110,6 +112,8 @@
         public static bool operator !=(Token<T> left, Token<T> right) {
             return !(left == right);
         }
+
+        #endregion
 
     }
 

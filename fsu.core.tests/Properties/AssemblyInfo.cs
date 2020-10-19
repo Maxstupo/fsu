@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("fsu.tests")]
+[assembly: AssemblyTitle("fsu.core.test")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("fsu.tests")]
-[assembly: AssemblyCopyright("Copyright © 2020 Maxstupo")]
+[assembly: AssemblyProduct("fsu.core.test")]
+[assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e6ae7965-00a8-49bd-818c-e310662519f3")]
+[assembly: Guid("b7f8c34a-b729-4e84-b54b-7493b3996ad5")]
 
 // Version information for an assembly consists of the following four values:
 //

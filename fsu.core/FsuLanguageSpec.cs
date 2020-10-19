@@ -66,10 +66,7 @@
             return new HashSet<Grammar<TokenType, IProcessor>> {
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "print") {
-                    Construct = x => new PrintProcessor(x.Get<string>(0)),
-                    Rules = {
-                        new OptionalRule<TokenType>(null, TokenType.TextValue, TokenType.StringValue)
-                    }
+                    Construct = x => new PrintProcessor()                   
                 },
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "sort") {
@@ -130,8 +127,8 @@
                         }
                     }
                 },
-               
-             
+
+
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "extract") {
                     Construct = x => {
                         if (x.Get<int>(1) == 0) { // first branch

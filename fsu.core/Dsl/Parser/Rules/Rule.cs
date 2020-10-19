@@ -1,11 +1,10 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-    using Maxstupo.Fsu.Core.Dsl.Lexer;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
 
     public interface IRule<T> where T : Enum {
 
@@ -114,6 +113,7 @@
         public static bool operator !=(Rule<T> left, Rule<T> right) {
             return !(left == right);
         }
+
     }
 
 }

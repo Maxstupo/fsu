@@ -69,7 +69,7 @@
 
                 Enum unit = null;
 
-                if (detail == FileDetail.Duration) { 
+                if (detail == FileDetail.Duration) {
                     numericValue /= 10000;
                     unit = DurationUnit.Millisecond;
 

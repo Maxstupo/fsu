@@ -1,32 +1,22 @@
 ﻿namespace Maxstupo.Fsu.Core.Providers {
 
-    using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Security.Cryptography;
-    using HeyRed.Mime;
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
-    using UnitsNet.Units;
 
-    public class BasicFilePropertyProvider : IPropertyProvider {
+    /// <summary>
+    /// Provides basic metadata for ProcessorItems representing a file or directory.
+    /// </summary>
+    public sealed class BasicFilePropertyProvider : IPropertyProvider {
 
-        private readonly Dictionary<string, HashAlgorithm> algorithms = new Dictionary<string, HashAlgorithm>();
+        public void Begin() { }
 
-        public void Begin() {
+        public void End() { }
 
-        }
-
-        public void End() {
-            foreach (HashAlgorithm algorithm in algorithms.Values)
-                algorithm.Dispose();
-            algorithms.Clear();
-        }
-
-        public PropertyItem GetProperty(IPropertyProvider providerList, ProcessorItem item, string propertyName) {
+        public PropertyItem GetProperty(IPropertyProvider propertyProvider, ProcessorItem item, string propertyName) {
             string filepath = item.Value;
-            HashAlgorithm ha;
+
             switch (propertyName) {
                 case "name":
                     return new PropertyItem(Path.GetFileNameWithoutExtension(filepath));
@@ -43,20 +33,13 @@
                     return new PropertyItem(Path.GetDirectoryName(filepath));
 
                 case "value":
-                case "path":
-                case "filepath":
                     return new PropertyItem(item.Value);
 
                 case "ivalue":
-                case "initialvalue":
-                case "initialpath":
-                case "ipath":
-                case "initialfilepath":
-                case "ifilepath":
                     return new PropertyItem(item.InitialValue);
 
                 case "relpath":
-                    PropertyItem originItem = item.GetProperty(providerList, "origin");
+                    PropertyItem originItem = item.GetProperty(propertyProvider, "origin");
                     if (originItem.IsNumeric || originItem == null)
                         return null;
 
@@ -68,50 +51,16 @@
                 case "size":
                 case "filesize":
                     if (!File.Exists(item.Value))
-                        break;
+                        return null;
                     long size = new FileInfo(item.Value).Length;
-                    return new PropertyItem(size, InformationUnit.Byte);
+                    return new PropertyItem(size, null);
 
-                case "megapixels": // Composite property
-                    PropertyItem width = item.GetProperty(providerList, "width");
-                    PropertyItem height = item.GetProperty(providerList, "height");
-                    if (width == null || height == null || !width.IsNumeric || !height.IsNumeric)
-                        break;
-                    return new PropertyItem(width.ValueNumber * height.ValueNumber / 1000000.0, null);
-
-                case "mime":
-                    return new PropertyItem(MimeTypesMap.GetMimeType(filepath));
-                case "type":
-                    string type = MimeTypesMap.GetMimeType(filepath).Split('/')[0];
-                    return new PropertyItem(type);
-
-                case "md5":
-                    ha = TryGetOrCacheAlgorithm(propertyName, () => MD5.Create());
-                    return new PropertyItem(ComputeHash(ha, filepath));
-                case "sha256":
-                    ha = TryGetOrCacheAlgorithm(propertyName, () => SHA256.Create());
-                    return new PropertyItem(ComputeHash(ha, filepath));
-                case "sha1":
-                    ha = TryGetOrCacheAlgorithm(propertyName, () => SHA1.Create());
-                    return new PropertyItem(ComputeHash(ha, filepath));
+                default:
+                    return null;
             }
-            return null;
-        }
 
-        private HashAlgorithm TryGetOrCacheAlgorithm(string key, Func<HashAlgorithm> creation) {
-            if (!algorithms.TryGetValue(key, out HashAlgorithm algorithm)) {
-                algorithm = creation();
-                algorithms[key] = algorithm;
-            }
-            return algorithm;
-        }
-
-        private static string ComputeHash(HashAlgorithm algorithm, string filepath) {
-            using (Stream stream = File.OpenRead(filepath)) {
-                byte[] hash = algorithm.ComputeHash(stream);
-                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLower();
-            }
         }
 
     }
+
 }

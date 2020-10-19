@@ -1,10 +1,9 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-    using Maxstupo.Fsu.Core.Dsl.Lexer;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
 
     public class RepeatingSequenceRule<T> : Rule<T>, IEnumerable<Rule<T>> where T : Enum {
 
@@ -31,7 +30,7 @@
         public override bool Eval(ref TokenStack<T> stack, ref RuleData data) {
             //TEMP
 
-//            new ColorConsole().WriteLine(Level.Fine, $"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
+            //            new ColorConsole().WriteLine(Level.Fine, $"  - Checking {GetType().Name.Replace("`1", string.Empty)}");
 
             foreach (Rule<T> rule in rules) {
                 if (!rule.Eval(ref stack, ref data))
@@ -55,7 +54,7 @@
         IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
- 
+
     }
 
 }

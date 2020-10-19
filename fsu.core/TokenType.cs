@@ -1,5 +1,5 @@
 ﻿namespace Maxstupo.Fsu.Core {
-
+   
     using Maxstupo.Fsu.Core.Dsl.Lexer;
 
     public enum TokenType {

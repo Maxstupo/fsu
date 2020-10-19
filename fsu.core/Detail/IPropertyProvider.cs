@@ -2,15 +2,28 @@
 
     using Maxstupo.Fsu.Core.Processor;
 
+    /// <summary>
+    /// Provides metadata for processor items.
+    /// </summary>
     public interface IPropertyProvider {
 
+        /// <summary>
+        /// Acts as a hint for the property provider that a bulk property request (of the same propertyName) is beginning.
+        /// </summary>
         void Begin();
 
+        /// <summary>
+        /// Acts as a hint for the property provider that a bulk property request is ending.
+        /// </summary>
         void End();
 
-        // providerList is a IPropertyProviderList, we aren't using that type as we don't need access to the methods it provides.
-        // aka the root provider for properties, useful for getting properties from other providers when providing composite properties.
-        PropertyItem GetProperty(IPropertyProvider providerList, ProcessorItem item, string propertyName);
+        /// <summary>
+        /// Returns a property item based off the processor item and property name specified.
+        /// </summary>
+        /// <param name="propertyProvider">A property provider used to access additional properties (enables the composite properties to be provided e.g. megapixels).</param>
+        /// <param name="item">The processor item this property is sourced from.</param>
+        /// <param name="propertyName">The property provider dependant name of the property item.</param>
+        PropertyItem GetProperty(IPropertyProvider propertyProvider, ProcessorItem item, string propertyName);
 
     }
 

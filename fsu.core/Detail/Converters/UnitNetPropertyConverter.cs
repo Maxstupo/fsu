@@ -4,7 +4,7 @@
     using UnitsNet;
 
     public class UnitNetPropertyConverter : IUnitConverter {
-      
+
         public double ConvertPropertyValue(PropertyItem property, string newUnitAbbr) {
             if (property == null || !property.IsNumeric || property.Unit == null)
                 return property.ValueNumber;

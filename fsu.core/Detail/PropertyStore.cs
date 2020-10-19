@@ -10,7 +10,7 @@
         private readonly Dictionary<string, object[]> items = new Dictionary<string, object[]>(StringComparer.InvariantCultureIgnoreCase);
 
         public int Count => items.Count;
-   
+
 
         public void Clear() {
             List<string> keysToRemove = items.Where(x => !(bool) x.Value[1]).Select(x => x.Key).ToList();
@@ -23,12 +23,11 @@
         }
 
         public IEnumerator<KeyValuePair<string, PropertyItem>> GetEnumerator() {
-          foreach(KeyValuePair<string, object[]> pair in items) 
-                yield return new KeyValuePair<string, PropertyItem>(pair.Key,(PropertyItem) pair.Value[0]);           
+            foreach (KeyValuePair<string, object[]> pair in items)
+                yield return new KeyValuePair<string, PropertyItem>(pair.Key, (PropertyItem) pair.Value[0]);
         }
 
 
-     
         public PropertyItem GetProperty(string propertyName) {
             return items.TryGetValue(propertyName, out object[] item) ? (PropertyItem) item[0] : null;
         }

@@ -7,9 +7,9 @@ configuration:
 
 environment:
     PRJ_NAME: 'fsu'
-    TEST_ASSEMBLY: '%PRJ_NAME%.Tests\bin\%CONFIGURATION%\%PRJ_NAME%.Tests.dll'
+    TEST_ASSEMBLY: '%PRJ_NAME%.core.tests\bin\%CONFIGURATION%\%PRJ_NAME%.core.tests.dll'
     COVERALLS_REPO_TOKEN:
-      secure: AA6BsNJ40iTf4N/1NmoRoweZcQZAU0kwkH+CDk/s8pR143KAQ/QxyKqvGv0f/47O
+      secure: Hue3gKAzE3Le1CRWfY2ygW4/t4ZfOuQJG7Zibq1osm4/AA8WmTRgsUhtuSNyAXtf
 
 skip_commits:
     files:
@@ -37,4 +37,6 @@ build:
 test_script:
   - cmd: >-
       
-      %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[*]Maxstupo.*.Tests*" -coverbytest:"*.Tests.dll" -output:".\coverage_%CONFIGURATION%.xml"
+      %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[fsu*]* -[*.tests]* -[*.Tests]*" -output:".\coverage_%CONFIGURATION%.xml"
+      
+      %USERPROFILE%\.dotnet\tools\csmacnz.Coveralls.exe --opencover -i "./coverage_%CONFIGURATION%.xml" --serviceName AppVeyor --repoToken "%COVERALLS_REPO_TOKEN%"

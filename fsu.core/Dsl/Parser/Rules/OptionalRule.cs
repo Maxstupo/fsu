@@ -1,8 +1,7 @@
 ﻿namespace Maxstupo.Fsu.Core.Dsl.Parser.Rules {
 
-    using Maxstupo.Fsu.Core.Dsl.Lexer;
-    using Maxstupo.Fsu.Core.Utility;
     using System;
+    using Maxstupo.Fsu.Core.Dsl.Lexer;
 
     public class OptionalRule<T> : Rule<T> where T : Enum {
 
@@ -25,18 +24,18 @@
             Token<T> token = stack.Next();
 
             // TEMP
-//#if DEBUG
-//            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
-//#endif
+            //#if DEBUG
+            //            new ColorConsole().WriteLine($"  - Checking {GetType().Name.Replace("`1", string.Empty)}: '{Pattern}' (&-a;{string.Join(", ", TokenTypes)}&-^;) => '&-e;{token.Value}&-^;' (&-a;{token.TokenType}&-^;)");
+            //#endif
             // Token type doesn't match, token isn't the one we are looking for... Revert stack, and return true.
             if (!IsTokenTypeMatch(token)) {
                 stack.Prev();
                 UpdateData(ref data, token, false);
 
                 //TEMP
-//#if DEBUG
-//                new ColorConsole().WriteLine("    - Optional token missing, reverting...");
-//#endif
+                //#if DEBUG
+                //                new ColorConsole().WriteLine("    - Optional token missing, reverting...");
+                //#endif
                 return true;
             }
 

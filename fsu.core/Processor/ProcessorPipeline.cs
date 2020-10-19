@@ -29,7 +29,7 @@
 
 
         public IEnumerable<ProcessorItem> Process(List<IProcessor> processors) {
-            
+
             IEnumerable<ProcessorItem> items = Enumerable.Empty<ProcessorItem>();
 
             foreach (IProcessor processor in processors) {
