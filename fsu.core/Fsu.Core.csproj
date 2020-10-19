@@ -45,10 +45,22 @@
     <Compile Include="Detail\IPropertyStore.cs" />
     <Compile Include="Detail\PropertyItem.cs" />
     <Compile Include="Dsl\IInterpreter.cs" />
+    <Compile Include="Dsl\Interpreter.cs" />
     <Compile Include="Dsl\Lexer\ITokenizer.cs" />
     <Compile Include="Dsl\Lexer\Token.cs" />
     <Compile Include="Dsl\Lexer\TokenDefinition.cs" />
     <Compile Include="Dsl\Lexer\Tokenizer.cs" />
+    <Compile Include="Dsl\Lexer\TokenStack.cs" />
+    <Compile Include="Dsl\Parser\Grammar.cs" />
+    <Compile Include="Dsl\Parser\ITokenParser.cs" />
+    <Compile Include="Dsl\Parser\RuleData.cs" />
+    <Compile Include="Dsl\Parser\Rules\BranchingRule.cs" />
+    <Compile Include="Dsl\Parser\Rules\LookaheadRule.cs" />
+    <Compile Include="Dsl\Parser\Rules\LookbackRule.cs" />
+    <Compile Include="Dsl\Parser\Rules\OptionalRule.cs" />
+    <Compile Include="Dsl\Parser\Rules\RepeatingSequenceRule.cs" />
+    <Compile Include="Dsl\Parser\Rules\Rule.cs" />
+    <Compile Include="Dsl\Parser\TokenParser.cs" />
     <Compile Include="Processor\IProcessor.cs" />
     <Compile Include="Processor\IProcessorPipeline.cs" />
     <Compile Include="Processor\ProcessorItem.cs" />
@@ -56,5 +68,6 @@
     <Compile Include="Providers\BasicFilePropertyProvider.cs" />
     <Compile Include="Utility\Util.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
