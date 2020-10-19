@@ -89,6 +89,7 @@
     <Compile Include="Processor\Processors\ExtractProcessor.cs" />
     <Compile Include="Processor\Processors\FilterProcessor.cs" />
     <Compile Include="Processor\Processors\FormulaProcessor.cs" />
+    <Compile Include="Processor\Processors\IndexProcessor.cs" />
     <Compile Include="Processor\Processors\GlobProcessor.cs" />
     <Compile Include="Processor\Processors\InProcessor.cs" />
     <Compile Include="Processor\Processors\ItemsProcessor.cs" />

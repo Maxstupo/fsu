@@ -26,6 +26,7 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "scan"),
                 new TokenDefinition<TokenType>(TokenType.Function, "transform"),
                 new TokenDefinition<TokenType>(TokenType.Function, "sum"),
+                new TokenDefinition<TokenType>(TokenType.Function, "index"),
                 new TokenDefinition<TokenType>(TokenType.Function, "rename"),
                 new TokenDefinition<TokenType>(TokenType.Function, "extract"),
                 new TokenDefinition<TokenType>(TokenType.Function, "glob"),
@@ -67,6 +68,10 @@
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "print") {
                     Construct = x => new PrintProcessor()                   
+                },     
+                
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "index") {
+                    Construct = x => new IndexProcessor()
                 },
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "sort") {
