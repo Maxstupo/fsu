@@ -18,6 +18,10 @@
 
         public IReadOnlyCollection<TokenDefinition<T>> TokenDefinitions => tokenDefinitions.AsReadOnly();
 
+        public event EventHandler<TokenDefinition<T>> OnDefinitionAdded;
+        public event EventHandler<TokenDefinition<T>> OnDefinitionRemoved;
+        public event EventHandler OnDefinitionsCleared;
+
 
         public Tokenizer(T invalidToken, T eolToken, T eofToken, bool loadTokenDefinitions = true) {
             this.invalidToken = invalidToken;
@@ -42,16 +46,22 @@
                 throw new ArgumentException($"{nameof(Tokenizer<T>)} can't register duplicate token definitions: {typeof(T).Name}.{tokenDefinition.TokenType} '{tokenDefinition.Regex}'", nameof(tokenDefinition));
 
             tokenDefinitions.Add(tokenDefinition);
+
+            OnDefinitionAdded?.Invoke(this, tokenDefinition);
         }
 
         public void Remove(TokenDefinition<T> tokenDefinition) {
             if (tokenDefinition == null)
                 throw new ArgumentNullException(nameof(tokenDefinition));
             tokenDefinitions.Remove(tokenDefinition);
+
+            OnDefinitionRemoved?.Invoke(this, tokenDefinition);
         }
 
         public void Clear() {
             tokenDefinitions.Clear();
+
+            OnDefinitionsCleared?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

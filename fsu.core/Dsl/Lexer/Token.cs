@@ -2,6 +2,7 @@
 
     using System;
     using System.Collections.Generic;
+    using Maxstupo.Fsu.Core.Utility;
 
     /// <summary>
     /// Represents a sub-string of the string given to the <see cref="ITokenizer{T}.Tokenize(string, int)"/> method.
@@ -57,6 +58,24 @@
             Precedence = precedence;
             HasVariableValue = hasVariableValue;
             LineNumber = lineNumber;
+        }
+
+        /// <summary>
+        /// Debug method for printing out this token with color coding using <see cref="ColorConsole"/>.<br/>
+        /// Expects default(T) to be the invalid token type.
+        /// </summary>
+        public void WriteLine(IOutput output, Level level, char color = 'a') {
+
+
+            string common = $"&-9;{Precedence}&-^; #&-c;{LineNumber}&-^; @&-c;{StartIndex}&-^;-&-c;{EndIndex}&-^;";
+            string value = HasVariableValue ? $"&-e;{Value,-30}&-^;" : $"{"---",-30}";
+
+
+            if (default(T).Equals(TokenType))
+                color = 'c';
+
+            output.WriteLine(level, $"&-{color};{TokenType,-20}&-^;{value}{common}");
+
         }
 
         #region Equals() & GetHashCode()

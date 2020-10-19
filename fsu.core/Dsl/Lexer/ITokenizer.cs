@@ -8,6 +8,10 @@
 
     public interface ITokenizer<T> where T : Enum {
 
+        event EventHandler<TokenDefinition<T>> OnDefinitionAdded;
+        event EventHandler<TokenDefinition<T>> OnDefinitionRemoved;
+        event EventHandler OnDefinitionsCleared;
+
         /// <summary>
         /// Registers the specified <paramref name="tokenDefinition"/> with this tokenizer.
         /// </summary>

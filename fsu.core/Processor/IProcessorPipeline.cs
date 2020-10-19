@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Dsl;
+    using Maxstupo.Fsu.Core.Utility;
 
     public interface IProcessorPipeline {
 
@@ -11,6 +12,8 @@
         IPropertyStore PropertyStore { get; }
 
         IPropertyProvider PropertyProvider { get; }
+
+        IOutput Output { get; }
 
         IInterpreter<IProcessor> Interpreter { get; }
 

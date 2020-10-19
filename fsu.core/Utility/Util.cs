@@ -1,4 +1,6 @@
-﻿namespace Maxstupo.Fsu.Core.Utility {
+﻿using System;
+
+namespace Maxstupo.Fsu.Core.Utility {
 
     /// <summary>
     /// Provides basic static utility methods and extensions for various purposes. 
@@ -15,6 +17,10 @@
                 return str;
 
             return str.Substring(startIndex);
+        }
+
+        public static bool Contains(this string src, string value, StringComparison comparison) {
+            return src.IndexOf(value, comparison) >= 0;
         }
 
     }
