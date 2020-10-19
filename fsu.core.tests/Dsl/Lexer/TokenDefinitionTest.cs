@@ -81,7 +81,7 @@
 
         [Fact]
         public void FindMatches_RetargetGroup_Equals() {
-            var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.MyToken2, "S(\\d\\d)E(\\d\\d)", null, 1, true, null, 1, true);
+            var td = new TokenDefinition<TokenTypeTest>(TokenTypeTest.MyToken2, "S(\\d\\d)E(\\d\\d)", null, 1, true, null, 2, true);
 
             var matches = td.FindMatches("VideoS01E05.mp4", 1);
 

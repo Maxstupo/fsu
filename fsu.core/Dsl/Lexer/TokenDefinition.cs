@@ -65,9 +65,6 @@
         /// Finds all matches of this <see cref="TokenDefinition{T}"/> within the provided input string.
         /// </summary>
         public IEnumerable<Token<T>> FindMatches(string input, int lineNumber) {
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
             return regex.Matches(input).Cast<Match>().Where(x => x.Success).Select(match => {
 
                 int startIndex = match.Index;
@@ -75,20 +72,22 @@
 
                 string value = match.Value;
 
-                if (!string.IsNullOrWhiteSpace(Template)) {
-                    string[] values = match.Groups.Cast<Group>().Select(x => x.Value).ToArray();
+                if (RetargetToGroup > 0) {
+                    startIndex = match.Groups[RetargetToGroup].Index;
+                    endIndex = startIndex + match.Groups[RetargetToGroup].Length;
+                    value = match.Groups[RetargetToGroup].Value;
+
+                } else if (!string.IsNullOrWhiteSpace(Template)) {
+                    string[] values = match.Groups.Cast<Group>().Where(x => x.Success).Select(x => x.Value).ToArray();
                     value = string.Format(Template, values);
 
-                } else if (RetargetToGroup > -1 || match.Groups.Count > 1) {
-                    int gidx = RetargetToGroup < 0 ? 1 : RetargetToGroup + 1;
-
-                    Group group = match.Groups[gidx];
-                    if (group.Success) {
-                        startIndex = group.Index;
-                        endIndex = startIndex + group.Length;
+                } else if (match.Groups.Count > 1) {
+                    Group group = match.Groups[1];
+                    if (group.Success)
                         value = group.Value;
-                    }
+
                 }
+
 
                 if (removeRegex != null)
                     value = removeRegex.Replace(value, string.Empty);
