@@ -49,7 +49,7 @@
 
             RuleData data = new RuleData();
 
-            foreach (Rule<T> rule in Rules) {
+            foreach (IRule<T> rule in Rules) {
                 if (!rule.Eval(ref stack, ref data)) {
                     result = null;
                     return false;
