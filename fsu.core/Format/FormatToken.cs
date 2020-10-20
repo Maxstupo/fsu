@@ -12,20 +12,24 @@
 
         public int Decimals { get; }
 
+        public int Padding { get; }
+
         public string DecimalFormat { get; }
 
         public string Unit { get; }
 
         public bool IsText => Type == PropertyType.Text;
 
-        public FormatToken(string value, PropertyType type, int decimals = 2, string unit = null) {
+        public FormatToken(string value, PropertyType type, int decimals = 2, int padding = 0, string unit = null) {
             Value = value ?? throw new ArgumentNullException(nameof(value));
 
             Type = type;
 
             Decimals = decimals;
+            Padding = padding;
+
             Unit = unit;
-            DecimalFormat = $"0.{new string('0', Decimals)}";
+            DecimalFormat = $"{new string('0', padding + 1)}.{new string(decimals > 0 ? '0' : '#', Math.Abs(Decimals))}";
         }
 
         public PropertyItem GetProperty(IPropertyProvider propertyProvider, IPropertyStore propertyStore, ProcessorItem item) {

@@ -3,6 +3,8 @@
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Detail.Converters;
     using Maxstupo.Fsu.Core.Processor;
+    using Maxstupo.Fsu.Core.Utility;
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -10,7 +12,7 @@
     using System.Text.RegularExpressions;
 
     public class FormatTemplate {
-        private static readonly Regex regex = new Regex(@"([\@\$])\{(\w+)(?:\:([\d\w]{1,3})(?:\,([\d\w]{1,3}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly Regex regex = new Regex(@"([\@\$])\{(?:(\d{1,2})\:)?(\w+)(?:\:([-\d\w]{1,3})(?:\,([-\d\w]{1,3}))?)?\}", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private readonly List<FormatToken> tokens;
 
@@ -41,18 +43,23 @@
 
                     } else {
                         PropertyItem property = token.GetProperty(propertyProvider, propertyStore, item);
+                        string text = "NA";
 
                         if (property == null) {
-                            sb.Append("NA");
+                            sb.Append(text);
 
                         } else if (property.IsNumeric) {
                             double value = unitConverter.ConvertPropertyValue(property, token.Unit);
 
-                            sb.Append(value.ToString(token.DecimalFormat, CultureInfo.InvariantCulture));
+                            text = value.ToString(token.DecimalFormat, CultureInfo.InvariantCulture);
+
                         } else {
-                            sb.Append(property.Value);
+                            text = property.Value.ToString();
 
                         }
+
+                        sb.Append(text);
+
                     }
                 }
 
@@ -62,6 +69,7 @@
             return sb.ToString();
         }
 
+
         public static FormatTemplate Build(string format) {
             List<FormatToken> tokens = new List<FormatToken>();
 
@@ -69,7 +77,7 @@
             MatchCollection mc = regex.Matches(format);
             for (int j = 0; j < mc.Count; j++) {
                 Match match = mc[j];
-                if (!match.Success || !match.Groups[1].Success || !match.Groups[2].Success)
+                if (!match.Success || !match.Groups[1].Success || !match.Groups[3].Success)
                     continue;
 
                 if (j == 0 && match.Index > 0) // Add leading text.
@@ -81,12 +89,17 @@
 
 
                 bool isItemProperty = match.Groups[1].Value == "@";
-                string name = match.Groups[2].Value;
 
-                int decimals = 2;
+                string name = match.Groups[3].Value;
+
+                int padding = 0;
+                int decimals = -2;
                 string unit = null;
 
-                for (int i = 3; i <= 4; i++) {// Group 3 and 4 could be decimal number or unit.
+                if (match.Groups[2].Success)
+                    padding = int.Parse(match.Groups[2].Value) -1;
+
+                for (int i = 4; i <= 5; i++) {// Group 3 and 4 could be decimal number or unit.
                     if (!match.Groups[i].Success)
                         continue;
 
@@ -101,7 +114,7 @@
                 }
 
                 PropertyType type = isItemProperty ? PropertyType.Item : PropertyType.Global;
-                tokens.Add(new FormatToken(name, type, decimals, unit));
+                tokens.Add(new FormatToken(name, type, decimals, padding, unit));
 
                 endIndex = match.Index + match.Length;
                 if (j == mc.Count - 1 && endIndex < format.Length) // Add trailing text 
