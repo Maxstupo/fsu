@@ -12,7 +12,7 @@
         public IEnumerable<ProcessorItem> Process(IProcessorPipeline pipeline, IEnumerable<ProcessorItem> items) {
             int i = 1;
             foreach (ProcessorItem item in items) {
-                item.TryCachePropertyValue("index", new PropertyItem(i++, null));
+                item.TryCachePropertyValue("index", new PropertyItem(i++, null), true);
                 yield return item;
             }
         }

@@ -60,15 +60,20 @@
                 return property;
             }
         }
-
-        public void TryCachePropertyValue(string propertyName, PropertyItem property) {
+        //
+        public void TryCachePropertyValue(string propertyName, PropertyItem property, bool overwrite = false) {
             if (propertyName == null)
                 throw new ArgumentNullException(nameof(propertyName));
             if (property == null)
                 throw new ArgumentNullException(nameof(property));
 
-            if (!cachedProperties.ContainsKey(propertyName))
+            if (overwrite) {
+                cachedProperties[propertyName] = property;
+
+            } else if (!cachedProperties.ContainsKey(propertyName)) {
                 cachedProperties.Add(propertyName, property);
+            }
+
         }
 
     }
