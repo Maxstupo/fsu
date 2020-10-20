@@ -13,15 +13,15 @@
         private readonly string regexText;
         private readonly string key;
         private readonly string property;
-
+        private readonly bool allowNumericCasting;
         private readonly Regex regex;
 
 
-        public ExtractProcessor(string regex, string key, string property) {
+        public ExtractProcessor(string regex, string key, string property, bool allowNumericCasting) {
             this.regexText = regex ?? throw new ArgumentNullException(nameof(regex));
             this.key = key ?? throw new ArgumentNullException(nameof(key));
             this.property = property ?? throw new ArgumentNullException(nameof(property));
-
+            this.allowNumericCasting = allowNumericCasting;
             this.regex = new Regex(regex, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
         }
 
@@ -50,7 +50,7 @@
         }
 
         private PropertyItem CreatePropertyItem(string value) {
-            return double.TryParse(value, out double numericValue) ? new PropertyItem(numericValue, null) : new PropertyItem(value);
+            return allowNumericCasting && double.TryParse(value, out double numericValue) ? new PropertyItem(numericValue, null) : new PropertyItem(value);
         }
 
         public override string ToString() {

@@ -20,6 +20,7 @@
                 new TokenDefinition<TokenType>(TokenType.Constant, "join|seq|append|replace"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "window|nowindow|no-window"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "wait"),
+                new TokenDefinition<TokenType>(TokenType.Constant,"numeric"),
                 new TokenDefinition<TokenType>(TokenType.Constant, "asc|desc"),
                 new TokenDefinition<TokenType>(TokenType.Keyword, "from|to|as"),
 
@@ -67,9 +68,9 @@
             return new HashSet<Grammar<TokenType, IProcessor>> {
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "print") {
-                    Construct = x => new PrintProcessor()                   
-                },     
-                
+                    Construct = x => new PrintProcessor()
+                },
+
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "index") {
                     Construct = x => new IndexProcessor()
                 },
@@ -137,27 +138,33 @@
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "extract") {
                     Construct = x => {
                         if (x.Get<int>(1) == 0) { // first branch
-                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(5), x.Get<string>(3));
+                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(5), x.Get<string>(3), x.Get<bool>(6));
 
                         } else { // second branch
-                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(3), "value");
+                            return new ExtractProcessor(x.Get<string>(0), x.Get<string>(3), "value", x.Get<bool>(4));
                         }
                     },
                     Rules = {
                        new Rule<TokenType>(TokenType.StringValue),
                        new BranchingRule<TokenType>() {
                            Branches = {
-                                //extract "regex" from @{name} as @{ep}
+                                //extract "regex" from @{name} as @{ep} [numeric]
                                 new List<Rule<TokenType>>() {
                                     new Rule<TokenType>(TokenType.Keyword, "from"),
                                     new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
                                     new Rule<TokenType>(TokenType.Keyword, "as"),
                                     new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
+                                    new OptionalRule<TokenType>(TokenType.Constant,false, "numeric") {
+                                        TokenConverter = token => token.Value.Equals("numeric", StringComparison.InvariantCultureIgnoreCase)
+                                    }
                                 },
-                                // extract "regex" as @{ep}
+                                // extract "regex" as @{ep} [numeric]
                                 new List<Rule<TokenType>>() {
                                     new Rule<TokenType>(TokenType.Keyword, "as"),
                                     new Rule<TokenType>(TokenType.ItemProperty) { TokenConverter = TokenConverterPropertyName },
+                                    new OptionalRule<TokenType>(TokenType.Constant, false, "numeric") {
+                                        TokenConverter = token => token.Value.Equals("numeric", StringComparison.InvariantCultureIgnoreCase)
+                                    }
                                 }
                            }
                        }
