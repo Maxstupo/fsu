@@ -28,10 +28,18 @@
                 pipeline.Output.WriteLine(Utility.Level.Info, $"Renaming: &-6;{srcFilepath}&-^; -> &-6;{dstFilepath}&-^;");
 
                 if (!pipeline.Simulate) {
-                    if (File.Exists(srcFilepath))
-                        File.Move(srcFilepath, dstFilepath);
-                }
+                    if (File.Exists(srcFilepath)) {
+                        if (!File.Exists(dstFilepath)) {
+                            File.Move(srcFilepath, dstFilepath);
+                        } else {
+                            pipeline.Output.WriteLine(Utility.Level.Info, $"  - &-c;Destination filepath already exists! Ignoring...&-^;");
 
+                        }
+                    } else {
+                        pipeline.Output.WriteLine(Utility.Level.Info, $"  - &-c;Source filepath doesn't exist! Ignoring...&-^;");
+
+                    }
+                }
             }
 
             return items;
