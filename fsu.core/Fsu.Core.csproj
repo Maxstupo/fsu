@@ -96,6 +96,7 @@
     <Compile Include="Processor\Processors\MaxProcessor.cs" />
     <Compile Include="Processor\Processors\MinProcessor.cs" />
     <Compile Include="Processor\Processors\MkDirProcessor.cs" />
+    <Compile Include="Processor\Processors\CopyProcessor.cs" />
     <Compile Include="Processor\Processors\OutProcessor.cs" />
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
     <Compile Include="Processor\Processors\MoveProcessor.cs" />

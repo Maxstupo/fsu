@@ -30,6 +30,7 @@
                 new TokenDefinition<TokenType>(TokenType.Function, "index"),
                 new TokenDefinition<TokenType>(TokenType.Function, "rename"),
                 new TokenDefinition<TokenType>(TokenType.Function, "move"),
+                new TokenDefinition<TokenType>(TokenType.Function, "copy"),
                 new TokenDefinition<TokenType>(TokenType.Function, "extract"),
                 new TokenDefinition<TokenType>(TokenType.Function, "glob"),
                 new TokenDefinition<TokenType>(TokenType.Function, "print"),
@@ -174,6 +175,14 @@
 
                 new Grammar<TokenType, IProcessor>(TokenType.Function, "move") {
                     Construct = x => new MoveProcessor(x.Get<FormatTemplate>(0)),
+                    Rules = {
+                        new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty, TokenType.GlobalProperty) {
+                            TokenConverter = TokenConverterFormatTemplate
+                        }
+                    }
+                },
+                new Grammar<TokenType, IProcessor>(TokenType.Function, "copy") {
+                    Construct = x => new CopyProcessor(x.Get<FormatTemplate>(0)),
                     Rules = {
                         new Rule<TokenType>(TokenType.TextValue, TokenType.StringValue, TokenType.ItemProperty, TokenType.GlobalProperty) {
                             TokenConverter = TokenConverterFormatTemplate
