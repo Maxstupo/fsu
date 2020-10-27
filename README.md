@@ -1,5 +1,7 @@
 # fsu
-[![Build status](https://ci.appveyor.com/api/projects/status/54p0js5x3wmj0ire?svg=true)](https://ci.appveyor.com/project/Maxstupo/fsu)
+[![License](https://img.shields.io/github/license/Maxstupo/fsu)](https://github.com/Maxstupo/fsu/blob/master/LICENSE.md)
+[![Latest Release](https://img.shields.io/github/v/release/Maxstupo/fsu?include_prereleases)](https://github.com/Maxstupo/fsu/releases/latest)
+[![Build Status](https://ci.appveyor.com/api/projects/status/54p0js5x3wmj0ire?svg=true)](https://ci.appveyor.com/project/Maxstupo/fsu)
 [![Coverage Status](https://coveralls.io/repos/github/Maxstupo/fsu/badge.svg?branch=master)](https://coveralls.io/github/Maxstupo/fsu?branch=master)
 
 ### Example Usage
