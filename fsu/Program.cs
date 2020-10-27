@@ -134,20 +134,22 @@
                 if (!hasSpecificScriptFile)
                     console.WriteLine(Level.Info, $"Running script: &-6;{options.ScriptName}&-^;");
 
-                string filename = hasSpecificScriptFile ? Path.GetFileNameWithoutExtension(options.FileToEvaluate) : $"{options.ScriptName}.fsu";
+                string filename = hasSpecificScriptFile ? Path.GetFileName(options.FileToEvaluate) : $"{options.ScriptName}.fsu";
                 string filepath = hasSpecificScriptFile ? Path.GetFullPath(options.FileToEvaluate) : Util.GetFirstExistingFile(Path.Combine(Directory.GetCurrentDirectory(), filename), Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename));
+                string name = hasSpecificScriptFile ? Path.GetFileNameWithoutExtension(options.FileToEvaluate) : options.ScriptName;
 
                 if (filepath != null && File.Exists(filepath)) {
                     console.WriteLine(Level.Debug, $"Executing script: &-6;{filepath}&-^;");
 
-                    fsu.PropertyStore.SetProperty("_filepath", new PropertyItem(filepath), true);
-                    fsu.PropertyStore.SetProperty("_filename", new PropertyItem(filename), true);
-                    fsu.PropertyStore.SetProperty("_name", new PropertyItem(options.ScriptName), true);
+                    fsu.PropertyStore.SetProperty("_filepath", new PropertyItem(filepath), Persistence.Runtime);
+                    fsu.PropertyStore.SetProperty("_filename", new PropertyItem(filename), Persistence.Runtime);
+                    fsu.PropertyStore.SetProperty("_name", new PropertyItem(name), Persistence.Runtime);
 
-                    int i = 0;
-                    foreach (string arg in options.ScriptParams)
-                        fsu.PropertyStore.SetProperty($"_{i++}", new PropertyItem(arg), true);
-
+                    if (options.ScriptParams != null) {
+                        int i = 0;
+                        foreach (string arg in options.ScriptParams)
+                            fsu.PropertyStore.SetProperty($"_{i++}", new PropertyItem(arg), Persistence.Runtime);
+                    }
 
                     foreach (string line in File.ReadLines(filepath)) {
                         Cli_OnCommand(null, line);

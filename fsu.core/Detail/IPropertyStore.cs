@@ -2,6 +2,11 @@
 
     using System.Collections.Generic;
 
+    public enum Persistence {
+        Runtime,
+        Normal
+    }
+
     public interface IPropertyStore : IEnumerable<KeyValuePair<string, PropertyItem>> {
 
         int Count { get; }
@@ -11,7 +16,7 @@
 
         void ClearAll();
 
-        void SetProperty(string propertyName, PropertyItem property, bool persistent = false);
+        void SetProperty(string propertyName, PropertyItem property, Persistence persistence = Persistence.Normal);
 
         PropertyItem GetProperty(string propertyName);
 

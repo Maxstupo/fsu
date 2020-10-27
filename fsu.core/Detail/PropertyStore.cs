@@ -12,14 +12,20 @@
         public int Count => items.Count;
 
 
+        /// <summary>
+        /// Clears all normal persistence properties from this store.
+        /// </summary>
         public void Clear() {
-            List<string> keysToRemove = items.Where(x => !(bool) x.Value[1]).Select(x => x.Key).ToList();
-            foreach (string key in keysToRemove)
-                items.Remove(key);
+            foreach (KeyValuePair<string, object[]> pair in items.Where(x => (Persistence) x.Value[1] == Persistence.Normal).ToList())
+                items.Remove(pair.Key);
         }
 
+        /// <summary>
+        /// Clears all properties but runtime properties from this store.
+        /// </summary>
         public void ClearAll() {
-            items.Clear();
+            foreach (KeyValuePair<string, object[]> pair in items.Where(x => (Persistence) x.Value[1] != Persistence.Runtime).ToList())
+                items.Remove(pair.Key);
         }
 
         public IEnumerator<KeyValuePair<string, PropertyItem>> GetEnumerator() {
@@ -32,14 +38,14 @@
             return items.TryGetValue(propertyName, out object[] item) ? (PropertyItem) item[0] : null;
         }
 
-        public void SetProperty(string propertyName, PropertyItem property, bool persistent = false) {
+        public void SetProperty(string propertyName, PropertyItem property, Persistence persistence = Persistence.Normal) {
 
             if (items.ContainsKey(propertyName))
                 return;
 
             items.Add(propertyName, new object[] {
                property,
-               persistent
+               persistence
             });
 
         }
