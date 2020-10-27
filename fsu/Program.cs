@@ -43,6 +43,7 @@
             fsu = new FsuEngine(console);
             fsu.Pipeline.Simulate = true;
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
+            fsu.PropertyStore.SetProperty("cd", new PropertyItem(Directory.GetCurrentDirectory()), Persistence.Runtime);
 
             string[] fallbackItems = options.FallbackItems.ToArray();
             fsu.FallbackItems = fallbackItems.Length > 0 ? fallbackItems : new string[] { Directory.GetCurrentDirectory() };
@@ -144,7 +145,7 @@
                     fsu.PropertyStore.SetProperty("_filepath", new PropertyItem(filepath), Persistence.Runtime);
                     fsu.PropertyStore.SetProperty("_filename", new PropertyItem(filename), Persistence.Runtime);
                     fsu.PropertyStore.SetProperty("_name", new PropertyItem(name), Persistence.Runtime);
-
+                                
                     if (options.ScriptParams != null) {
                         int i = 0;
                         foreach (string arg in options.ScriptParams)
