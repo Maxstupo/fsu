@@ -9,7 +9,7 @@
         [Option('l', "level", Default = Level.Info, HelpText = "The logging level for fsu.")]
         public Level Level { get; set; }
 
-        [Option('f', "file", Default = null, HelpText = "The file to evaluate at startup.")]
+        [Option('f', "file", Default = null, HelpText = "The script filepath to execute. Overrides 'script-name' option.")]
         public string FileToEvaluate { get; set; }
 
         [Option("fallback-items", Separator = ',', HelpText = "Processor stream input items to use when nothing is initially provided. Defaults to current directory.")]
