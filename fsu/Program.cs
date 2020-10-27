@@ -106,6 +106,24 @@
             };
             commandLine.Register(cmdPersistent);
 
+            Command cmdPurge = new Command("Purge", "purge", Aliases.Create("clean"), "Clears the property store.");
+            cmdPurge.OnExecuted += data => {
+                fsu.PropertyStore.ClearAll();
+                data.Output.WriteLine(Level.None, "&-c;Property store purged!&-^;");
+            };
+            commandLine.Register(cmdPurge);
+
+            Command cmdStore = new Command("Store", "store", Aliases.Create("summary"), "Displays a summary of properties within the property store.");
+            cmdStore.OnExecuted += data => {
+                if (fsu.PropertyStore.Count == 0) {
+                    data.Output.WriteLine(Level.None, "&-c;Property store is empty!&-^;");
+                } else {
+                    data.Output.WriteLine(Level.None, "\n------------- Property Store Summary --------------");
+                    foreach (KeyValuePair<string, PropertyItem> item in fsu.PropertyStore)
+                        data.Output.WriteLine(Level.None, $"{item.Key}: {item.Value.Value}");
+                }
+            };
+            commandLine.Register(cmdStore);
         }
 
         private int Start(Options options) {
