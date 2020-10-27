@@ -13,6 +13,7 @@
     using Maxstupo.Fsu.CommandTree.Parameters;
     using Maxstupo.Fsu.CommandTree.Providers;
     using Maxstupo.Fsu.Core;
+    using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
     using Maxstupo.Fsu.Providers;
@@ -91,11 +92,40 @@
         }
 
         private int Start(Options options) {
-            if (options.FileToEvaluate != null && File.Exists(options.FileToEvaluate))
-                Cli_OnCommand(null, File.ReadAllText(options.FileToEvaluate));
+            bool hasSpecificScriptFile = options.FileToEvaluate != null && File.Exists(options.FileToEvaluate);
 
-            if (!options.NoPrompt)
+            // Run a script.
+            if (!string.IsNullOrWhiteSpace(options.ScriptName) || hasSpecificScriptFile) {
+                if (!hasSpecificScriptFile)
+                    console.WriteLine(Level.Info, $"Running script: &-6;{options.ScriptName}&-^;");
+
+                string filename = hasSpecificScriptFile ? Path.GetFileNameWithoutExtension(options.FileToEvaluate) : $"{options.ScriptName}.fsu";
+                string filepath = hasSpecificScriptFile ? Path.GetFullPath(options.FileToEvaluate) : Util.GetFirstExistingFile(Path.Combine(Directory.GetCurrentDirectory(), filename), Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename));
+
+                if (filepath != null && File.Exists(filepath)) {
+                    console.WriteLine(Level.Debug, $"Executing script: &-6;{filepath}&-^;");
+
+                    fsu.PropertyStore.SetProperty("_filepath", new PropertyItem(filepath), true);
+                    fsu.PropertyStore.SetProperty("_filename", new PropertyItem(filename), true);
+                    fsu.PropertyStore.SetProperty("_name", new PropertyItem(options.ScriptName), true);
+
+                    int i = 0;
+                    foreach (string arg in options.ScriptParams)
+                        fsu.PropertyStore.SetProperty($"_{i++}", new PropertyItem(arg), true);
+
+
+                    foreach (string line in File.ReadLines(filepath)) {
+                        Cli_OnCommand(null, line);
+                    }
+
+                } else {
+                    console.WriteLine(Level.Warn, $"&-c;No script found!&-^;");
+                    return -1;
+                }
+
+            } else {
                 Run();
+            }
 
             return 0;
         }
@@ -130,7 +160,7 @@
 
 #if DEBUG
             if (Debugger.IsAttached)
-                args = "-l Fine -f fsu_on_start.txt".Split(' ');
+                args = "vid 12 -l Fine".Split(' ');
 #endif
 
             Parser parser = new Parser(with => { with.HelpWriter = null; with.CaseInsensitiveEnumValues = true; });
