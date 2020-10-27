@@ -98,6 +98,7 @@
     <Compile Include="Processor\Processors\MkDirProcessor.cs" />
     <Compile Include="Processor\Processors\OutProcessor.cs" />
     <Compile Include="Processor\Processors\PrintProcessor.cs" />
+    <Compile Include="Processor\Processors\MoveProcessor.cs" />
     <Compile Include="Processor\Processors\RenameProcessor.cs" />
     <Compile Include="Processor\Processors\ScanProcessor.cs" />
     <Compile Include="Processor\Processors\SortProcessor.cs" />
