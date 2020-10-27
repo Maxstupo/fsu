@@ -27,9 +27,12 @@
 
         public IPropertyStore PropertyStore { get; }
 
+        public bool PersistentStore { get; set; } = false;
+
         public string[] FallbackItems { get; set; }
 
         private readonly IInterpreter<IProcessor> interpreter;
+
 
         public FsuEngine(IOutput output) {
             Output = output;
@@ -128,7 +131,8 @@
 
             Output.WriteLine(Level.Debug, "\n--------------------- Pipeline Output --------------------\n");
 
-            Pipeline.PropertyStore.Clear();
+            if (!PersistentStore)
+                Pipeline.PropertyStore.Clear();
             return Pipeline.Process(objs);
         }
 

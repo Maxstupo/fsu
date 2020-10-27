@@ -89,6 +89,23 @@
                 data.Output.WriteLine(Level.Info, $"Simulation mode is {(fsu.Pipeline.Simulate ? "&-a;on" : "&-c;off")}&-^;");
             };
             commandLine.Register(cmSim);
+
+            Command cmdPersistent = new Command("Persistent", "persistent", Aliases.Create("p", "pstore"), "Enable/disable persistent property store.");
+            cmdPersistent.Parameters.Add(new ParamDef("value", string.Empty, typeof(string), "True to enable persistent mode, leave blank for toggle"));
+            cmdPersistent.OnExecuted += data => {
+
+                string value = data.Parameters.Get<string>("value");
+                if (string.IsNullOrWhiteSpace(value)) {
+                    fsu.PersistentStore = !fsu.PersistentStore;
+
+                } else if (bool.TryParse(value, out bool persistentStore)) {
+                    fsu.PersistentStore = persistentStore;
+
+                }
+                data.Output.WriteLine(Level.Info, $"Persistent store mode is {(fsu.PersistentStore ? "&-a;on" : "&-c;off")}&-^;");
+            };
+            commandLine.Register(cmdPersistent);
+
         }
 
         private int Start(Options options) {
