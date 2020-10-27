@@ -1,6 +1,8 @@
-﻿using System;
-
-namespace Maxstupo.Fsu.Core.Utility {
+﻿namespace Maxstupo.Fsu.Core.Utility {
+    
+    using System;
+    using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Provides basic static utility methods and extensions for various purposes. 
@@ -21,6 +23,14 @@ namespace Maxstupo.Fsu.Core.Utility {
 
         public static bool Contains(this string src, string value, StringComparison comparison) {
             return src.IndexOf(value, comparison) >= 0;
+        }
+
+        /// <summary>
+        /// Returns the first filepath that exists from the provided <paramref name="files"/> array, or null.
+        /// </summary>
+        /// <returns>Null if no files exist; otherwise, the first existing filepath.</returns>
+        public static string GetFirstExistingFile(params string[] files) {
+            return files.FirstOrDefault(x => File.Exists(x));
         }
 
     }
