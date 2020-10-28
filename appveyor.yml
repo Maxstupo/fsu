@@ -5,7 +5,8 @@ configuration:
   - Release
 
 init:
-  - ps: Update-AppveyorBuild -Version "$(Get-Date -format yy.MM).$env:appveyor_build_number"
+  - ps: $env:padded_build_number = $env:appveyor_build_number.ToString("00")
+  - ps: Update-AppveyorBuild -Version "$(Get-Date -format yy.MM).$env:padded_build_number"
 
 environment:
     PRJ_NAME: 'fsu'
