@@ -38,7 +38,7 @@
         [TokenDef("\"((?:\\\\.|[^\\\\\"])*)\"", RemoveRegex = "\\\\(?=\\\")")]
         StringValue,
 
-        [TokenDef(@"-?(?:\d+)\.(?:\d+)?")]
+        [TokenDef(@"-?(?:\d+)(?:\.\d+)?")]
         NumberValue,
 
         [TokenDef(@"[\w\d:\\/\.\-\*\[\]\{\}]+", 3)]

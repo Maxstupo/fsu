@@ -46,6 +46,7 @@
 
             } else {
                 output.WriteLine(Level.Warn, $"&-c;Condition type mismatch, unable to compare values, ignoring condition: {leftValue.Value} {Operator} {rightValue.Value}&-^;");
+                output.WriteLine(Level.Debug, $"&-c;  - LV_NUMERIC: {leftValue.IsNumeric}, RV_NUMERIC: {rightValue.IsNumeric}&-^;");
                 return true;
             }
         }
