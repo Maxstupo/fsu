@@ -199,7 +199,7 @@
 
 #if DEBUG
             if (Debugger.IsAttached)
-                args = "vid 12 -l Fine".Split(' ');
+                args = "-l Fine".Split(' ');
 #endif
 
             Parser parser = new Parser(with => { with.HelpWriter = null; with.CaseInsensitiveEnumValues = true; });
