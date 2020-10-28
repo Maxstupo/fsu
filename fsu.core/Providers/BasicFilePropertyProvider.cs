@@ -1,6 +1,7 @@
 ﻿namespace Maxstupo.Fsu.Core.Providers {
 
     using System.IO;
+    using HeyRed.Mime;
     using Maxstupo.Fsu.Core.Detail;
     using Maxstupo.Fsu.Core.Processor;
     using Maxstupo.Fsu.Core.Utility;
@@ -37,6 +38,10 @@
 
                 case "ivalue":
                     return new PropertyItem(item.InitialValue);
+
+                case "mime":
+                    string mime = MimeTypesMap.GetMimeType(item.Value);
+                    return new PropertyItem(mime);
 
                 case "relpath":
                     PropertyItem originItem = item.GetProperty(propertyProvider, "origin");
