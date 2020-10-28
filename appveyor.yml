@@ -49,5 +49,5 @@ test_script:
       %USERPROFILE%\.dotnet\tools\csmacnz.Coveralls.exe --opencover -i "./coverage_%CONFIGURATION%.xml" --serviceName AppVeyor --repoToken "%COVERALLS_REPO_TOKEN%"
 
 artifacts:
-- path: $(APPVEYOR_BUILD_FOLDER)\fsu\bin\Release\fsu.exe
+- path: fsu\bin\Release\fsu.exe
   name: fsu
