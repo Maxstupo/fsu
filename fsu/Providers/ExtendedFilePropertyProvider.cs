@@ -8,7 +8,7 @@
     using Maxstupo.Fsu.Utility;
     using UnitsNet.Units;
 
-    public class ExtendedFilePropertyProvider : IPropertyProvider {
+    public sealed class ExtendedFilePropertyProvider : IPropertyProvider {
 
         private bool isBulkMode = false;
 
