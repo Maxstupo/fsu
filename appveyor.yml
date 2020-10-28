@@ -1,4 +1,4 @@
-﻿version: 0.0.0.{build}
+﻿version: 20.10.3.{build}
 image: Visual Studio 2019
 
 configuration:
