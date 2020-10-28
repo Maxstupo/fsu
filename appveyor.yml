@@ -1,8 +1,7 @@
-﻿version: 0.0.0.{build}
+﻿version: 20.10.{build}
 image: Visual Studio 2019
 
 configuration:
-  - Debug
   - Release
 
 environment:
@@ -11,6 +10,7 @@ environment:
     COVERALLS_REPO_TOKEN:
       secure: Hue3gKAzE3Le1CRWfY2ygW4/t4ZfOuQJG7Zibq1osm4/AA8WmTRgsUhtuSNyAXtf
 
+skip_tags: true
 skip_commits:
     files:
       - '**/*.md'
@@ -26,6 +26,13 @@ install:
 #  - choco install -y innosetup --version 6.0.4
 #  - set PATH="C:\Program Files (x86)\Inno Setup 6";%PATH%
 
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+
 before_build:
   - nuget restore
  # - ps: gitversion /l console /output buildserver /updateAssemblyInfo
@@ -40,3 +47,7 @@ test_script:
       %USERPROFILE%\.nuget\packages\opencover\4.7.922\tools\OpenCover.Console.exe -register:administrator -target:"%xunit20%\xunit.console.exe" -targetargs:"%TEST_ASSEMBLY% -appveyor -noshadow" -filter:"+[fsu*]* -[*.tests]* -[*.Tests]*" -output:".\coverage_%CONFIGURATION%.xml"
       
       %USERPROFILE%\.dotnet\tools\csmacnz.Coveralls.exe --opencover -i "./coverage_%CONFIGURATION%.xml" --serviceName AppVeyor --repoToken "%COVERALLS_REPO_TOKEN%"
+
+artifacts:
+- path: $(APPVEYOR_BUILD_FOLDER)\fsu\bin\Release\fsu.exe
+  name: fsu
