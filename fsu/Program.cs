@@ -43,6 +43,7 @@
             fsu = new FsuEngine(console);
             fsu.Pipeline.Simulate = true;
             fsu.PropertyProviders.Add(new ExtendedFilePropertyProvider());
+            fsu.PropertyProviders.Add(new CompositePropertyProvider());
             fsu.PropertyStore.SetProperty("cd", new PropertyItem(Directory.GetCurrentDirectory()), Persistence.Runtime);
 
             string[] fallbackItems = options.FallbackItems.ToArray();

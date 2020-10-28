@@ -66,6 +66,7 @@
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\CompositePropertyProvider.cs" />
     <Compile Include="Providers\ExtendedFilePropertyProvider.cs" />
     <Compile Include="Utility\Cli.cs" />
     <Compile Include="Utility\ExtendedFile.cs" />
