@@ -1,5 +1,4 @@
-﻿version: 20.10.{build}
-image: Visual Studio 2019
+﻿image: Visual Studio 2019
 
 configuration:
   - Release
@@ -19,6 +18,9 @@ skip_commits:
 #  - 'C:\ProgramData\chocolatey\bin -> appveyor.yml'
 #  - 'C:\ProgramData\chocolatey\lib -> appveyor.yml'
 #  - 'C:\Program Files (x86)\Inno Setup 6 -> appveyor.yml'
+
+init:
+  - ps: Update-AppveyorBuild -Version "$(Get-Date -format yy.MM).$env:appveyor_build_number"
 
 install:
   - dotnet tool install coveralls.net --global --version 1.0.0
